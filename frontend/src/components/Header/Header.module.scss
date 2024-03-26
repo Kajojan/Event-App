@@ -1,0 +1,35 @@
+.headerWrapper {
+  position: sticky;
+  border-bottom: 1px solid rgb(97, 97, 97);
+  display: flex;
+  justify-content: space-between;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-top: 35px;
+  & {
+    align-items: center;
+    font-size: 30px;
+    font-weight: 600;
+  }
+  button {
+    margin-right: 15px;
+  }
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+.icon {
+  color: blue;
+  width: 60px !important;
+  height: 60px !important;
+}
+.logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  p {
+    font-size: 30px;
+    font-weight: 500;
+  }
+}

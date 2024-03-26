@@ -1,11 +1,20 @@
 import axios from "axios";
 
+const getAuthorizationHeader = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    return `Bearer ${token}`;
+  } else {
+    return null;
+  }
+};
 const apiClient = axios.create({
   baseURL: `${process.env.REACT_APP_API_URL}`,
   withCredentials: true,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
+    Authorization: getAuthorizationHeader(),
   },
 });
 

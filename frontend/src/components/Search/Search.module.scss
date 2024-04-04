@@ -1,0 +1,19 @@
+.input {
+  border: 1px solid #f3f3f3;
+  height: 2.5rem;
+  box-sizing: border-box;
+  padding: 1px 10px;
+  outline: none;
+  transition: 0.2s ease-in-out;
+  border-radius: 5px;
+}
+
+.input:focus {
+  transition: 0.2s ease-in-out;
+  border: 1px solid blue;
+}
+
+// .searchIcon {
+//   position: absolute;
+//   cursor: pointer;
+// }

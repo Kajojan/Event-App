@@ -1,3 +1,4 @@
-import Event from "./Event";
+import EventIcon from "./EventIcon";
+import SearchIcon from "./SearchIcon";
 
-export { Event };
+export { EventIcon, SearchIcon };

@@ -1,0 +1,21 @@
+.event_container {
+  border: 1px solid black;
+  height: 300px;
+  border-radius: 8%;
+  cursor: pointer;
+  .event_image {
+    border-radius: 8%;
+    border: 1px solid red;
+    height: 150px;
+  }
+  p {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .event_content {
+    padding-top: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+}

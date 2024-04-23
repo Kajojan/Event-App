@@ -1,0 +1,10 @@
+import React from "react";
+import { createSvgIcon } from "@mui/material/utils";
+
+const RecommendedIcon = createSvgIcon(
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="recommendation">
+    <path d="m14.5 13.586-2.293-2.293-1.414 1.414 3.707 3.707 6.707-6.707-1.414-1.414z"></path>
+    <path d="M27 12c0-6.074-4.924-11-11-11C9.926 1 5 5.926 5 12c0 4.21 2.369 7.865 5.844 9.714L10 31l6-4 6 4-.844-9.286A10.995 10.995 0 0 0 27 12zm-11 9c-4.971 0-9-4.029-9-9s4.029-9 9-9 9 4.029 9 9-4.029 9-9 9z"></path>
+  </svg>
+);
+export default RecommendedIcon;

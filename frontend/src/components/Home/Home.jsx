@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import Event from "../Events/Event";
 import style from "./Home.module.scss";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([
     {
       username: "kajo",
@@ -30,17 +32,19 @@ const Home = () => {
   useEffect(() => {
     // data from Api
   });
-  const handleClickEvent = () => {
-    console.log("Cclick");
-  };
 
+  const handleClickEventPopular = (id) => {
+    navigate(`event/popular/${id}`);
+  };
+  const handleClickEventComming = (id) => {
+    navigate(`event/comming/${id}`);
+  };
   return (
     <Box>
       <Typography
         variant="h1"
         fontWeight="500"
-        // color={homePageTheme.background.color}
-        // className={styles.header}
+        className={style.Typography_home}
         sx={{
           fontSize: ["xx-large", "xx-large", "xxx-large", "xxx-large"],
           paddingLeft: [0, 0, 3, 0],
@@ -59,11 +63,20 @@ const Home = () => {
         style={{ width: "60%", marginTop: "20px", margin: "0 auto", fontSize: "20px" }}
         textAlign="left"
       >
-        Popularne Eventy{" "}
+        <Link className={style.home_link} to="/event/popular">
+          Popularne wydarzenia
+        </Link>
       </Divider>
       <Box className={style.home_container}>
         {data.map((item, index) => {
-          return <Event onClick={handleClickEvent} item={item}></Event>;
+          return (
+            <Event
+              onClick={() => {
+                handleClickEventPopular(index);
+              }}
+              item={item}
+            ></Event>
+          );
         })}
       </Box>
       <Divider
@@ -75,11 +88,20 @@ const Home = () => {
         style={{ width: "60%", marginTop: "20px", margin: "0 auto", fontSize: "20px" }}
         textAlign="left"
       >
-        Najbliższe/nadchodzące
+        <Link className={style.home_link} to="/event/comming">
+          Popularne wydarzenia
+        </Link>
       </Divider>
       <Box className={style.home_container}>
         {data.map((item, index) => {
-          return <Event onClick={handleClickEvent} item={item}></Event>;
+          return (
+            <Event
+              onClick={() => {
+                handleClickEventComming(index);
+              }}
+              item={item}
+            ></Event>
+          );
         })}
       </Box>
     </Box>

@@ -12,6 +12,10 @@
     font-weight: 600;
   }
   button {
+    &:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 12px rgba(0, 95, 238, 0.5);
+    }
     margin-right: 15px;
   }
 }
@@ -24,12 +28,17 @@ a {
   width: 60px !important;
   height: 60px !important;
 }
-.logo {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  p {
-    font-size: 30px;
-    font-weight: 500;
+.leftIconHeader {
+  .logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    p {
+      font-size: 30px;
+      font-weight: 500;
+    }
+  }
+  &:hover {
+    transform: scale(1.01);
   }
 }

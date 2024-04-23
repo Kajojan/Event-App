@@ -4,9 +4,12 @@
   border-radius: 8%;
   cursor: pointer;
   .event_image {
-    border-radius: 8%;
-    border: 1px solid red;
-    height: 150px;
+    img {
+      border-radius: 8%;
+      // max-height: 250px !important;
+      height: auto;
+      width: 100%;
+    }
   }
   p {
     font-size: 20px;
@@ -17,5 +20,42 @@
     padding-top: 5px;
     display: flex;
     flex-direction: column;
+  }
+}
+.box_container {
+  width: 600px;
+  height: 400px;
+  margin: 60px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  div {
+    &:hover {
+      transform: scale(1.01);
+      border: 1px solid rgba(0, 95, 238, 0.5);
+
+      box-shadow: 0 0 12px rgba(0, 95, 238, 0.5);
+      svg {
+        transform: scale(1.09);
+      }
+    }
+    svg {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      padding-top: 5px;
+      margin-top: 10px;
+    }
+    a {
+      display: block;
+      text-transform: capitalize;
+      margin-top: 5px;
+      box-sizing: content-box;
+    }
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 150px;
+    height: 150px;
   }
 }

@@ -25,7 +25,7 @@ const EventMain = () => {
           <Link>Utwórz Nowe</Link>
           <CreateIcon></CreateIcon>
         </Box>
-        <Box onClick={() => navigate("/event/yourcomming")}>
+        <Box onClick={() => navigate("/event/yourincomming")}>
           <Link>Twoje nadchodzące</Link>
           <TimeIcon></TimeIcon>
         </Box>

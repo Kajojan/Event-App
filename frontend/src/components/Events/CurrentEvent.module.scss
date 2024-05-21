@@ -1,15 +1,15 @@
-.event_container {
-  border: 1px solid black;
-  height: fit-content;
-  border-radius: 8%;
-  cursor: pointer;
+
   .event_image {
+    margin: 30px;
     img {
       border-radius: 8%;
-      // max-height: 250px !important;
       height: auto;
-      width: 100%;
+      width: 90%;
     }
+  }
+  .Typography_home {
+    margin: 20px;
+    margin-top: 40px;
   }
   p {
     font-size: 20px;
@@ -17,11 +17,12 @@
   }
 
   .event_content {
+    margin-top: 10px;
     padding-top: 5px;
     display: flex;
     flex-direction: column;
   }
-}
+
 .box_container {
   width: 600px;
   height: 400px;

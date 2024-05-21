@@ -33,12 +33,10 @@ const Home = () => {
     // data from Api
   });
 
-  const handleClickEventPopular = (id) => {
-    navigate(`event/popular/${id}`);
+  const handleClickEvent = (id) => {
+    navigate(`event/${id}`);
   };
-  const handleClickEventComming = (id) => {
-    navigate(`event/comming/${id}`);
-  };
+
   return (
     <Box>
       <Typography
@@ -72,7 +70,7 @@ const Home = () => {
           return (
             <Event
               onClick={() => {
-                handleClickEventPopular(index);
+                handleClickEvent(item.id);
               }}
               item={item}
             ></Event>
@@ -97,7 +95,7 @@ const Home = () => {
           return (
             <Event
               onClick={() => {
-                handleClickEventComming(index);
+                handleClickEvent(item.id);
               }}
               item={item}
             ></Event>

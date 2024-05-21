@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 import Event from "./Event";
 import styles from "./EventList.module.scss";
@@ -26,6 +26,7 @@ const EventList = ({ events, name }) => {
       }
     });
 
+
     setSortedEvents(sorted);
   };
 
@@ -47,6 +48,9 @@ const EventList = ({ events, name }) => {
         return { xs: 12 };
     }
   };
+  useEffect(()=>{
+    setSortedEvents(events)
+  },[events])
   return (
     <Box>
       <Typography

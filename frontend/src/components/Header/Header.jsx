@@ -57,12 +57,12 @@ const Header = () => {
           <Link to="/event">Wydarzenia</Link>
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Link>Wyszukaj</Link>
+          <Link to="/search">Wyszukaj</Link>
         </MenuItem>
         <hr></hr>
         {isAuthenticated ? (
           <MenuItem onClick={handleClose}>
-            <Link to="/profile">{user.name} </Link>
+            <Link to="/profile">profile </Link>
           </MenuItem>
         ) : (
           <MenuItem onClick={loginWithRedirect}>Zaloguj się</MenuItem>

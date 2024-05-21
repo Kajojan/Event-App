@@ -9,7 +9,7 @@ const Main = () => {
   return (
     <div>
       <Header></Header>
-      {!isAuthenticated ? <Home></Home> : <HomeLogin></HomeLogin>}
+      <Home></Home>
     </div>
   );
 };

@@ -5,6 +5,10 @@ const auth0Cache2 = JSON.parse(localStorage.getItem(auth0CacheKey));
 const auth0Cache = auth0Cache2?.body?.access_token;
 const initialState = {
   socket: null,
+  yourIncommingEvent: null,
+  popular: [],
+  recomended: [],
+  incomming: [],
 };
 
 const socketSlice = createSlice({
@@ -19,7 +23,9 @@ const socketSlice = createSlice({
       });
     },
     addEvent(state, action) {
-      state.socket.emit("addEvent", action.payload.event);
+      if (state.socket) {
+        state.socket.emit("addEvent", action.payload.event);
+      }
       // state.socket.on("addEvent", (resData) => {
       // const postId = resData.post[0]._fields[0].identity.low;
       // this.socket.on(`event-${postId}`, (data) => {
@@ -29,8 +35,13 @@ const socketSlice = createSlice({
       // });
       // });
     },
+    getEvents(state, action) {
+      if (state.socket) {
+        state.socket.emit("get_new_event", action.payload);
+      }
+    },
   },
 });
 
-export const { connect, addEvent } = socketSlice.actions;
+export const { connect, addEvent, getEvents } = socketSlice.actions;
 export default socketSlice.reducer;

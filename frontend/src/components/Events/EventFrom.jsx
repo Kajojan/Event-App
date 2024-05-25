@@ -21,6 +21,7 @@ function EventForm() {
   const [address, setAddress] = useState("");
   const onSubmit = (data) => {
     setFormData(data);
+    console.log(formData, data);
     dispatch(addEvent({ event: { content: { ...data, address }, owner: user.email } }))
   };
 
@@ -57,7 +58,7 @@ function EventForm() {
         }}
       >
         <Box sx={{ marginBottom: "20px", marginLeft: "30px", width: "300px", alignItems: "center", display: "flex" }}>
-          <Event item={formData}></Event>
+          {/* <Event item={formData}></Event> */}
         </Box>
         <form onSubmit={handleSubmit(onSubmit)} className={style.container}>
           <div className={style.name}>
@@ -76,10 +77,10 @@ function EventForm() {
               <input
                 type="date"
                 min={new Date().toISOString().split("T")[0]}
-                id="eventTime"
-                {...register("eventTime", { required: true })}
+                id="eventDate"
+                {...register("eventDate", { required: true })}
               />
-              {errors.eventTime && <span>This field is required</span>}
+              {errors.eventDate && <span>This field is required</span>}
             </div>
           </div>
 

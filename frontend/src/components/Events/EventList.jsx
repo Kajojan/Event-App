@@ -9,23 +9,57 @@ const EventList = ({ events, name }) => {
   const [sortedEvents, setSortedEvents] = useState(events);
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortBy, setSortBy] = useState("name");
-  const [layout, setLayout] = useState("list"); 
+  const [layout, setLayout] = useState("list");
   const navigate = useNavigate();
 
-  const handleSort = (property) => {
+  const handleSort_Date = (property) => {
+    const isAsc = sortBy === property && sortOrder === "asc";
+    const newOrder = isAsc ? "desc" : "asc";
+    setSortOrder(newOrder);
+    setSortBy(property);
+    const sorted = [...events].sort((a, b) => {
+      const dateA = new Date(a._fields[0].properties["eventDate"]);
+      const dateB = new Date(b._fields[0].properties["eventDate"]);
+
+      if (dateA < dateB) {
+        return newOrder === "asc" ? -1 : 1;
+      }
+      if (dateA > dateB) {
+        return newOrder === "asc" ? 1 : -1;
+      }
+      const timeA = a._fields[0].properties["eventTime"]
+      const timeB = b._fields[0].properties["eventTime"]
+      if (timeA < timeB) {
+        return newOrder === "asc" ? -1 : 1;
+      }
+      if (timeA > timeB) {
+        return newOrder === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+
+    setSortedEvents(sorted);
+  };
+
+  const handleSort_Name = (property) => {
     const isAsc = sortBy === property && sortOrder === "asc";
     const newOrder = isAsc ? "desc" : "asc";
     setSortOrder(newOrder);
     setSortBy(property);
 
     const sorted = [...events].sort((a, b) => {
-      if (newOrder === "asc") {
-        return a[property] < b[property] ? -1 : 1;
-      } else {
-        return a[property] > b[property] ? -1 : 1;
-      }
-    });
+      const nameA = a._fields[0].properties.eventName.toLowerCase();
+      const nameB = b._fields[0].properties.eventName.toLowerCase();
 
+      if (nameA < nameB) {
+        return newOrder === "asc" ? -1 : 1;
+      }
+      if (nameA > nameB) {
+        return newOrder === "asc" ? 1 : -1;
+      }
+    }
+    )
 
     setSortedEvents(sorted);
   };
@@ -48,9 +82,9 @@ const EventList = ({ events, name }) => {
         return { xs: 12 };
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     setSortedEvents(events)
-  },[events])
+  }, [events])
   return (
     <Box>
       <Typography
@@ -65,21 +99,21 @@ const EventList = ({ events, name }) => {
         {name}
       </Typography>
       <Box mb={2} mt={10}>
-        <Button variant="outlined"  sx={{borderColor: "#0000ff", color:"black", fontWeight: "normal" }} onClick={() => handleSort("name")}>
-         Sortuj po nazwie  ({sortOrder === "asc" && sortBy === "name" ? "asc" : "desc"})
+        <Button variant="outlined" sx={{ borderColor: "#0000ff", color: "black", fontWeight: "normal" }} onClick={() => handleSort_Name("eventName")}>
+          Sortuj po nazwie  ({sortOrder === "asc" && sortBy === "eventName" ? "asc" : "desc"})
         </Button>
-        <Button variant="outlined" sx={{borderColor: "#0000ff", color:"black", fontWeight: "normal" }} onClick={() => handleSort("date")} style={{ marginLeft: 8 }}>
-        Sortuj po dacie ({sortOrder === "asc" && sortBy === "date" ? "asc" : "desc"})
+        <Button variant="outlined" sx={{ borderColor: "#0000ff", color: "black", fontWeight: "normal" }} onClick={() => handleSort_Date("eventDate")} style={{ marginLeft: 8 }}>
+          Sortuj po dacie ({sortOrder === "asc" && sortBy === "eventDate" ? "asc" : "desc"})
         </Button>
       </Box>
       <Box mb={2}>
-        <Button variant="outlined" sx={{borderColor: "#0000ff", color:"black", fontWeight: "normal" }} onClick={() => handleLayoutChange("list")}>
+        <Button variant="outlined" sx={{ borderColor: "#0000ff", color: "black", fontWeight: "normal" }} onClick={() => handleLayoutChange("list")}>
           List
         </Button>
-        <Button variant="outlined" sx={{borderColor: "#0000ff", color:"black", fontWeight: "normal" }} onClick={() => handleLayoutChange("2col")} style={{ marginLeft: 8 }}>
+        <Button variant="outlined" sx={{ borderColor: "#0000ff", color: "black", fontWeight: "normal" }} onClick={() => handleLayoutChange("2col")} style={{ marginLeft: 8 }}>
           2 kolumny
         </Button>
-        <Button variant="outlined" sx={{borderColor: "#0000ff", color:"black", fontWeight: "normal" }} onClick={() => handleLayoutChange("3col")} style={{ marginLeft: 8 }}>
+        <Button variant="outlined" sx={{ borderColor: "#0000ff", color: "black", fontWeight: "normal" }} onClick={() => handleLayoutChange("3col")} style={{ marginLeft: 8 }}>
           3 kolumny
         </Button>
       </Box>
@@ -97,7 +131,7 @@ const EventList = ({ events, name }) => {
             <div style={{ height: "fit-content", margin: "50px" }}>
               <Event
                 onClick={() => {
-                  handleClickEvent(item.id)
+                  handleClickEvent(item._fields[0].identity.low)
                 }}
                 item={item}
               />

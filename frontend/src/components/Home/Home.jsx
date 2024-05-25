@@ -68,12 +68,13 @@ const Home = () => {
       <Box className={style.home_container}>
         {data.map((item, index) => {
           return (
-            <Event
-              onClick={() => {
-                handleClickEvent(item.id);
-              }}
-              item={item}
-            ></Event>
+            // <Event
+            //   onClick={() => {
+            //     handleClickEvent(item.id);
+            //   }}
+            //   item={item}
+            // ></Event>
+            <></>
           );
         })}
       </Box>
@@ -93,12 +94,13 @@ const Home = () => {
       <Box className={style.home_container}>
         {data.map((item, index) => {
           return (
-            <Event
-              onClick={() => {
-                handleClickEvent(item.id);
-              }}
-              item={item}
-            ></Event>
+            <a></a>
+            // <Event
+            //   onClick={() => {
+            //     handleClickEvent(item.id);
+            //   }}
+            //   item={item}
+            // ></Event>
           );
         })}
       </Box>

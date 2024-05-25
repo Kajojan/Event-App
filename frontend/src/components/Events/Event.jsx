@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import style from "./Event.module.scss";
 
 const Event = ({ item, onClick }) => {
+  const { address, eventDate, eventDescription, eventImage, eventName, eventTime } = item?._fields[0]?.properties
   return (
     <Box onClick={onClick} className={style.event_container}>
       <Box className={style.event_image}>
@@ -10,11 +11,11 @@ const Event = ({ item, onClick }) => {
           alt="EventImage"
         />
       </Box>
-      <Typography>Tytył</Typography>
+      <Typography>{eventName}</Typography>
       <Box className={style.event_content}>
-        Organizator
-        <a>Date</a>
-        <a>Miejsce</a>
+        Organizator: {item?._fields[1]?.properties?.nickname}
+        <a>Date: {eventDate}, {eventTime} </a>
+        <a>Miejsce: {address}</a>
       </Box>
     </Box>
   );

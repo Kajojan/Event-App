@@ -1,8 +1,10 @@
 const {
   create_event,
   getAllevent,
-  get_newEvents_after_your,
+  get_newEvents_coming,
   get_newEvents_after,
+  get_newEvents_popular,
+  get_newEvents_yourComing,
   get_newevent_before,
   get_oldevent,
   edit_event,
@@ -56,13 +58,32 @@ module.exports = (io) => {
       });
 
       socket.on("get_new_event", async (data) => {
-        console.log(data);
         const { name, skip, username } = data;
-        const newEvent =
-          name == "yourincomming" || name == "recomended"
-            ? await get_newEvents_after_your(username, skip, "ASC", name)
-            : await get_newEvents_after(username, skip, "ASC", name);
-        socket.emit("receive_new_event", newEvent);
+        switch (name) {
+          case "popular":
+            const newEventPopular = await get_newEvents_popular(skip);
+            socket.emit("receive_new_event_popular", newEventPopular);
+            break;
+
+          case "yourincomming":
+            const newEvent_yourCOming = await get_newEvents_yourComing(username, skip);
+            socket.emit("receive_new_event_yourComing", newEvent_yourCOming);
+            break;
+
+          case "incomming":
+            const newEvent_inComing = await get_newEvents_coming(skip);
+            socket.emit("receive_new_event_inComing", newEvent_inComing);
+            break;
+
+          case "recommended":
+            const newEvent_rem = await get_newEvents_yourComing(username, skip);
+            socket.emit("receive_new_event_reco", newEvent_rem);
+            break;
+
+          default:
+            console.log("defoult:, ", data);
+            break;
+        }
       });
 
       socket.on("get_event", async (data) => {
@@ -94,7 +115,7 @@ module.exports = (io) => {
           connect.to(data.owner).emit("user_event", { owner: data.owner, id: res.event[0]._fields[0].identity.low });
           socket.emit("create_event", res);
         } else {
-          const { eventName, eventTime, eventDate, eventImage, eventDescription, address } = data.content;
+          const { eventName, eventTime, eventDate, eventImage, eventDescription, address, seat } = data.content;
           const res = await create_event(
             eventName,
             eventDate,
@@ -102,7 +123,8 @@ module.exports = (io) => {
             eventImage,
             eventDescription,
             address,
-            data.owner
+            data.owner,
+            seat
           );
           // connect.to(data.owner).emit("user_event", { owner: data.owner, id: res.event[0]._fields[0].identity.low });
           socket.emit("create_event", res);

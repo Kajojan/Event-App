@@ -2,15 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const passport = require("passport");
 const flash = require("express-flash");
 const express_session = require("express-session");
 const bodyParser = require("body-parser");
-const initializePassport = require("./passport/passport-config");
 const auth_routes = require("./routes/auth_routes");
 const sessionStore = require("sessionstore");
 const event_router = require("./routes/event_routes");
 const user_router = require("./routes/user_routes");
+const qrcode_router = require("./routes/qrcode_routes");
 const aws_router = require("./aws/aws_router");
 const { auth } = require("express-oauth2-jwt-bearer");
 
@@ -64,12 +63,11 @@ const sessionExpress = express_session({
   },
 });
 app.use(sessionExpress);
-app.use(passport.initialize());
-app.use(passport.session());
 
 const { neo4j_session, driver, runQuery } = require("./db/db_connect");
 
 app.use("/", auth_routes);
+app.use("/api/qr", qrcode_router);
 app.use("/api/event", event_router);
 app.use("/api/user", jwtCheck, user_router);
 app.use("/api/aws", aws_router);

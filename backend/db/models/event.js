@@ -2,9 +2,18 @@ const { error } = require("neo4j-driver");
 const { runQuery } = require("../db_connect");
 const relation = require("./relations");
 
-exports.create_event = async function (eventName, eventDate, eventTime, eventImage, eventDescription, address, owner) {
+exports.create_event = async function (
+  eventName,
+  eventDate,
+  eventTime,
+  eventImage,
+  eventDescription,
+  address,
+  owner,
+  seat = 0
+) {
   const query =
-    " CREATE (n:event {eventName: $eventName, eventDate: $eventDate, eventTime: $eventTime, eventImage: $eventImage,  eventDescription: $eventDescription, address: $address}) RETURN n";
+    " CREATE (n:event {eventName: $eventName, eventDate: $eventDate, eventTime: $eventTime, eventImage: $eventImage,  eventDescription: $eventDescription, address: $address, seat: $seat}) RETURN n";
 
   const parameters = {
     eventName: eventName,
@@ -13,6 +22,7 @@ exports.create_event = async function (eventName, eventDate, eventTime, eventIma
     eventImage: "image",
     eventDescription: eventDescription,
     address: address,
+    seat: seat,
   };
   try {
     return await runQuery(query, parameters)
@@ -34,24 +44,13 @@ exports.create_event = async function (eventName, eventDate, eventTime, eventIma
   }
 };
 
-exports.get_event = async function (id) {
+exports.get_event = async function (id, email) {
   const query = `MATCH (m:event)- [:OWNER] - (n: user)  WHERE id(m)=${id} 
-                  OPTIONAL MATCH (m) <- [:LIKE] - (l:user) 
-                  WITH m, n, l ,COLLECT(l) AS likes_count
-
-                  OPTIONAL MATCH (m)<-[:COMMENT]-(c:event) 
-
-                  OPTIONAL MATCH (m) <-[:QUOTE] - (q:event)  
-                  WITH m, n, l ,c,likes_count,q,COLLECT(q) AS quote_count
-
-                  OPTIONAL MATCH (m) -[:VIEW] - (v:user)  
-                  WITH m, n, l ,c,likes_count,q,COLLECT(v) AS view_count,quote_count
-                  
-                  OPTIONAL MATCH (m) -[:QUOTE] -> (u2:event) <- [:OWNER] -(u:user)
-                  WITH m, n, l ,c,likes_count,q,view_count,quote_count, u2 , u
-
-
-                  RETURN  m, n ,  COUNT(c) AS comment, SIZE(likes_count) AS like,  SIZE(quote_count) AS quote, SIZE(view_count) AS view, u2 AS QUOTE, u as QUOTEUSER`;
+                  OPTIONAL MATCH (m) <- [:PART] - (l:user) 
+                  WITH m, n,COLLECT(l) AS PART
+                  OPTIONAL MATCH (m)<-[r:PART]-(c: user {email: "${email}"}) 
+                  with m,n,PART,c,r
+                  RETURN  m, n , PART,c,r `;
   try {
     return await runQuery(query)
       .then((result) => {
@@ -138,6 +137,26 @@ exports.getAllevent = async function (username) {
     return { isSuccessful: false };
   }
 };
+exports.TakePart_event_seat_counter = async function (id) {
+  const query = `MATCH (n:event) WHERE id(n)=${id} and toInteger(n.seat) >0
+  SET n.seat = toInteger(n.seat) - 1 
+  RETURN n`;
+  try {
+    return await runQuery(query)
+      .then((result) => {
+        return {
+          isSuccessful: true,
+          event: result.records,
+        };
+      })
+      .catch((error) => {
+        console.log(error);
+        return { isSuccessful: false };
+      });
+  } catch (err) {
+    return { isSuccessful: false };
+  }
+};
 
 // exports.edit_event = async function (id, content) {
 //   const query = `MATCH (m:event) WHERE id(m)=${id} SET m.content='${content}' RETURN m`;
@@ -164,7 +183,7 @@ exports.getAllevent = async function (username) {
 //   }
 // };
 
-exports.get_newEvents_after_your = async function (user, skip, order, name) {
+exports.get_newEvents_yourComing = async function (user, skip) {
   const query = `MATCH (:user {email: "${user}"}) - [r:PART|OWNER] -> (m:event)
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m) <- [:OWNER] - (n:user) 
@@ -188,14 +207,15 @@ exports.get_newEvents_after_your = async function (user, skip, order, name) {
   }
 };
 
-exports.get_newEvents_popular = async function (user, skip, order, name) {
-  const query = `MATCH (n: event )
+exports.get_newEvents_popular = async function (skip) {
+  const query = `MATCH (n: event )  
+                  OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
-                  WITH n ,COLLECT(l) AS PART
-                  ORDER BY part_count DESC
+                  WITH n,m ,COLLECT(l) AS PART
+                  ORDER BY PART DESC
                   SKIP ${skip}
                   LIMIT 5
-                  RETURN n,PART`;
+                  RETURN n,m,PART`;
   try {
     return await runQuery(query)
       .then((result) => {
@@ -210,14 +230,15 @@ exports.get_newEvents_popular = async function (user, skip, order, name) {
     return { isSuccessful: false };
   }
 };
-exports.get_newEvents_coming = async function (user, skip, order, name) {
+exports.get_newEvents_coming = async function (skip) {
   const query = `MATCH (n: event )
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
-                  WITH n ,COLLECT(l) AS PART
+                  OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
+                  WITH n,m ,COLLECT(l) AS PART
                   ORDER BY m.eventDate, m.eventTime
                   SKIP ${skip}
                   LIMIT 5
-                  RETURN n,PART`;
+                  RETURN n,m,PART`;
   try {
     return await runQuery(query)
       .then((result) => {

@@ -33,14 +33,4 @@ router.get("/getAll/:username", async (req, res) => {
   }
 });
 
-router.put("/changeabout", async (req, res) => {
-  const { username, about } = req.body;
-  try {
-    const resoult = await edit_profile_about(username, about);
-    res.send(resoult);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
 module.exports = router;

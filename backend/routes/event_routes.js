@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { get_comment, getAllevent, edit_event, get_event: get_event } = require("../db/models/event");
+const { get_comment, getAllevent, TakePart_event_seat_counter, get_event: get_event } = require("../db/models/event");
 const relation = require("../db/models/relations");
 
-router.event("/edit_event", async (req, res) => {
+router.post("/edit_event", async (req, res) => {
   const data = req.body;
   try {
     const event = await edit_event(data.id, data.content);
@@ -13,10 +13,11 @@ router.event("/edit_event", async (req, res) => {
   }
 });
 
-router.get("/get_event/:id", async (req, res) => {
+router.get("/get_event/:id/:email", async (req, res) => {
   const eventId = req.params.id;
+  const email = req.params.email;
   try {
-    const event = await get_event(eventId);
+    const event = await get_event(eventId, email);
     res.status(200).send(event);
   } catch (error) {
     res.status(500).send(error.message);
@@ -46,22 +47,31 @@ router.get("/getAllevents/:username", async (req, res) => {
   }
 });
 
-router.event("/like", async (req, res) => {
-  const { username, id } = req.body;
-
+router.post("/takePart", async (req, res) => {
+  const { email, id } = req.body;
   try {
-    const resoult = await relation.create_relation_event_user(username, id, "LIKE");
-    if (resoult.isSuccessful) {
-      res.status(200).send(resoult);
-    } else {
-      res.status(409);
+    const istakpart = await TakePart_event_seat_counter(id);
+    console.log(istakpart);
+    if (istakpart.isSuccessful) {
+      const resoult = await relation.create_relation_event_user(
+        email,
+        id,
+        "PART",
+        istakpart?.event[0]?._fields[0]?.properties?.seat?.low + 1 || "wstęp wolny"
+      );
+
+      if (resoult.isSuccessful) {
+        res.status(200).send(resoult);
+      } else {
+        res.status(409);
+      }
     }
   } catch (err) {
     res.status(500).send(err.message);
   }
 });
 
-router.event("/view", async (req, res) => {
+router.post("/view", async (req, res) => {
   const { username, id } = req.body;
 
   try {

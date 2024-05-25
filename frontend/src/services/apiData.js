@@ -1,13 +1,15 @@
 import axios from "axios";
 
 const getAuthorizationHeader = () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    return `Bearer ${token}`;
+  const auth0CacheKey = `@@auth0spajs@@::${process.env.REACT_APP_CLIENT_ID}::${process.env.REACT_APP_AUDIENCE}::openid profile email offline_access`;
+  const auth0Cache = JSON.parse(localStorage.getItem(auth0CacheKey)) || [];
+  if (auth0Cache) {
+    return `Bearer ${auth0Cache?.body?.access_token}`;
   } else {
     return null;
   }
 };
+
 const apiClient = axios.create({
   baseURL: `${process.env.REACT_APP_API_URL}`,
   withCredentials: true,
@@ -53,8 +55,8 @@ export default {
   getPersons(username) {
     return apiClient.get(`/api/user/getAll/${username}`);
   },
-  getPost(id) {
-    return apiClient.get(`/api/post/get_post/${id}`);
+  getEvent(id) {
+    return apiClient.get(`/api/event/get_event/${id}`);
   },
   likePost(data) {
     return apiClient.post("/api/post/like", data);

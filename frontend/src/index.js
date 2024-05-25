@@ -9,14 +9,25 @@ import { RouterProvider } from "react-router-dom";
 import { Auth0Provider } from "@auth0/auth0-react";
 import AppRouter from "./router.js";
 
+const onRedirectCallback = (appState) => {
+  window.history.replaceState(
+    {},
+    document.title,
+    appState && appState.returnTo ? appState.returnTo : window.location.pathname
+  );
+};
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Auth0Provider
       domain={process.env.REACT_APP_DOMAIN}
       clientId={process.env.REACT_APP_CLIENT_ID}
+      cacheLocation={"localstorage"}
+      useRefreshTokens={true}
+      onRedirectCallback={onRedirectCallback}
       authorizationParams={{
-        redirect_uri: window.location.origin,
+        redirect_uri: "https://localhost:3000/login",
         audience: process.env.REACT_APP_AUDIENCE,
       }}
     >

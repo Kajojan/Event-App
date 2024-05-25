@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import style from "./EventForm.module.scss";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Event from "./Event";
 import PlacesAutocomplete from "react-places-autocomplete";
+import { useDispatch } from "react-redux";
+import { useAuth0 } from "@auth0/auth0-react";
+import { addEvent } from "../../store/slices/socketSlice";
 
 function EventForm() {
+  const { user } = useAuth0()
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({});
   const {
     register,
@@ -13,11 +18,11 @@ function EventForm() {
     formState: { errors },
   } = useForm();
 
+  const [address, setAddress] = useState("");
   const onSubmit = (data) => {
     setFormData(data);
-    console.log({ ...data, address });
+    dispatch(addEvent({ event: { content: { ...data, address }, owner: user.email } }))
   };
-  const [address, setAddress] = useState("");
 
   const handleSelect = (selectedAddress) => {
     setAddress(selectedAddress);
@@ -103,7 +108,7 @@ function EventForm() {
                 </div>
               )}
             </PlacesAutocomplete>
-            {errors.eventLocation && <span>This field is required</span>}
+            {errors.eventLocation && <span>Pole Wymagane</span>}
           </div>
 
           <div className={style.photo}>
@@ -116,7 +121,7 @@ function EventForm() {
             <textarea id="eventDescription" {...register("eventDescription")} />
           </div>
 
-          <button type="submit">Zapisz</button>
+          <Button type="submit">Dodaj</Button>
         </form>
       </Box>
     </Box>

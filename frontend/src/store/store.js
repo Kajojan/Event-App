@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import rootReducer from "./reducers";
+import socketReducer from "./slices/socketSlice";
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: {
+    socket: socketReducer,
+  },
 });
 
 export default store;

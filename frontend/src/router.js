@@ -10,6 +10,7 @@ import RecomendedView from "./view/RecomendedView ";
 import CommingView from "./view/CommingView";
 import SearchView from "./view/SearchView";
 import CurrentEventView from "./view/CurrentEventView";
+import LoadingView from "./view/LoadingView";
 
 const AppRouter = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const AppRouter = createBrowserRouter([
     path: "/profile",
     element: <ProtectedRoutes />,
     children: [{ path: "", element: <ProfileView /> }],
+  },
+  {
+    path: "/login",
+    element: <LoadingView />,
   },
   {
     path: "/search",

@@ -37,6 +37,13 @@ export default {
   getComments(postId) {
     return apiClient.get(`/api/post/comments/${postId}`);
   },
+  qrcode(data) {
+    return apiClient.get(`/api/qr`, {
+      params: {
+        data: data,
+      },
+    });
+  },
   async getPerson(username, checkusername) {
     const data = {};
     const res = await apiClient.get(`/api/user/${checkusername}`);
@@ -55,15 +62,13 @@ export default {
   getPersons(username) {
     return apiClient.get(`/api/user/getAll/${username}`);
   },
-  getEvent(id) {
-    return apiClient.get(`/api/event/get_event/${id}`);
+  getEvent(id, email) {
+    return apiClient.get(`/api/event/get_event/${id}/${email}`);
   },
-  likePost(data) {
-    return apiClient.post("/api/post/like", data);
+  takePart(data) {
+    return apiClient.post("/api/event/takePart", data);
   },
-  viewPost(data) {
-    return apiClient.post("/api/post/view", data);
-  },
+
   sendFile(file) {
     return apiClient.post("/api/aws/upload", file, {
       headers: {

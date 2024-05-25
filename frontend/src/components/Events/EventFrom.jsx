@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import style from "./EventForm.module.scss";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Typography } from "@mui/material";
 import Event from "./Event";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { useDispatch } from "react-redux";
@@ -12,6 +12,8 @@ function EventForm() {
   const { user } = useAuth0()
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({});
+  const [check, setCheck] = useState(false)
+  const [error, setError] = useState(false)
   const {
     register,
     handleSubmit,
@@ -21,17 +23,28 @@ function EventForm() {
   const [address, setAddress] = useState("");
   const onSubmit = (data) => {
     setFormData(data);
-    console.log(formData, data);
-    dispatch(addEvent({ event: { content: { ...data, address }, owner: user.email } }))
+    if (address != "") {
+      console.log(formData, data);
+      setError(false)
+      dispatch(addEvent({ event: { content: { ...data, address }, owner: user.email } }))
+    } else {
+      setError(true)
+    }
   };
 
   const handleSelect = (selectedAddress) => {
     setAddress(selectedAddress);
+    setError(false)
+
   };
 
   const handleChange = (newAddress) => {
     setAddress(newAddress);
+    setError(false)
   };
+  const checkboxChange = () => {
+    setCheck(!check)
+  }
 
   return (
     <Box>
@@ -64,13 +77,13 @@ function EventForm() {
           <div className={style.name}>
             <label htmlFor="eventName">Nazwa Wydarzenia</label>
             <input type="text" id="eventName" {...register("eventName", { required: true })} />
-            {errors.eventName && <span>This field is required</span>}
+            {errors.eventName && <span>Pole Wymagane</span>}
           </div>
           <div className={style.TimeDate}>
             <div className={style.time}>
               <label htmlFor="eventTime">Czas rozpoczęcia</label>
               <input type="time" id="eventTime" {...register("eventTime", { required: true })} />
-              {errors.eventTime && <span>This field is required</span>}
+              {errors.eventTime && <span>Pole Wymagane</span>}
             </div>
             <div className={style.date}>
               <label htmlFor="eventDate">Data wydarzenia</label>
@@ -80,7 +93,7 @@ function EventForm() {
                 id="eventDate"
                 {...register("eventDate", { required: true })}
               />
-              {errors.eventDate && <span>This field is required</span>}
+              {errors.eventDate && <span>Pole Wymagane</span>}
             </div>
           </div>
 
@@ -109,7 +122,7 @@ function EventForm() {
                 </div>
               )}
             </PlacesAutocomplete>
-            {errors.eventLocation && <span>Pole Wymagane</span>}
+            {!error && <span>Pole Wymagane</span>}
           </div>
 
           <div className={style.photo}>
@@ -121,8 +134,16 @@ function EventForm() {
             <label htmlFor="eventDescription">Opis wydarzenia</label>
             <textarea id="eventDescription" {...register("eventDescription")} />
           </div>
-
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <label style={{ alignContent: "center" }}>Ograniczona Ilość miejsc:</label>
+            <Checkbox onChange={() => { checkboxChange() }}></Checkbox>
+          </div>
+          {check && <div className={style.desc}>
+            <label htmlFor="seat">Liczba miejsc</label>
+            <input id="seat" type="number" min="1" {...register("seat")} />
+          </div>}
           <Button type="submit">Dodaj</Button>
+
         </form>
       </Box>
     </Box>

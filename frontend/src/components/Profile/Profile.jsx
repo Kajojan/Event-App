@@ -15,7 +15,6 @@ const Home = () => {
     setSeeStats(!seeStats)
   }
   useEffect(() => {
-    apiData.getOnlyPersonData("user2").then((res) => { console.log(res); })
     // apiData.register(user)
   }, [])
 

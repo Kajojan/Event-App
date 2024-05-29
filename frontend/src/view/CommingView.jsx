@@ -13,12 +13,14 @@ const CommingView = () => {
   const [skip, setSkip] = useState(0)
 
   useEffect(() => {
-    socket.once("receive_new_event_inComing", (data) => {
-      setEvents(data)
-      console.log(data);
-    });
-    dispatch(getEvents({ name: "incomming", skip, username: user.email }))
-  }, [])
+    if (socket) {
+
+      socket.once("receive_new_event_inComing", (data) => {
+        setEvents(data)
+      });
+      dispatch(getEvents({ name: "incomming", skip, username: user.email }))
+    }
+  }, [socket])
   return (
     <div>
       <Header></Header>

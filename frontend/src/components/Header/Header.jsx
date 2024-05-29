@@ -1,18 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
-
 import { Box, Menu, Typography, Button } from "@mui/material";
 import styles from "./Header.module.scss";
 import { EventIcon, MenuIcon } from "../icons";
 import Search from "../Search/Search";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+import { useDispatch, useSelector } from "react-redux";
+import { connect } from "../../store/slices/socketSlice";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const socket = useSelector(state => state.socket.socket)
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(location, isAuthenticated, socket);
+    if (isAuthenticated && socket == null) {
+      dispatch(connect({ user }));
+    }
+  }, [location]);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

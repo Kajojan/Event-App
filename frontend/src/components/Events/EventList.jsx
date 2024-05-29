@@ -4,9 +4,29 @@ import Event from "./Event";
 import styles from "./EventList.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 
-
+const duplicateNull = (data) => {
+  const seen = new Set();
+  return data.map(item => {
+    const key = `${item._fields[0]?.identity?.low}`;
+    if (seen.has(key)) {
+      return {
+        ...item,
+        _fields: [
+          ...item._fields.slice(0, item._fieldLookup.n),
+          null,
+          ...item._fields.slice(item._fieldLookup.n + 1)
+        ]
+      };
+    } else {
+      seen.add(key);
+      return item;
+    }
+  });
+}
 const EventList = ({ events, name }) => {
-  const [sortedEvents, setSortedEvents] = useState(events);
+
+
+  const [sortedEvents, setSortedEvents] = useState(duplicateNull(events));
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortBy, setSortBy] = useState("name");
   const [layout, setLayout] = useState("list");
@@ -17,7 +37,7 @@ const EventList = ({ events, name }) => {
     const newOrder = isAsc ? "desc" : "asc";
     setSortOrder(newOrder);
     setSortBy(property);
-    const sorted = [...events].sort((a, b) => {
+    const sorted = [...sortedEvents].sort((a, b) => {
       const dateA = new Date(a._fields[0].properties["eventDate"]);
       const dateB = new Date(b._fields[0].properties["eventDate"]);
 
@@ -48,7 +68,7 @@ const EventList = ({ events, name }) => {
     setSortOrder(newOrder);
     setSortBy(property);
 
-    const sorted = [...events].sort((a, b) => {
+    const sorted = [...sortedEvents].sort((a, b) => {
       const nameA = a._fields[0].properties.eventName.toLowerCase();
       const nameB = b._fields[0].properties.eventName.toLowerCase();
 
@@ -83,7 +103,7 @@ const EventList = ({ events, name }) => {
     }
   };
   useEffect(() => {
-    setSortedEvents(events)
+    setSortedEvents(duplicateNull(events))
   }, [events])
   return (
     <Box>

@@ -13,12 +13,14 @@ const PopularView = () => {
   const [skip, setSkip] = useState(0)
 
   useEffect(() => {
-    socket.once("receive_new_event_popular", (data) => {
-      setEvents(data)
-      console.log(data);
-    });
-    dispatch(getEvents({ name: "popular", skip, username: user.email }))
-  }, [])
+    if (socket) {
+      socket.once("receive_new_event_popular", (data) => {
+        setEvents(data)
+        console.log(data);
+      });
+      dispatch(getEvents({ name: "popular", skip, username: user.email }))
+    }
+  }, [socket])
   return (
     <div>
       <Header></Header>

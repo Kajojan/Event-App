@@ -3,35 +3,22 @@ import { Box, Typography, Divider } from "@mui/material";
 import Event from "../Events/Event";
 import style from "./Home.module.scss";
 import { Link, useNavigate } from "react-router-dom";
+import apiData from "../../services/apiData";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([
-    {
-      username: "kajo",
-      content:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-    },
-    {
-      username: "kajo",
-      content:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-    },
-    {
-      username: "kajo",
-      content:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-    },
-    {
-      username: "kajo",
-      content:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-    },
-  ]);
+  const [popularData, setPopularData] = useState([])
+  const [incomingData, setIncomingData] = useState([])
+
 
   useEffect(() => {
-    // data from Api
-  });
+    apiData.getEvents("email", "popular").then((res) => {
+      setPopularData(res.data.slice(0, 4))
+    })
+    apiData.getEvents("email", "incomming").then((res) => {
+      setIncomingData(res.data.slice(0, 4))
+    })
+  }, []);
 
   const handleClickEvent = (id) => {
     navigate(`event/${id}`);
@@ -66,15 +53,15 @@ const Home = () => {
         </Link>
       </Divider>
       <Box className={style.home_container}>
-        {data.map((item, index) => {
+        {popularData.map((item, index) => {
           return (
-            // <Event
-            //   onClick={() => {
-            //     handleClickEvent(item.id);
-            //   }}
-            //   item={item}
-            // ></Event>
-            <></>
+            <Event
+              onClick={() => {
+                handleClickEvent(item._fields[0].identity.low);
+              }}
+              item={item}
+              className={style.event_home}
+            ></Event>
           );
         })}
       </Box>
@@ -92,15 +79,16 @@ const Home = () => {
         </Link>
       </Divider>
       <Box className={style.home_container}>
-        {data.map((item, index) => {
+        {incomingData.map((item, index) => {
           return (
-            <a></a>
-            // <Event
-            //   onClick={() => {
-            //     handleClickEvent(item.id);
-            //   }}
-            //   item={item}
-            // ></Event>
+            <Event
+              onClick={() => {
+                handleClickEvent(item._fields[0].identity.low);
+              }}
+              item={item}
+              className={style.event_home}
+
+            ></Event>
           );
         })}
       </Box>

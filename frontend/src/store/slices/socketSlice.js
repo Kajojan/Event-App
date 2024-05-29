@@ -16,6 +16,7 @@ const socketSlice = createSlice({
   initialState,
   reducers: {
     connect(state, action) {
+      console.log("connect: ");
       const { email, name, nickname } = action.payload.user;
       state.socket = io("https://localhost:4000/connect", {
         auth: { token: auth0Cache },

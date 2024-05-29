@@ -65,6 +65,10 @@ export default {
   getEvent(id, email) {
     return apiClient.get(`/api/event/get_event/${id}/${email}`);
   },
+  getEvents(email, name) {
+    return apiClient.get(`/api/events/${name}/get_event/${email}`);
+  },
+
   takePart(data) {
     return apiClient.post("/api/event/takePart", data);
   },

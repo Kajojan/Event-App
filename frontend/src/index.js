@@ -26,6 +26,7 @@ root.render(
       cacheLocation={"localstorage"}
       useRefreshTokens={true}
       onRedirectCallback={onRedirectCallback}
+      scope="openid profile email read:messages write:messages"
       authorizationParams={{
         redirect_uri: "https://localhost:3000/login",
         audience: process.env.REACT_APP_AUDIENCE,

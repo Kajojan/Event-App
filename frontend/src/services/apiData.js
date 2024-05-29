@@ -44,6 +44,10 @@ export default {
       },
     });
   },
+  getImage() {
+    return apiClient.get(`/api/aws/image`);
+  },
+
   async getPerson(username, checkusername) {
     const data = {};
     const res = await apiClient.get(`/api/user/${checkusername}`);

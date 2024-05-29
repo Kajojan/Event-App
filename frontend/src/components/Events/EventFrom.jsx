@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import style from "./EventForm.module.scss";
 import { Box, Button, Checkbox, Typography } from "@mui/material";
@@ -7,26 +7,89 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import { useDispatch } from "react-redux";
 import { useAuth0 } from "@auth0/auth0-react";
 import { addEvent } from "../../store/slices/socketSlice";
+import apiData from "../../services/apiData";
 
 function EventForm() {
+
   const { user } = useAuth0()
   const dispatch = useDispatch()
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    "_fields": [
+      {
+        properties: {
+        },
+      }, {
+        properties: {
+          nickname: user.email,
+        },
+      }
+    ]
+  });
+
+  useEffect(() => {
+    apiData.getImage().then((res) => {
+      setFormData({
+        "_fields": [
+          {
+            properties: {
+              ...formData._fields[0].properties,
+              eventImage: res.data
+            }
+          },
+          {
+            properties: {
+              ...formData._fields[1].properties
+            }
+          }]
+      })
+    })
+  }, [])
+
   const [check, setCheck] = useState(false)
   const [error, setError] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const [address, setAddress] = useState("");
-  const onSubmit = (data) => {
-    setFormData(data);
+
+  const see = (data) => {
     if (address != "") {
+      setFormData({
+        "_fields": [
+          {
+            properties: {
+              ...formData._fields[0].properties,
+              ...data,
+              address
+            }
+          },
+          {
+            properties: {
+              ...formData._fields[1].properties
+            }
+          }
+        ]
+      })
       console.log(formData, data);
+    }
+  }
+  const onSubmit = (data) => {
+    if (address != "") {
+      see(data)
       setError(false)
-      dispatch(addEvent({ event: { content: { ...data, address }, owner: user.email } }))
+      setAddress("")
+      reset()
+      if (data.eventImage[0] != null) {
+        const formData = new FormData();
+        formData.append("file", data.eventImage[0]);
+        apiData.sendFile(formData).then((res) => {
+          dispatch(addEvent({ event: { content: { ...data, address, eventImage: res.data.result }, owner: user.email } }))
+        })
+      }
     } else {
       setError(true)
     }
@@ -35,7 +98,6 @@ function EventForm() {
   const handleSelect = (selectedAddress) => {
     setAddress(selectedAddress);
     setError(false)
-
   };
 
   const handleChange = (newAddress) => {
@@ -70,12 +132,13 @@ function EventForm() {
           justifyContent: "space-around",
         }}
       >
-        <Box sx={{ marginBottom: "20px", marginLeft: "30px", width: "300px", alignItems: "center", display: "flex" }}>
-          {/* <Event item={formData}></Event> */}
+        <Box sx={{ marginBottom: "20px", marginLeft: "30px", width: "300px", alignSelf: "center", display: "flex", flexDirection: "column" }}>
+          <Event item={formData}></Event>
+          <Button onClick={handleSubmit(onSubmit)}> Podgląd</Button>
         </Box>
         <form onSubmit={handleSubmit(onSubmit)} className={style.container}>
           <div className={style.name}>
-            <label htmlFor="eventName">Nazwa Wydarzenia</label>
+            <label htmlFor="eventName" >Nazwa Wydarzenia</label>
             <input type="text" id="eventName" {...register("eventName", { required: true })} />
             {errors.eventName && <span>Pole Wymagane</span>}
           </div>
@@ -122,12 +185,12 @@ function EventForm() {
                 </div>
               )}
             </PlacesAutocomplete>
-            {!error && <span>Pole Wymagane</span>}
+            {error && <span>Pole Wymagane</span>}
           </div>
 
           <div className={style.photo}>
             <label htmlFor="eventImage">Zdjęcie</label>
-            <input type="file" id="eventImage" {...register("eventImage")} />
+            <input type="file" accept=".png, .jpg, .jpeg" id="eventImage" {...register("eventImage")} />
           </div>
 
           <div className={style.desc}>

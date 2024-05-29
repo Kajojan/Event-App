@@ -11,6 +11,7 @@ const event_router = require("./routes/event_routes");
 const user_router = require("./routes/user_routes");
 const qrcode_router = require("./routes/qrcode_routes");
 const aws_router = require("./aws/aws_router");
+const no_auth_req = require("./routes/no_auth_req");
 const { auth } = require("express-oauth2-jwt-bearer");
 
 app.use(require("cookie-parser")());
@@ -19,6 +20,7 @@ const jwtCheck = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
   tokenSigningAlg: process.env.TOKEN_SIGNING_ALG,
+  scope: "openid profile email read:messages write:messages",
 });
 
 app.use((req, res, next) => {
@@ -67,11 +69,11 @@ app.use(sessionExpress);
 const { neo4j_session, driver, runQuery } = require("./db/db_connect");
 
 app.use("/", auth_routes);
-app.use("/api/qr", qrcode_router);
-app.use("/api/event", event_router);
+app.use("/api/events", no_auth_req);
+app.use("/api/qr", jwtCheck, qrcode_router);
+app.use("/api/event", jwtCheck, event_router);
 app.use("/api/user", jwtCheck, user_router);
-app.use("/api/aws", aws_router);
-
+app.use("/api/aws", jwtCheck, aws_router);
 const fs = require("fs");
 const https = require("https");
 const server = https.createServer(

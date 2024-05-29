@@ -1,6 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { get_comment, getAllevent, TakePart_event_seat_counter, get_event: get_event } = require("../db/models/event");
+const {
+  get_comment,
+  getAllevent,
+  get_newEvents_yourComing,
+  get_newEvents_coming,
+  get_newEvents_recommended,
+  TakePart_event_seat_counter,
+  get_newEvents_popular,
+  get_event: get_event,
+} = require("../db/models/event");
 const relation = require("../db/models/relations");
 
 router.post("/edit_event", async (req, res) => {

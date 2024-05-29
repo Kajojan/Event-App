@@ -5,6 +5,7 @@ const {
   get_newEvents_after,
   get_newEvents_popular,
   get_newEvents_yourComing,
+  get_newEvents_recommended,
   get_newevent_before,
   get_oldevent,
   edit_event,
@@ -76,7 +77,7 @@ module.exports = (io) => {
             break;
 
           case "recommended":
-            const newEvent_rem = await get_newEvents_yourComing(username, skip);
+            const newEvent_rem = await get_newEvents_recommended(username, skip);
             socket.emit("receive_new_event_reco", newEvent_rem);
             break;
 

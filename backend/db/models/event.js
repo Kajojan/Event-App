@@ -254,6 +254,35 @@ exports.get_newEvents_coming = async function (skip) {
   }
 };
 
+// Rkomendacje n jeśli nie ma to wyświetlamy n2 jako " podobne "
+exports.get_newEvents_recommended = async function (user, skip) {
+  const query = `MATCH (u:user {email: "${user}"}) - [r:PART|OWNER] -> (m:event)
+  OPTIONAL MATCH (m) <- [:OWNER|PART] - (l:user)
+  OPTIONAL MATCH (n: event) <- [:OWNER|PART] - (l)
+  WHERE NOT (u)-[:OWNER|PART]-(n) 
+  WITH n,m,COLLECT(l) AS PART,l,u
+  ORDER BY n.eventDate, n.eventTime
+  OPTIONAL MATCH (n2: event) 
+  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2)
+  WITH n,m,l,n2,PART,u
+  SKIP ${skip}
+  LIMIT 5 
+  RETURN  n,m,n2,l,PART,u `;
+  try {
+    return await runQuery(query)
+      .then((result) => {
+        return result.records;
+      })
+      .catch((error) => {
+        console.log(error);
+        return { isSuccessful: false };
+      });
+  } catch (err) {
+    console.log(err);
+    return { isSuccessful: false };
+  }
+};
+
 // exports.get_oldevent = async function (user, start) {
 //   const query = `MATCH (:user {username: "${user}"}) - [r:FOLLOW] -> (n:user)
 //                   OPTIONAL MATCH (m:event) <-[:OWNER] - (n)

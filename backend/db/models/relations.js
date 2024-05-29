@@ -65,7 +65,7 @@ const functions = {
     try {
       if (await this.check_is_relation_event_user(username, eventID, relation_name)) {
         const res = await runQuery(
-          `MATCH (u1:user {email: '${username}'}), (u2:event) WHERE id(u2)=${eventID} CREATE (u1)-[:${relation_name} {seat: "${data}"} ]->(u2) RETURN u2 `
+          `MATCH (u1:user {email: '${username}'}), (u2:event) WHERE id(u2)=${eventID} CREATE (u1)-[:${relation_name} {seat: "${data}" } ]->(u2) RETURN u2 `
         );
         return { isSuccessful: true };
       } else {

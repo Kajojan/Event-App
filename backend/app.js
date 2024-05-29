@@ -73,7 +73,7 @@ app.use("/api/events", no_auth_req);
 app.use("/api/qr", jwtCheck, qrcode_router);
 app.use("/api/event", jwtCheck, event_router);
 app.use("/api/user", jwtCheck, user_router);
-app.use("/api/aws", jwtCheck, aws_router);
+app.use("/api/aws", aws_router);
 const fs = require("fs");
 const https = require("https");
 const server = https.createServer(

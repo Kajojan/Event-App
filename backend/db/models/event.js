@@ -19,7 +19,7 @@ exports.create_event = async function (
     eventName: eventName,
     eventDate: eventDate,
     eventTime: eventTime,
-    eventImage: "image",
+    eventImage: eventImage,
     eventDescription: eventDescription,
     address: address,
     seat: seat,

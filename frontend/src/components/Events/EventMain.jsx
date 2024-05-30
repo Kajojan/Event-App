@@ -26,11 +26,11 @@ const EventMain = () => {
           <CreateIcon></CreateIcon>
         </Box>
         <Box onClick={() => navigate("/event/yourincomming")}>
-          <Link>Twoje nadchodzące</Link>
+          <Link>Twoje Wydarzenia</Link>
           <TimeIcon></TimeIcon>
         </Box>
         <Box onClick={() => navigate("/event/popular")}>
-          <Link>popularne</Link>
+          <Link>Popularne</Link>
           <PopularIcon></PopularIcon>
         </Box>
         <Box onClick={() => navigate("/event/recomended")}>
@@ -38,7 +38,7 @@ const EventMain = () => {
           <RecommendedIcon></RecommendedIcon>
         </Box>
         <Box onClick={() => navigate("/event/comming")}>
-          <Link>comming</Link>
+          <Link>Nadchodzące</Link>
           <TimeIcon></TimeIcon>
         </Box>
         <Box onClick={() => navigate("/event/map")}>

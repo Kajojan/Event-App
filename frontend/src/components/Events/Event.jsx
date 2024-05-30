@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import style from "./Event.module.scss";
 
 const Event = ({ item, onClick, className = "" }) => {
-  console.log(item);
   const source = item._fields[0] === null ? item._fields[2] : item._fields[0];
   const { address, eventDate, eventDescription, eventImage, eventName, eventTime } = source?.properties || {};
   return (

@@ -1,12 +1,15 @@
 .event_container {
-  border: 1px solid black;
   height: fit-content;
   border-radius: 8%;
   cursor: pointer;
+  box-shadow: 0 5px 5px #d5def5;
+
+  &:hover {
+    box-shadow: 0 4px 10px #527cf2;
+  }
   .event_image {
     img {
       border-radius: 8%;
-      // max-height: 250px !important;
       height: auto;
       width: 100%;
     }
@@ -33,7 +36,7 @@
     height: max-content;
     &:hover {
       transform: scale(1.01);
-      border: 1px solid rgba(0, 95, 238, 0.5);
+      border: 1px solid hwb(216 0% 7% / 0.5);
 
       box-shadow: 0 0 12px rgba(0, 95, 238, 0.5);
       svg {

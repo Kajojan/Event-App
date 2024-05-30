@@ -75,7 +75,7 @@ const Home = () => {
         textAlign="left"
       >
         <Link className={style.home_link} to="/event/comming">
-          Popularne wydarzenia
+          Nadchodzące wydarzenia
         </Link>
       </Divider>
       <Box className={style.home_container}>

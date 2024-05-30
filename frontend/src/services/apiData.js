@@ -20,7 +20,6 @@ const apiClient = axios.create({
   },
 });
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   login(user) {
     return apiClient.post("/login", user);
@@ -84,9 +83,13 @@ export default {
       },
     });
   },
+  getEventByName(name) {
+    return apiClient.get(`/api/event/getByName/${name}`);
+  },
   changeAwatar(username, awatar) {
     return apiClient.post("/api/aws/awatar", { username, awatar });
   },
+
   getOnlyPersonData(username) {
     return apiClient.get(`/api/user/${username}`);
   },

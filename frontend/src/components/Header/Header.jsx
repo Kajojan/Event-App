@@ -1,28 +1,28 @@
 import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
-import { Box, Menu, Typography, Button } from "@mui/material";
+import { Box, Menu, Button } from "@mui/material";
 import styles from "./Header.module.scss";
-import { EventIcon, MenuIcon } from "../icons";
-import Search from "../Search/Search";
+import { DotIcon, EventIcon, MenuIcon } from "../icons";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 import { useDispatch, useSelector } from "react-redux";
-import { connect } from "../../store/slices/socketSlice";
+import { connect, Notification, IntNotification } from "../../store/slices/socketSlice";
 import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
+  const notifications = useSelector(state => state.socket.isNotification)
   const socket = useSelector(state => state.socket.socket)
   const location = useLocation();
   const dispatch = useDispatch();
 
+
   useEffect(() => {
-    console.log(location, isAuthenticated, socket);
-    if (isAuthenticated && socket == null) {
+    console.log(location, isAuthenticated, user, socket);
+    if (isAuthenticated && (socket == null || !socket?.connected)) {
       dispatch(connect({ user }));
     }
   }, [location]);
@@ -52,7 +52,7 @@ const Header = () => {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
-        <MenuIcon></MenuIcon>
+        <MenuIcon></MenuIcon>{!open && notifications != 0 && <span style={{ marginBottom: "20px", marginLeft: "-5px", color: "red", fontWeight: "bolder" }}><DotIcon></DotIcon></span>}
       </Button>
       <Menu
         id="fade-menu"
@@ -73,10 +73,13 @@ const Header = () => {
         <MenuItem onClick={handleClose}>
           <Link to="/search">Wyszukaj</Link>
         </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <Link to="/notifications">Powiadomienia</Link>{notifications != 0 && <span style={{ marginBottom: "20px", marginLeft: "-6px", color: "red", fontWeight: "bolder" }}><DotIcon></DotIcon></span>}
+        </MenuItem>
         <hr></hr>
         {isAuthenticated ? (
           <MenuItem onClick={handleClose}>
-            <Link to="/profile">profile </Link>
+            <Link to="/profile">{user.email} </Link>
           </MenuItem>
         ) : (
           <MenuItem onClick={loginWithRedirect}>Zaloguj się</MenuItem>

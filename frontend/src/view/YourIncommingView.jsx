@@ -14,7 +14,6 @@ const YourIncommingView = () => {
 
   useEffect(() => {
     if (socket) {
-
       socket.once("receive_new_event_yourComing", (data) => {
         setEvents(data)
       });
@@ -26,22 +25,6 @@ const YourIncommingView = () => {
       <Header></Header>
       <EventList
         events={events}
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        // ]}
         name={"Twoje nadchodzące wydarzenia"}
       ></EventList>
     </div>

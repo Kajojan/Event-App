@@ -11,6 +11,7 @@ import CommingView from "./view/CommingView";
 import SearchView from "./view/SearchView";
 import CurrentEventView from "./view/CurrentEventView";
 import LoadingView from "./view/LoadingView";
+import NotificationView from "./view/NotificationsView";
 
 const AppRouter = createBrowserRouter([
   {
@@ -43,6 +44,11 @@ const AppRouter = createBrowserRouter([
     path: "/search",
     element: <ProtectedRoutes />,
     children: [{ path: "", element: <SearchView /> }],
+  },
+  {
+    path: "/notifications",
+    element: <ProtectedRoutes />,
+    children: [{ path: "", element: <NotificationView /> }],
   },
   {
     path: "*",

@@ -10,7 +10,8 @@ import { addEvent } from "../../store/slices/socketSlice";
 import apiData from "../../services/apiData";
 
 function EventForm() {
-
+  const [image, setImage] = useState("")
+  const [change, setChange] = useState(false)
   const { user } = useAuth0()
   const dispatch = useDispatch()
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ function EventForm() {
         },
       }, {
         properties: {
-          nickname: user.email,
+          nickname: user.nickname,
         },
       }
     ]
@@ -28,6 +29,7 @@ function EventForm() {
 
   useEffect(() => {
     apiData.getImage().then((res) => {
+      setImage(res.data)
       setFormData({
         "_fields": [
           {
@@ -43,7 +45,7 @@ function EventForm() {
           }]
       })
     })
-  }, [])
+  }, [change])
 
   const [check, setCheck] = useState(false)
   const [error, setError] = useState(false)
@@ -57,13 +59,15 @@ function EventForm() {
   const [address, setAddress] = useState("");
 
   const see = (data) => {
+    const { eventImage, ...dataWithoutImage } = data;
+    const Eventdata = data.eventImage[0] ? data : dataWithoutImage
     if (address != "") {
       setFormData({
         "_fields": [
           {
             properties: {
               ...formData._fields[0].properties,
-              ...data,
+              ...Eventdata,
               address
             }
           },
@@ -89,6 +93,10 @@ function EventForm() {
         apiData.sendFile(formData).then((res) => {
           dispatch(addEvent({ event: { content: { ...data, address, eventImage: res.data.result }, owner: user.email } }))
         })
+      } else {
+        console.log({ event: { content: { ...data, address, eventImage: image }, owner: user.email } });
+        dispatch(addEvent({ event: { content: { ...data, address, eventImage: image }, owner: user.email } }))
+
       }
     } else {
       setError(true)
@@ -134,7 +142,10 @@ function EventForm() {
       >
         <Box sx={{ marginBottom: "20px", marginLeft: "30px", width: "300px", alignSelf: "center", display: "flex", flexDirection: "column" }}>
           <Event item={formData}></Event>
-          <Button onClick={handleSubmit(onSubmit)}> Podgląd</Button>
+
+          <Button onClick={() => { setChange(!change) }}> Zmień obrazek</Button>
+
+          <Button onClick={handleSubmit(see)}> Podgląd</Button>
         </Box>
         <form onSubmit={handleSubmit(onSubmit)} className={style.container}>
           <div className={style.name}>

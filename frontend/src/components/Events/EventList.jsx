@@ -99,7 +99,7 @@ const EventList = ({ events, name }) => {
       case "3col":
         return { xs: 12, sm: 4 };
       default:
-        return { xs: 12 };
+        return { xs: 12, sm: 7 };
     }
   };
   useEffect(() => {

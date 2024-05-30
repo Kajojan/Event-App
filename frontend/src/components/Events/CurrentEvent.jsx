@@ -1,9 +1,10 @@
-import { Box, Divider, Typography, Button } from "@mui/material"
+import { Box, Divider, Typography, Button, Grid } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import style from "./CurrentEvent.module.scss"
 import apiData from "../../services/apiData"
 import { useParams } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
+import { PeopleIcon } from "../icons"
 
 
 const CurrentEvent = () => {
@@ -24,7 +25,7 @@ const CurrentEvent = () => {
       console.log(err);
     })
   }, [])
-  const hasSeat = item?.seat?.low > 0 || item.seat == ""
+  const hasSeat = item?.seat > 0 || item.seat == ""
 
   const downloadQRWithLogo = () => {
     apiData.qrcode({ email: user.email, name: user.name, event: item.eventName, seat }).then((res) => {
@@ -52,7 +53,7 @@ const CurrentEvent = () => {
     <Box>
       <Box className={style.event_image}>
         <img
-          src="https://cache.marriott.com/content/dam/marriott-renditions/dm-static-renditions/continents/us-canada/en_us/lifestyle/photo/2022-photoshoot/limited/assets/pdt-b2b-812667705994678-168370154999290-wide-hor.jpg?interpolation=progressive-bilinear&downsize=600px:*"
+          src={item.eventImage}
           alt="EventImage"
         />
       </Box>
@@ -65,16 +66,30 @@ const CurrentEvent = () => {
         style={{ width: "60%", marginTop: "20px", margin: "0 auto" }}
         textAlign="left">Szczegłóły </Divider>
       <Box className={style.event_content}>
-        Organizator: {owner}
-        <a>Date {item.eventDate}, {item.eventTime}</a>
-        <a>Miejsce {item.address}</a>
-        Opis
-        <a>{item.eventDescription}</a>
-        {item.seat && <a>Zostało jeszcze {item.seat.low} miejsc</a>}
-        {item.seat == "" && <a>Wstęp wolny</a>}
+        <Box className={style.peopleContainer}>
+          {seat && <a className={style.leftAText}> Twoje Zarezerwowane miejsce: <b>{seat}</b></a>}
+          {(item.seat > 0 || item.seat) && <a>Zostało jeszcze <b>{item.seat.low || item.seat}</b> miejsc </a>}
+          {item.seat == "" && <a>Wstęp wolny</a>}
+          <PeopleIcon></PeopleIcon>
+        </Box>
 
-        {seat && <a>Zarezerwowane miejsce  {seat}</a>}
+
+        <Grid container spacing={2} direction="row" justifyContent="space-around" >
+          <Grid item xs={4} container direction="column">
+            <Typography variant="body1">Organizator</Typography>
+            <Typography variant="body1">Date</Typography>
+            <Typography variant="body1">Miejsce</Typography>
+            {item.eventDescription && <Typography variant="body1">Opis</Typography>}
+          </Grid>
+          <Grid item xs={4} container direction="column" >
+            <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{owner}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{item.eventDate} {item.eventTime}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{item.address}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{item.eventDescription}</Typography>
+          </Grid>
+        </Grid>
       </Box>
+
     </Box>
     {
       !takePart && hasSeat &&

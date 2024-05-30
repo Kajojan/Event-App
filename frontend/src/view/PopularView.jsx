@@ -26,22 +26,6 @@ const PopularView = () => {
       <Header></Header>
       <EventList
         events={events}
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        //   { el: [], elleme: [] },
-        // ]}
         name={" Popularne wydarzenia"}
       ></EventList>
     </div>

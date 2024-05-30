@@ -10,10 +10,12 @@ const Loading = () => {
     useEffect(() => {
         if (isAuthenticated) {
             apiData.register(user).then((res) => {
-                navigate("/")
+                window.location.href = "/"
+
             })
         }
     }, [isAuthenticated])
+
     return (<div style={{ margin: "100px" }}>
         <a style={{ fontSize: "Larger", fontWeight: "530" }}>Loading ...</a>
     </div >)

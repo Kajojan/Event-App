@@ -184,7 +184,7 @@ exports.TakePart_event_seat_counter = async function (id) {
 // };
 
 exports.get_newEvents_yourComing = async function (user, skip) {
-  const query = `MATCH (:user {email: "${user}"}) - [r:PART|OWNER] -> (m:event)
+  const query = `MATCH (:user {email: "${user}"}) - [r:OWNER] -> (m:event)
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m) <- [:OWNER] - (n:user) 
                   WITH m,n ,COLLECT(l) AS PART
@@ -235,7 +235,7 @@ exports.get_newEvents_coming = async function (skip) {
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   WITH n,m ,COLLECT(l) AS PART
-                  ORDER BY m.eventDate, m.eventTime
+                  ORDER BY n.eventDate, n.eventTime
                   SKIP ${skip}
                   LIMIT 5
                   RETURN n,m,PART`;
@@ -271,6 +271,25 @@ exports.get_newEvents_recommended = async function (user, skip) {
   try {
     return await runQuery(query)
       .then((result) => {
+        return result.records;
+      })
+      .catch((error) => {
+        console.log(error);
+        return { isSuccessful: false };
+      });
+  } catch (err) {
+    console.log(err);
+    return { isSuccessful: false };
+  }
+};
+exports.getEventByName = async function (name) {
+  const query = `MATCH (e:event)
+  WHERE toLower(e.eventName) CONTAINS toLower("${name}")
+  RETURN e`;
+  try {
+    return await runQuery(query)
+      .then((result) => {
+        console.log(result.records);
         return result.records;
       })
       .catch((error) => {

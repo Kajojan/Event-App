@@ -3,11 +3,8 @@ const router = express.Router();
 const {
   get_comment,
   getAllevent,
-  get_newEvents_yourComing,
-  get_newEvents_coming,
-  get_newEvents_recommended,
+  getEventByName,
   TakePart_event_seat_counter,
-  get_newEvents_popular,
   get_event: get_event,
 } = require("../db/models/event");
 const relation = require("../db/models/relations");
@@ -30,6 +27,16 @@ router.get("/get_event/:id/:email", async (req, res) => {
     res.status(200).send(event);
   } catch (error) {
     res.status(500).send(error.message);
+  }
+});
+
+router.get("/getByName/:name", async (req, res) => {
+  const name = req.params.name;
+  try {
+    const findEvents = await getEventByName(name);
+    res.status(200).send(findEvents);
+  } catch (error) {
+    res.send(500).send(error);
   }
 });
 
@@ -60,7 +67,6 @@ router.post("/takePart", async (req, res) => {
   const { email, id } = req.body;
   try {
     const istakpart = await TakePart_event_seat_counter(id);
-    console.log(istakpart);
     if (istakpart.isSuccessful) {
       const resoult = await relation.create_relation_event_user(
         email,

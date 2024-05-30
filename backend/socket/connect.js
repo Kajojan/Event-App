@@ -1,14 +1,11 @@
 const {
   create_event,
-  getAllevent,
   get_newEvents_coming,
   get_newEvents_after,
   get_newEvents_popular,
   get_newEvents_yourComing,
   get_newEvents_recommended,
-  get_newevent_before,
   get_oldevent,
-  edit_event,
   get_event_range,
 } = require("../db/models/event");
 const relations = require("../db/models/relations");
@@ -16,6 +13,7 @@ const { auth } = require("express-oauth2-jwt-bearer");
 const { expressjwt: jwt } = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
 const { use } = require("passport");
+const cron = require("node-cron");
 
 const jwtCheck = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -38,6 +36,7 @@ module.exports = (io) => {
     }
     jwtCheck({ headers: { authorization: `Bearer ${token}` } }, {}, (err) => {
       if (err) {
+        console.log(err);
         return socket.disconnect(true);
       }
       next();
@@ -47,10 +46,25 @@ module.exports = (io) => {
     try {
       const { email, name, nickname } = socket.handshake.query;
       console.log("# Socket.io: połączono: ", email);
+
       follow_arr = await relations.find_all_follow(email);
+
       follow_arr.data.map(async (element) => {
-        const followee = element.get("m").properties.email;
-        socket.join(followee);
+        const eventDateTime = new Date(
+          `${element._fields[0].properties.eventDate}T${element._fields[0].properties.eventTime}`
+        );
+        const eventDateTimeMinus12Hours = new Date(eventDateTime.getTime() - 24 * 60 * 60 * 1000);
+        const month = eventDateTimeMinus12Hours.getMonth() + 1;
+        const day = eventDateTimeMinus12Hours.getDate();
+        const hour = eventDateTimeMinus12Hours.getHours();
+        const minute = eventDateTimeMinus12Hours.getMinutes();
+        const cronExpression = `${minute} ${hour} ${day} ${month} *`;
+        console.log(cronExpression);
+        cron.schedule(cronExpression, () => {
+          console.log(cronExpression);
+          socket.emit("Powiadomienie", element._fields[0]);
+          console.log("wysłane");
+        });
       });
 
       socket.on("allMyEvents", async (_data) => {

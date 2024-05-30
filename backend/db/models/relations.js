@@ -6,7 +6,6 @@ const functions = {
       const res = await runQuery(
         `MATCH (u1:user {username: '${follower_username}'}) -[r:${relation_name}] -> (u2:user {username: '${followee_username}'}) RETURN r `
       );
-      // console.log(res.records[0]._fields);
       return res.records.length == 0;
     } catch (error) {
       console.log(error);
@@ -93,7 +92,7 @@ const functions = {
 
   find_all_follow: async function (username) {
     try {
-      const res = await runQuery(`MATCH (n: user {email: '${username}' })- [r:FOLLOW] -> (m:user) RETURN m,r`);
+      const res = await runQuery(`MATCH (n: user {email: '${username}' })- [r:PART] -> (m:event) RETURN m,r`);
       return { isSuccessful: true, data: res.records };
     } catch (error) {
       console.log(error);

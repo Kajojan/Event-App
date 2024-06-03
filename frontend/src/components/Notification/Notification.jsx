@@ -31,7 +31,7 @@ const Notifications = () => {
             }
             {notifications.map((el) => {
                 return (
-                    <Link to={`/event/${el.identity.low}`} style={{ width: "fit-content", padding: "15px", marginTop: "20px", border: "1px solid grey", borderRadius: "8px" }}>{`Wydarzenie ${el.properties.eventName}, w którym bierzesz udział, odbędzie się za 12h`}</Link>)
+                    <Link to={`/event/${el.identity.low}`} style={{ width: "fit-content", padding: "15px", marginTop: "20px", border: "1px solid grey", borderRadius: "8px" }}>{`Wydarzenie ${el.properties.eventName}, w którym bierzesz udział, odbędzie się za 24h`}</Link>)
             })}
 
         </Box>

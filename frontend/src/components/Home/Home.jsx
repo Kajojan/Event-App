@@ -35,9 +35,11 @@ const Home = () => {
           paddingLeft: [0, 0, 3, 0],
         }}
       >
-        Aplikacja
+        EventApp
       </Typography>
-      <a> About </a>
+      <a > Aplikacja stworzona do znajdowaniu interesujących wydarzeń oraz brania w nich udziału </a>
+      <br></br>
+      <a>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi</a>
 
       <Divider
         sx={{
@@ -45,7 +47,7 @@ const Home = () => {
             borderColor: "#0000ff",
           },
         }}
-        style={{ width: "60%", marginTop: "20px", margin: "0 auto", fontSize: "20px" }}
+        style={{ width: "60%", marginTop: "50px", margin: "0 auto", fontSize: "20px" }}
         textAlign="left"
       >
         <Link className={style.home_link} to="/event/popular">

@@ -30,6 +30,7 @@ const RecomendedView = () => {
         events={events}
         name={"Rekomendowane wydarzenia"}
       ></EventList>
+
     </div>
   );
 };

@@ -24,8 +24,6 @@ const duplicateNull = (data) => {
   });
 }
 const EventList = ({ events, name }) => {
-
-
   const [sortedEvents, setSortedEvents] = useState(duplicateNull(events));
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortBy, setSortBy] = useState("name");
@@ -139,7 +137,7 @@ const EventList = ({ events, name }) => {
       </Box>
       <Grid container className={styles.eventList_container}>
         {sortedEvents.map((item, index) => (
-          <Grid
+          item._fields[0]?.identity?.low && <Grid
             item
             key={index}
             container

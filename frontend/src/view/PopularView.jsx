@@ -4,6 +4,7 @@ import EventList from "../components/Events/EventList";
 import { useDispatch, useSelector } from "react-redux";
 import { getEvents } from "../store/slices/socketSlice"
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button } from "@mui/material";
 
 const PopularView = () => {
   const { user } = useAuth0()
@@ -12,13 +13,18 @@ const PopularView = () => {
   const socket = useSelector((state) => state.socket.socket)
   const [skip, setSkip] = useState(0)
 
+  const connectAndCollect = (valueSkip) => {
+    socket.on("receive_new_event_popular", (data) => {
+      setEvents(prevEvents => [...prevEvents, ...data]);
+      socket.off("receive_new_event_popular")
+    });
+    dispatch(getEvents({ name: "popular", skip: valueSkip, username: user.email }))
+
+  }
+
   useEffect(() => {
     if (socket) {
-      socket.once("receive_new_event_popular", (data) => {
-        setEvents(data)
-        console.log(data);
-      });
-      dispatch(getEvents({ name: "popular", skip, username: user.email }))
+      connectAndCollect(skip)
     }
   }, [socket])
   return (
@@ -28,7 +34,11 @@ const PopularView = () => {
         events={events}
         name={" Popularne wydarzenia"}
       ></EventList>
-    </div>
+      <Button onClick={async () => {
+        setSkip(prevSkip => prevSkip + 5);
+        connectAndCollect(skip + 5)
+      }}>More</Button>
+    </div >
   );
 };
 

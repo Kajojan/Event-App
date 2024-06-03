@@ -7,6 +7,7 @@ const ProfileView = () => {
     <div>
       <Header></Header>
       <Profile />
+
     </div>
   );
 };

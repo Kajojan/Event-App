@@ -3,13 +3,14 @@ import Header from "../components/Header/Header";
 import EventList from "../components/Events/EventList";
 import Search from "../components/Search/Search";
 
-const RecomendedView  = () => {
+const RecomendedView = () => {
   return (
     <div>
       <Header></Header>
-      <Search/>
+      <Search />
+
     </div>
   );
 };
 
-export default RecomendedView ;
+export default RecomendedView;

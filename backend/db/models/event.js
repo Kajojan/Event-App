@@ -49,6 +49,7 @@ exports.get_event = async function (id, email) {
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   WITH m, n,COLLECT(l) AS PART
                   OPTIONAL MATCH (m)<-[r:PART]-(c: user {email: "${email}"}) 
+                  WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
                   with m,n,PART,c,r
                   RETURN  m, n , PART,c,r `;
   try {
@@ -158,33 +159,38 @@ exports.TakePart_event_seat_counter = async function (id) {
   }
 };
 
-// exports.edit_event = async function (id, content) {
-//   const query = `MATCH (m:event) WHERE id(m)=${id} SET m.content='${content}' RETURN m`;
-//   try {
-//     return await runQuery(query)
-//       .then((result) => {
-//         return result.records.length == 0
-//           ? {
-//               isSuccessful: false,
-//               message: "event not found",
-//             }
-//           : {
-//               isSuccessful: true,
-//               event: result.records[0].get("m"),
-//             };
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         return { isSuccessful: false };
-//       });
-//   } catch (err) {
-//     console.log(err);
-//     return { isSuccessful: false };
-//   }
-// };
+exports.edit_event = async function (id, data) {
+  const setClause = Object.keys(data)
+  .map(key => `m.${key} = $${key}`)
+  .join(', ');
+
+  const query = `MATCH (m:event) WHERE id(m)=${id} SET ${setClause}  RETURN m`;
+  try {
+    return await runQuery(query,data)
+      .then((result) => {
+        return result.records.length == 0
+          ? {
+              isSuccessful: false,
+              message: "event not found",
+            }
+          : {
+              isSuccessful: true,
+              event: result.records[0].get("m"),
+            };
+      })
+      .catch((error) => {
+        console.log(error);
+        return { isSuccessful: false };
+      });
+  } catch (err) {
+    console.log(err);
+    return { isSuccessful: false };
+  }
+};
 
 exports.get_newEvents_yourComing = async function (user, skip) {
   const query = `MATCH (:user {email: "${user}"}) - [r:OWNER] -> (m:event)
+  WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m) <- [:OWNER] - (n:user) 
                   WITH m,n ,COLLECT(l) AS PART
@@ -209,6 +215,7 @@ exports.get_newEvents_yourComing = async function (user, skip) {
 
 exports.get_newEvents_popular = async function (skip) {
   const query = `MATCH (n: event )  
+                WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   WITH n,m ,COLLECT(l) AS PART
@@ -232,6 +239,7 @@ exports.get_newEvents_popular = async function (skip) {
 };
 exports.get_newEvents_coming = async function (skip) {
   const query = `MATCH (n: event )
+  WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   WITH n,m ,COLLECT(l) AS PART
@@ -257,13 +265,14 @@ exports.get_newEvents_coming = async function (skip) {
 // Rkomendacje n jeśli nie ma to wyświetlamy n2 jako " podobne "
 exports.get_newEvents_recommended = async function (user, skip) {
   const query = `MATCH (u:user {email: "${user}"}) - [r:PART|OWNER] -> (m:event)
+   WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
   OPTIONAL MATCH (m) <- [:OWNER|PART] - (l:user)
-  OPTIONAL MATCH (n: event) <- [:OWNER|PART] - (l)
-  WHERE NOT (u)-[:OWNER|PART]-(n) 
+  OPTIONAL MATCH (n: event) <- [:OWNER|PART] - (l) 
+  WHERE NOT (u)-[:OWNER|PART]-(n)
   WITH n,m,COLLECT(l) AS PART,l,u
   ORDER BY n.eventDate, n.eventTime
   OPTIONAL MATCH (n2: event) 
-  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2)
+  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2) AND datetime(n2.eventDate + 'T' + n2.eventTime) > datetime()
   WITH n,m,l,n2,PART,u
   SKIP ${skip}
   LIMIT 5 
@@ -302,80 +311,23 @@ exports.getEventByName = async function (name) {
   }
 };
 
-// exports.get_oldevent = async function (user, start) {
-//   const query = `MATCH (:user {username: "${user}"}) - [r:FOLLOW] -> (n:user)
-//                   OPTIONAL MATCH (m:event) <-[:OWNER] - (n)
-//                   OPTIONAL MATCH (m) <- [:LIKE] - (l:user)
-//                   WITH m, n, l,r ,COLLECT(l) AS likes_count
 
-//                   WHERE NOT EXISTS((m)-[:COMMENT]->(:event))
-//                   OPTIONAL MATCH (m)<-[:COMMENT]-(c:event)
-
-//                   OPTIONAL MATCH (m) <-[:QUOTE] - (q:event)
-//                   WITH m, n, l,r ,c,likes_count,q,COLLECT(q) AS quote_count
-
-//                   OPTIONAL MATCH (m) -[:VIEW] - (v:user)
-//                   WITH m, n, l,r ,c,likes_count,q,COLLECT(v) AS view_count,quote_count
-
-//                   OPTIONAL MATCH (m) -[:QUOTE] -> (u2:event) <- [:OWNER] -(u:user)
-//                   WITH m, n, l,r ,c,likes_count,q,view_count,quote_count, u2 , u
-
-//                   WHERE id(m) < ${start} AND id(m) > r.first
-//                   RETURN  m, n, COUNT(c) AS comment, SIZE(likes_count) AS like,  SIZE(quote_count) AS quote, SIZE(view_count) AS view, u2 AS QUOTE, u as QUOTEUSER
-
-//                   ORDER BY id(m) DESC
-//                   LIMIT 5`;
-//   try {
-//     return await runQuery(query)
-//       .then((result) => {
-//         return result.records;
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         return { isSuccessful: false };
-//       });
-//   } catch (err) {
-//     console.log(err);
-//     return { isSuccessful: false };
-//   }
-// };
-
-// exports.get_event_range = async function (user, start, end) {
-//   const query = `MATCH (:user {username: "${user}"}) - [r:FOLLOW] -> (n:user)
-//                   OPTIONAL MATCH (m:event) <-[:OWNER] - (n)
-//                   OPTIONAL MATCH (m) <- [:LIKE] - (l:user)
-//                   WITH m, n, l,r ,COLLECT(l) AS likes_count
-
-//                   WHERE NOT EXISTS((m)-[:COMMENT]->(:event))
-//                   OPTIONAL MATCH (m)<-[:COMMENT]-(c:event)
-
-//                   OPTIONAL MATCH (m) <-[:QUOTE] - (q:event)
-//                   WITH m, n, l,r ,c,likes_count,q,COLLECT(q) AS quote_count
-
-//                   OPTIONAL MATCH (m) -[:VIEW] - (v:user)
-//                   WITH m, n, l,r ,c,likes_count,q,COLLECT(v) AS view_count,quote_count
-
-//                   OPTIONAL MATCH (m) -[:QUOTE] -> (u2:event) <- [:OWNER] -(u:user)
-//                   WITH m, n, l,r ,c,likes_count,q,view_count,quote_count, u2 , u
-
-//                   WHERE id(m) <= ${start} AND id(m) >= ${end} AND id(m) > r.first
-//                   RETURN  m, n, COUNT(c) AS comment, SIZE(likes_count) AS like,  SIZE(quote_count) AS quote, SIZE(view_count) AS view, u2 AS QUOTE, u as QUOTEUSER
-
-//                   ORDER BY id(m) DESC
-//                   LIMIT 5`;
-//   try {
-//     return await runQuery(query)
-//       .then((result) => {
-//       return result.records;
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         return { isSuccessful: false };
-//       });
-//   } catch (err) {
-//     console.log(err);
-//     return { isSuccessful: false };
-//   }
-// };
-
-// exports.delete_event
+exports.delete_event = async function (id){
+  const query =`MATCH (n: event)-[r]-() 
+  WHERE id(n) =  ${id}
+  DELETE r ,n`
+  try {
+    return await runQuery(query)
+      .then((result) => {
+        console.log(result);
+        return result.records;
+      })
+      .catch((error) => {
+        console.log(error);
+        return { isSuccessful: false };
+      });
+  } catch (err) {
+    console.log(err);
+    return { isSuccessful: false };
+  }
+}

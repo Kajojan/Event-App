@@ -46,7 +46,12 @@ export default {
   getImage() {
     return apiClient.get(`/api/aws/image`);
   },
-
+  editEvent(id,data){
+    return apiClient.put("/api/event/edit", {id,data})
+  },
+  deleteEvent(id){
+    return apiClient.delete(`/api/event/${id}`)
+  },
   getPersons(username) {
     return apiClient.get(`/api/user/getAll/${username}`);
   },

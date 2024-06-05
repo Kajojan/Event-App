@@ -1,0 +1,83 @@
+.event_image {
+  margin: 30px;
+  img {
+    border-radius: 8%;
+    height: auto;
+    width: 90%;
+  }
+}
+.Typography_home {
+  margin: 20px;
+  margin-top: 40px;
+}
+p {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.event_content {
+  margin-top: 20px;
+  padding: 50px;
+  margin-bottom: 10px;
+  max-width: 1200px;
+  margin: auto;
+  p {
+    margin: 10px;
+  }
+  .peopleContainer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 33px;
+    margin-bottom: 10px;
+    svg {
+      height: 40px;
+      width: 40px;
+    }
+    a {
+      text-align: right;
+    }
+    .leftAText {
+      margin-right: auto;
+      margin-left: 33px;
+    }
+  }
+}
+
+.box_container {
+  width: 600px;
+  height: 400px;
+  margin: 60px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  div {
+    &:hover {
+      transform: scale(1.01);
+      border: 1px solid rgba(0, 95, 238, 0.5);
+
+      box-shadow: 0 0 12px rgba(0, 95, 238, 0.5);
+      svg {
+        transform: scale(1.09);
+      }
+    }
+    svg {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      padding-top: 5px;
+      margin-top: 10px;
+    }
+    a {
+      display: block;
+      text-transform: capitalize;
+      margin-top: 5px;
+      box-sizing: content-box;
+    }
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 150px;
+    height: 150px;
+  }
+}

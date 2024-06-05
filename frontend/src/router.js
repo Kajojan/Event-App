@@ -13,6 +13,7 @@ import CurrentEventView from "./view/eventView/CurrentEventView";
 import LoadingView from "./view/LoadingView";
 import NotificationView from "./view/NotificationsView";
 import EditProfileView from "./view/user/EditProfileView"
+import EditCurrentEventView from "./view/eventView/EditCurrentEventView";
 
 const AppRouter = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ const AppRouter = createBrowserRouter([
     children: [
       { path: "", element: <EventView></EventView> },
       { path: ":id", element: <CurrentEventView></CurrentEventView> },
+      { path: ":id/edit", element: <EditCurrentEventView></EditCurrentEventView> },
       { path: "create", element: <CreateEventView /> },
       { path: "yourincomming", element: <YourIncommingView /> },
       { path: "popular", element: <PopularView /> },

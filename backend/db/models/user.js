@@ -29,9 +29,9 @@ exports.create_user = async function (name, email, picture, nickname) {
   return user;
 };
 
-exports.get_user = async function (emial) {
+exports.get_user = async function (email) {
   try {
-    user = await runQuery(`MATCH (n:user WHERE n.email = '${emial}' )
+    user = await runQuery(`MATCH (n:user WHERE n.email = '${email}' )
                           RETURN n`)
       .then((result) => {
         if (result.records.length != 0) {
@@ -53,13 +53,12 @@ exports.get_user = async function (emial) {
 
 
 exports.edit_profile = async function (email, data) {
-  let setClause = Object.keys(data)
+  const setClause = Object.keys(data)
   .map(key => `n.${key} = $${key}`)
   .join(', ');
 
   const query = `MATCH (n: user {email: $email})   SET ${setClause}  RETURN n`;
   const parameters = { email: email, ...data };
-  console.log(query,parameters,data);
   try {
     return await runQuery(query, parameters).then((result) => {
       return result.records.length == 0

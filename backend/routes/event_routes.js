@@ -4,8 +4,10 @@ const {
   get_comment,
   getAllevent,
   getEventByName,
+  edit_event,
   TakePart_event_seat_counter,
   get_event: get_event,
+  delete_event,
 } = require("../db/models/event");
 const relation = require("../db/models/relations");
 
@@ -29,6 +31,27 @@ router.get("/get_event/:id/:email", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+
+
+router.put("/edit/", async (req, res) => {
+    const { id, data } = req.body;
+  try {
+    const event = await edit_event(id, data);
+    res.status(200).send(event);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+router.delete("/:id", async(req,res)=>{
+  const id = req.params.id
+  try {
+    const status = await delete_event(id);
+    res.status(200).send(status);
+  } catch (error) {
+    res.send(500).send(error);
+  }
+})
 
 router.get("/getByName/:name", async (req, res) => {
   const name = req.params.name;

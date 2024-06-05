@@ -2,12 +2,13 @@ import { Box, Divider, Typography, Button, Grid } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import style from "./CurrentEvent.module.scss"
 import apiData from "../../services/apiData"
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
 import { PeopleIcon } from "../icons"
 
 
 const CurrentEvent = () => {
+  const navigate = useNavigate()
   const { user } = useAuth0()
   const [item, setItem] = useState({})
   const [owner, setOwner] = useState("")
@@ -18,7 +19,7 @@ const CurrentEvent = () => {
   useEffect(() => {
     apiData.getEvent(id, user.email).then((res) => {
       setItem(res.data.event[0]._fields[0].properties)
-      setOwner(res.data.event[0]._fields[1].properties.nickname)
+      setOwner(res.data.event[0]._fields[1].properties)
       setTakePart(res.data.event[0]._fields[3] != null)
       setSeat(res.data.event[0]._fields[4]?.properties?.seat || null)
     }).catch((err) => {
@@ -82,7 +83,7 @@ const CurrentEvent = () => {
             {item.eventDescription && <Typography variant="body1">Opis</Typography>}
           </Grid>
           <Grid item xs={4} container direction="column" >
-            <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{owner}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{owner.nickname}</Typography>
             <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{item.eventDate} {item.eventTime}</Typography>
             <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{item.address}</Typography>
             <Typography variant="body1" sx={{ fontWeight: "bolder" }}>{item.eventDescription}</Typography>
@@ -92,12 +93,13 @@ const CurrentEvent = () => {
 
     </Box>
     {
-      !takePart && hasSeat &&
+      !takePart && hasSeat && owner.email !== user.email && 
       <Button sx={{ marginBottom: "100px" }} onClick={() => { apiData.takePart({ email: user.email, id: id }).then((res) => { setTakePart(true) }) }}> Weż udział </Button>}
     {
-      takePart && item.seat != "" &&
+      takePart && item.seat != "" && owner.email !== user.email && 
       <Button sx={{ marginBottom: "100px" }} onClick={() => { downloadQRWithLogo() }}> Pobierz Bilet </Button>}
-
+      {owner.email === user.email && <Button sx={{ marginBottom: "100px" }} onClick={()=>navigate(`/event/${id}/edit`)} >Edytuj</Button> }
+      {owner.email === user.email && <Button sx={{ marginBottom: "100px" }} onClick={()=>apiData.deleteEvent(id).then((res)=>navigate('/'))} >Usuń</Button> }
 
   </Box>)
 }

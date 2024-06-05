@@ -37,14 +37,6 @@ const socketSlice = createSlice({
       if (state.socket) {
         state.socket.emit("addEvent", action.payload.event);
       }
-      // state.socket.on("addEvent", (resData) => {
-      // const postId = resData.post[0]._fields[0].identity.low;
-      // this.socket.on(`event-${postId}`, (data) => {
-      //   const data2 = { message: "New Comment in your post ", postId: postId };
-      //   this.notification?.unshift(data2);
-      //   this.isNotification == null ? (this.isNotification = 1) : (this.isNotification += 1);
-      // });
-      // });
     },
     getEvents(state, action) {
       if (state.socket) {

@@ -29,11 +29,10 @@ exports.create_user = async function (name, email, picture, nickname) {
   return user;
 };
 
-exports.get_user = async function (username) {
+exports.get_user = async function (emial) {
   try {
-    user = await runQuery(`MATCH (n:user WHERE n.username = '${username}' )
-                            OPTIONAL MATCH (n)<-[:FOLLOW]-(c:user)
-                          RETURN n, COUNT(c) AS followers`)
+    user = await runQuery(`MATCH (n:user WHERE n.email = '${emial}' )
+                          RETURN n`)
       .then((result) => {
         if (result.records.length != 0) {
           return {
@@ -52,17 +51,15 @@ exports.get_user = async function (username) {
   return user;
 };
 
-exports.get_all = async function (username) {
-  try {
-    return (users = await runQuery(`MATCH (n:user) WHERE n.username <>'${username}' RETURN n`).then((res) => {
-      return res.records;
-    }));
-  } catch (error) {}
-};
 
-exports.edit_profile = async function (username, awatar) {
-  const query = "MATCH (n: user {username: $username}) SET n.awatar=$awatar  RETURN n";
-  const parameters = { username: username, awatar: awatar };
+exports.edit_profile = async function (email, data) {
+  let setClause = Object.keys(data)
+  .map(key => `n.${key} = $${key}`)
+  .join(', ');
+
+  const query = `MATCH (n: user {email: $email})   SET ${setClause}  RETURN n`;
+  const parameters = { email: email, ...data };
+  console.log(query,parameters,data);
   try {
     return await runQuery(query, parameters).then((result) => {
       return result.records.length == 0

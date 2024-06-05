@@ -1,17 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 import Main from "./view/MainView";
-import ProfileView from "./view/ProfileView";
+import ProfileView from "./view/user/ProfileView";
 import ProtectedRoutes from "./protectedRoutes";
-import EventView from "./view/EventView";
-import CreateEventView from "./view/CreateEventView";
-import YourIncommingView from "./view/YourIncommingView";
-import PopularView from "./view/PopularView";
-import RecomendedView from "./view/RecomendedView ";
-import CommingView from "./view/CommingView";
-import SearchView from "./view/SearchView";
-import CurrentEventView from "./view/CurrentEventView";
+import EventView from "./view/eventView/EventView";
+import CreateEventView from "./view/eventView/CreateEventView";
+import YourIncommingView from "./view/eventView/YourIncommingView";
+import PopularView from "./view/eventView/PopularView";
+import RecomendedView from "./view/eventView/RecomendedView ";
+import CommingView from "./view/eventView/CommingView";
+import SearchView from "./view/eventView/SearchView";
+import CurrentEventView from "./view/eventView/CurrentEventView";
 import LoadingView from "./view/LoadingView";
 import NotificationView from "./view/NotificationsView";
+import EditProfileView from "./view/user/EditProfileView"
 
 const AppRouter = createBrowserRouter([
   {
@@ -35,6 +36,11 @@ const AppRouter = createBrowserRouter([
     path: "/profile",
     element: <ProtectedRoutes />,
     children: [{ path: "", element: <ProfileView /> }],
+  },
+  {
+    path: "/edit-profile",
+    element: <ProtectedRoutes />,
+    children: [{ path: "", element: <EditProfileView /> }],
   },
   {
     path: "/login",

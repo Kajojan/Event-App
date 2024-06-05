@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "../components/Header/Header";
-import CurrentEvent from "../components/Events/CurrentEvent";
+import Header from "../../components/Header/Header";
+import CurrentEvent from "../../components/Events/CurrentEvent";
 
 const CurrentEventView = () => {
   return (

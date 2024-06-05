@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { get_user, get_all, edit_profile_about } = require("../db/models/user");
+const { get_user, get_all, edit_profile } = require("../db/models/user");
 const relation = require("../db/models/relations");
 
 router.get("/:username", async (req, res) => {
@@ -23,10 +23,10 @@ router.get("/relation/:username/:checkusername/:relationName", async (req, res) 
   }
 });
 
-router.get("/getAll/:username", async (req, res) => {
-  const username = req.params.username;
+router.put("/change", async (req, res) => {
+  const { email, data } = req.body;
   try {
-    const resoult = await get_all(username);
+    const resoult = await edit_profile(email,data);
     res.send(resoult);
   } catch (error) {
     console.log(error);

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header/Header";
-import EventList from "../components/Events/EventList";
+import Header from "../../components/Header/Header";
+import EventList from "../../components/Events/EventList";
 import { useDispatch, useSelector } from "react-redux";
-import { getEvents } from "../store/slices/socketSlice"
+import { getEvents } from "../../store/slices/socketSlice"
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "@mui/material";
 

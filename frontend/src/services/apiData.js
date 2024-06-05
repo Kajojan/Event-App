@@ -47,21 +47,6 @@ export default {
     return apiClient.get(`/api/aws/image`);
   },
 
-  async getPerson(username, checkusername) {
-    const data = {};
-    const res = await apiClient.get(`/api/user/${checkusername}`);
-    data.user = res.data;
-    const res_1 = await apiClient.get(`/api/user/relation/${username}/${checkusername}/FOLLOW`);
-    data.check = res_1.data;
-    const res_2 = await apiClient.get(`/api/post/getAllPosts/${checkusername}`);
-    data.posts = res_2.data;
-    const res_3 = await apiClient.get(`/api/user/relation/${checkusername}/${username}/BAN`);
-    data.banned = res_3.data;
-    const res_4 = await apiClient.get(`/api/user/relation/${username}/${checkusername}/BAN`);
-    data.ban = res_4.data;
-
-    return data;
-  },
   getPersons(username) {
     return apiClient.get(`/api/user/getAll/${username}`);
   },
@@ -86,8 +71,8 @@ export default {
   getEventByName(name) {
     return apiClient.get(`/api/event/getByName/${name}`);
   },
-  changeAwatar(username, awatar) {
-    return apiClient.post("/api/aws/awatar", { username, awatar });
+  changeUser(email, data) {
+    return apiClient.put("/api/user/change", { email, data });
   },
 
   getOnlyPersonData(username) {

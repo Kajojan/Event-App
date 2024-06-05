@@ -14,9 +14,11 @@ const Home = () => {
 
 
   const getStats = () => {
-    console.log(user);
-    setStats([{ name: "Wziałeś udział", value: 10 }, { name: "Byłeś zainteresowany", value: 1 }, { name: "nie poszedłeś", value: 4 }])
-    setSeeStats(!seeStats)
+    apiData.getStatsUser(user.email).then((res)=>{
+      console.log(res.data.values);
+      setStats([{ name: "Wziałeś udział w ",value: res.data.values[1].low }, { name: "Stworzyłeś", value: res.data.values[0].low }])
+      setSeeStats(!seeStats)
+    })
   }
   useEffect(() => {
     apiData.getOnlyPersonData(user.email).then((res)=>{
@@ -77,7 +79,7 @@ const Home = () => {
       <Box sx={{ marginBlock: "20px",  display:"flex", flexDirection:"column", alignContent:"center" }} >
         <Button  onClick={() => getStats()}> Zobacz Statystyki </Button>
         {seeStats && stats.map((el) => {
-          return (<Box>{el.name} : {el.value} </Box>)
+          return (<Box sx={{margin: "10px"}}>{el.name}  {el.value} wydarzeniach</Box>)
         })}
       <Button onClick={() =>navigate("/edit-profile") }> Edycja</Button>
       <Button onClick={() => logout()}> LOGOUt</Button>

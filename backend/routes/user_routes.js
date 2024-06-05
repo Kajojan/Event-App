@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { get_user, get_all, edit_profile } = require("../db/models/user");
+const { get_user, get_all, edit_profile,get_relations_count } = require("../db/models/user");
 const relation = require("../db/models/relations");
 
 router.get("/:username", async (req, res) => {
@@ -32,5 +32,15 @@ router.put("/change", async (req, res) => {
     console.log(error);
   }
 });
+
+router.get("/stats/:email", async (req,res)=>{
+  const {email} = req.params;
+  try {
+    const resoutl = await get_relations_count(email)
+    res.status(200).send(resoutl);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+})
 
 module.exports = router;

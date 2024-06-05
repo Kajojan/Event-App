@@ -101,3 +101,31 @@ exports.edit_profile_about = async function (username, about) {
     };
   }
 };
+
+exports.get_relations_count = async function (email) {
+  console.log(email);
+  const query=`MATCH (n:event)<-[:PART]-(l:user)
+  WHERE l.email = '${email}' AND  date(n.eventDate) < date(datetime())
+    WITH n, COUNT (n) AS partCount,l
+    OPTIONAL MATCH (n2:event)<-[:OWNER]-(l)
+    RETURN COUNT(DISTINCT 1) AS ownerCount, SUM(partCount) AS partCount`
+
+  try {
+    return await runQuery(query).then((result) => {
+      return result.records.length == 0
+        ? {
+            isSuccessful: false,
+            message: "user not found",
+          }
+        : {
+            isSuccessful: true,
+            values: result.records[0]._fields
+          };
+    });
+  } catch (error) {
+    console.log(error);
+    return {
+      isSuccessful: false,
+    };
+  }
+}

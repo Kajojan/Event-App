@@ -79,9 +79,11 @@ export default {
   changeUser(email, data) {
     return apiClient.put("/api/user/change", { email, data });
   },
-
   getOnlyPersonData(username) {
     return apiClient.get(`/api/user/${username}`);
+  },
+  getStatsUser(email){
+    return apiClient.get(`/api/user/stats/${email}`)
   },
   changeAbout(username, about) {
     return apiClient.put("/api/user/changeabout", { username, about });

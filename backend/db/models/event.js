@@ -49,7 +49,6 @@ exports.get_event = async function (id, email) {
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   WITH m, n,COLLECT(l) AS PART
                   OPTIONAL MATCH (m)<-[r:PART]-(c: user {email: "${email}"}) 
-                  WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
                   with m,n,PART,c,r
                   RETURN  m, n , PART,c,r `;
   try {
@@ -70,74 +69,6 @@ exports.get_event = async function (id, email) {
   }
 };
 
-exports.get_comment = async function (id) {
-  const query = `MATCH (m:event)  <-[:COMMENT]-(n:event) WHERE id(m)=${id} 
-                  OPTIONAL MATCH (n) <- [:LIKE] - (l:user) 
-                  WITH m, n, l ,COLLECT(l) AS likes_count
-
-                  OPTIONAL MATCH (n)<-[:COMMENT]-(c:event) 
-
-                  OPTIONAL MATCH (n)-[:OWNER]-(u:user) 
-                 
-                  OPTIONAL MATCH (n) <-[:QUOTE] - (q:event)  
-                  WITH m, n,u ,l ,c,likes_count,q,COLLECT(q) AS quote_count
-
-                  OPTIONAL MATCH (n) -[:VIEW] - (v:user)
-                  WITH n, u, l ,c,likes_count,q,COLLECT(v) AS view_count,quote_count
-
-                  RETURN  n, u, COUNT(c) AS comment,  SIZE(likes_count) AS like, SIZE(quote_count) AS quote,SIZE(view_count) AS view`;
-  try {
-    return await runQuery(query)
-      .then((result) => {
-        return {
-          isSuccessful: true,
-          event: result.records,
-        };
-      })
-      .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
-  } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
-  }
-};
-
-exports.getAllevent = async function (username) {
-  const query = `MATCH (m:event) <-[:OWNER] - (n: user {username: '${username}'}) 
-                  OPTIONAL MATCH (m) <- [:LIKE] - (l:user) 
-                  WITH m, n, l ,COLLECT(l) AS likes_count
-
-                  WHERE NOT EXISTS((m)-[:COMMENT]->(:event))
-                  OPTIONAL MATCH (m)<-[:COMMENT]-(c:event) 
-
-                  OPTIONAL MATCH (m) <-[:QUOTE] - (q:event)  
-                  WITH m, n, l ,c,likes_count,q,COLLECT(q) AS quote_count
-
-                  OPTIONAL MATCH (m) -[:VIEW] - (v:user)  
-                  WITH m, n, l ,c,likes_count,q,COLLECT(v) AS view_count,quote_count
-
-                  OPTIONAL MATCH (m) -[:QUOTE] -> (u2:event) <- [:OWNER] -(u:user)
-                  WITH m, n, l ,c,likes_count,q,view_count,quote_count, u2 , u
-
-                  RETURN  m, n, COUNT(c) AS comment, SIZE(likes_count) AS like,  SIZE(quote_count) AS quote, SIZE(view_count) AS view, u2 AS QUOTE, u as QUOTEUSER`;
-  try {
-    return await runQuery(query)
-      .then((result) => {
-        return {
-          isSuccessful: true,
-          event: result.records,
-        };
-      })
-      .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
-  } catch (err) {
-    return { isSuccessful: false };
-  }
-};
 exports.TakePart_event_seat_counter = async function (id) {
   const query = `MATCH (n:event) WHERE id(n)=${id} and toInteger(n.seat) >0
   SET n.seat = toInteger(n.seat) - 1 
@@ -161,12 +92,12 @@ exports.TakePart_event_seat_counter = async function (id) {
 
 exports.edit_event = async function (id, data) {
   const setClause = Object.keys(data)
-  .map(key => `m.${key} = $${key}`)
-  .join(', ');
+    .map((key) => `m.${key} = $${key}`)
+    .join(", ");
 
   const query = `MATCH (m:event) WHERE id(m)=${id} SET ${setClause}  RETURN m`;
   try {
-    return await runQuery(query,data)
+    return await runQuery(query, data)
       .then((result) => {
         return result.records.length == 0
           ? {
@@ -311,11 +242,10 @@ exports.getEventByName = async function (name) {
   }
 };
 
-
-exports.delete_event = async function (id){
-  const query =`MATCH (n: event)-[r]-() 
+exports.delete_event = async function (id) {
+  const query = `MATCH (n: event)-[r]-() 
   WHERE id(n) =  ${id}
-  DELETE r ,n`
+  DELETE r ,n`;
   try {
     return await runQuery(query)
       .then((result) => {
@@ -330,4 +260,4 @@ exports.delete_event = async function (id){
     console.log(err);
     return { isSuccessful: false };
   }
-}
+};

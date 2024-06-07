@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const {
-  get_comment,
-  getAllevent,
   getEventByName,
   edit_event,
   TakePart_event_seat_counter,
@@ -32,10 +30,8 @@ router.get("/get_event/:id/:email", async (req, res) => {
   }
 });
 
-
-
 router.put("/edit/", async (req, res) => {
-    const { id, data } = req.body;
+  const { id, data } = req.body;
   try {
     const event = await edit_event(id, data);
     res.status(200).send(event);
@@ -43,15 +39,15 @@ router.put("/edit/", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-router.delete("/:id", async(req,res)=>{
-  const id = req.params.id
+router.delete("/:id", async (req, res) => {
+  const id = req.params.id;
   try {
     const status = await delete_event(id);
     res.status(200).send(status);
   } catch (error) {
     res.send(500).send(error);
   }
-})
+});
 
 router.get("/getByName/:name", async (req, res) => {
   const name = req.params.name;
@@ -60,29 +56,6 @@ router.get("/getByName/:name", async (req, res) => {
     res.status(200).send(findEvents);
   } catch (error) {
     res.send(500).send(error);
-  }
-});
-
-router.get("/comments/:id", async (req, res) => {
-  const eventId = req.params.id;
-  try {
-    const event = await get_comment(eventId);
-    res.status(200).send(event);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
-router.get("/getAllevents/:username", async (req, res) => {
-  const username = req.params.username;
-
-  try {
-    const eventFollow = await getAllevent(username);
-    const events = eventFollow.event;
-    events.sort((a, b) => b._fields[0].identity.low - a._fields[0].identity.low);
-    res.status(200).send(events);
-  } catch (err) {
-    res.status(500).send(err.message);
   }
 });
 
@@ -103,38 +76,6 @@ router.post("/takePart", async (req, res) => {
       } else {
         res.status(409);
       }
-    }
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
-router.post("/view", async (req, res) => {
-  const { username, id } = req.body;
-
-  try {
-    const resoult = await relation.create_relation_event_user(username, id, "VIEW");
-    if (resoult.isSuccessful) {
-      res.status(200).send(resoult);
-    } else {
-      res.status(409);
-    }
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
-router.get("/relation/:idQuote/:relationName", async (req, res) => {
-  const { idQuote, relationName } = req.params;
-
-  try {
-    const resoult = await relation.check_is_QUOTE(idQuote, relationName);
-    if (resoult.records.length > 0) {
-      res
-        .status(200)
-        .send({ event: resoult.records[0].get("u2"), user: resoult.records[0].get("u"), isSuccessful: true });
-    } else {
-      res.status(200).send({ isSuccessful: false });
     }
   } catch (err) {
     res.status(500).send(err.message);

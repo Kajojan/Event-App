@@ -51,11 +51,10 @@ exports.get_user = async function (email) {
   return user;
 };
 
-
 exports.edit_profile = async function (email, data) {
   const setClause = Object.keys(data)
-  .map(key => `n.${key} = $${key}`)
-  .join(', ');
+    .map((key) => `n.${key} = $${key}`)
+    .join(", ");
 
   const query = `MATCH (n: user {email: $email})   SET ${setClause}  RETURN n`;
   const parameters = { email: email, ...data };
@@ -79,36 +78,13 @@ exports.edit_profile = async function (email, data) {
   }
 };
 
-exports.edit_profile_about = async function (username, about) {
-  const query = "MATCH (n: user {username: $username}) SET n.about=$about  RETURN n";
-  const parameters = { username: username, about: about };
-  try {
-    return await runQuery(query, parameters).then((result) => {
-      return result.records.length == 0
-        ? {
-            isSuccessful: false,
-            message: "user not found",
-          }
-        : {
-            isSuccessful: true,
-            user: result.records[0].get("n"),
-          };
-    });
-  } catch (error) {
-    console.log(error);
-    return {
-      isSuccessful: false,
-    };
-  }
-};
-
 exports.get_relations_count = async function (email) {
   console.log(email);
-  const query=`MATCH (n:event)<-[:PART]-(l:user)
+  const query = `MATCH (n:event)<-[:PART]-(l:user)
   WHERE l.email = '${email}' AND  date(n.eventDate) < date(datetime())
     WITH n, COUNT (n) AS partCount,l
     OPTIONAL MATCH (n2:event)<-[:OWNER]-(l)
-    RETURN COUNT(DISTINCT 1) AS ownerCount, SUM(partCount) AS partCount`
+    RETURN COUNT(DISTINCT 1) AS ownerCount, SUM(partCount) AS partCount`;
 
   try {
     return await runQuery(query).then((result) => {
@@ -119,7 +95,7 @@ exports.get_relations_count = async function (email) {
           }
         : {
             isSuccessful: true,
-            values: result.records[0]._fields
+            values: result.records[0]._fields,
           };
     });
   } catch (error) {
@@ -128,4 +104,4 @@ exports.get_relations_count = async function (email) {
       isSuccessful: false,
     };
   }
-}
+};

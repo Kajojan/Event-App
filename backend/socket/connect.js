@@ -59,17 +59,9 @@ module.exports = (io) => {
         const hour = eventDateTimeMinus12Hours.getHours();
         const minute = eventDateTimeMinus12Hours.getMinutes();
         const cronExpression = `${minute} ${hour} ${day} ${month} *`;
-        console.log(cronExpression);
         cron.schedule(cronExpression, () => {
-          console.log(cronExpression);
           socket.emit("Powiadomienie", element._fields[0]);
-          console.log("wysłane");
         });
-      });
-
-      socket.on("allMyEvents", async (_data) => {
-        event_array = await relations.find_all_events(username);
-        socket.emit("allevents", event_array);
       });
 
       socket.on("get_new_event", async (data) => {
@@ -101,69 +93,19 @@ module.exports = (io) => {
         }
       });
 
-      socket.on("get_event", async (data) => {
-        const { end, start } = data;
-        if (end == null) {
-          const newevents = await get_newEvents_after(username, 0, "DESC");
-          socket.emit("receive_event", newevents);
-        } else {
-          const newevent = await get_event_range(username, start, end);
-          socket.emit("receive_event", newevent);
-        }
-      });
-
-      socket.on("get_old_event", async (data) => {
-        const { end } = data;
-        const oldevent = await get_oldevent(username, end);
-        socket.emit("receive_old_event", oldevent);
-      });
-
       socket.on("addEvent", async (data) => {
-        if (data.comment == "comment") {
-          const res = await create_event(data.content, data.owner, data.comment, data.idToComment);
-          connect.emit(`event-${data.idToComment}`, data.idToComment);
-          socket.emit("create_event", res);
-        } else if (data.comment == "quote") {
-          const res = await create_event(data.content, data.owner);
-          const eventId = res.event[0]._fields[0].identity.low;
-          await relations.create_relation_between_events(eventId, data.idToComment, "QUOTE");
-          connect.to(data.owner).emit("user_event", { owner: data.owner, id: res.event[0]._fields[0].identity.low });
-          socket.emit("create_event", res);
-        } else {
-          const { eventName, eventTime, eventDate, eventImage, eventDescription, address, seat } = data.content;
-          const res = await create_event(
-            eventName,
-            eventDate,
-            eventTime,
-            eventImage,
-            eventDescription,
-            address,
-            data.owner,
-            seat
-          );
-          // connect.to(data.owner).emit("user_event", { owner: data.owner, id: res.event[0]._fields[0].identity.low });
-          socket.emit("create_event", res);
-        }
-      });
-
-      socket.on("relation_user_user", async (data) => {
-        const { follower_user, folowee_user, relation_name } = data;
-        if (data.toDo == "DELETE") {
-          const res = relations.delete_realtion(follower_user, folowee_user, relation_name);
-          socket.leave(folowee_user);
-          socket.emit("relation_user_user", res);
-        } else {
-          const res = await relations.create_relation_between_users(follower_user, folowee_user, relation_name);
-          if (relation_name == "FOLLOW") {
-            socket.join(folowee_user);
-            connect.emit(folowee_user, { user: follower_user, message: relation_name });
-          } else if (relation_name == "BAN") {
-            connect.emit(folowee_user, { user: follower_user, message: relation_name });
-            const res = await relations.delete_realtion(folowee_user, follower_user, "FOLLOW");
-            socket.emit("relation_user_user", res);
-          }
-          socket.emit("relation_user_user", res);
-        }
+        const { eventName, eventTime, eventDate, eventImage, eventDescription, address, seat } = data.content;
+        const res = await create_event(
+          eventName,
+          eventDate,
+          eventTime,
+          eventImage,
+          eventDescription,
+          address,
+          data.owner,
+          seat
+        );
+        socket.emit("create_event", res);
       });
 
       socket.on("disconnect", () => {

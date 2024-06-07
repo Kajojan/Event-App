@@ -31,12 +31,7 @@ app.use(
   cors({
     origin: "https://localhost:3000",
     methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: [
-      "X-Requested-With",
-      "content-type",
-      "authorization",
-      "Access-Control-Allow-Origin",
-    ],
+    allowedHeaders: ["X-Requested-With", "content-type", "authorization", "Access-Control-Allow-Origin"],
     credentials: true,
   })
 );
@@ -55,14 +50,14 @@ app.use("/api/events", no_auth_req);
 app.use("/api/qr", jwtCheck, qrcode_router);
 app.use("/api/event", jwtCheck, event_router);
 app.use("/api/user", jwtCheck, user_router);
-app.use("/api/aws",jwtCheck, aws_router);
+app.use("/api/aws", jwtCheck, aws_router);
 
 const fs = require("fs");
 const https = require("https");
 const server = https.createServer(
   {
-    key: fs.readFileSync("./ssl/my.key",'utf8'),
-    cert: fs.readFileSync("./ssl/my.crt",'utf8'),
+    key: fs.readFileSync("./ssl/my.key", "utf8"),
+    cert: fs.readFileSync("./ssl/my.crt", "utf8"),
   },
   app
 );

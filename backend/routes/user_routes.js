@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { get_user, get_all, edit_profile,get_relations_count } = require("../db/models/user");
+const { get_user, get_all, edit_profile, get_relations_count } = require("../db/models/user");
 const relation = require("../db/models/relations");
 
 router.get("/:username", async (req, res) => {
@@ -13,34 +13,24 @@ router.get("/:username", async (req, res) => {
   }
 });
 
-router.get("/relation/:username/:checkusername/:relationName", async (req, res) => {
-  const { username, checkusername, relationName } = req.params;
-  try {
-    const resoutl = await relation.check_is_relation(username, checkusername, relationName);
-    res.status(200).send(resoutl);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
 router.put("/change", async (req, res) => {
   const { email, data } = req.body;
   try {
-    const resoult = await edit_profile(email,data);
+    const resoult = await edit_profile(email, data);
     res.send(resoult);
   } catch (error) {
     console.log(error);
   }
 });
 
-router.get("/stats/:email", async (req,res)=>{
-  const {email} = req.params;
+router.get("/stats/:email", async (req, res) => {
+  const { email } = req.params;
   try {
-    const resoutl = await get_relations_count(email)
+    const resoutl = await get_relations_count(email);
     res.status(200).send(resoutl);
   } catch (error) {
     res.status(500).send(error.message);
   }
-})
+});
 
 module.exports = router;

@@ -10,32 +10,31 @@ const Home = () => {
   const [stats, setStats] = useState([])
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const navigate = useNavigate()
-  const [userData, setUserData]=useState(user)
+  const [userData, setUserData] = useState(user)
 
 
   const getStats = () => {
-    apiData.getStatsUser(user.email).then((res)=>{
+    apiData.getStatsUser(user.email).then((res) => {
       console.log(res.data.values);
-      setStats([{ name: "Wziałeś udział w ",value: res.data.values[1].low }, { name: "Stworzyłeś", value: res.data.values[0].low }])
+      setStats([{ name: "Wziałeś udział w ", value: res.data.values[1].low }, { name: "Stworzyłeś", value: res.data.values[0].low }])
       setSeeStats(!seeStats)
     })
   }
   useEffect(() => {
-    apiData.getOnlyPersonData(user.email).then((res)=>{
+    apiData.getOnlyPersonData(user.email).then((res) => {
       setUserData(res.data.user[0]._fields[0].properties)
-    }).catch((err)=>{
+    }).catch((err) => {
       console.log(err);
     })
   }, [])
 
-  console.log(isAuthenticated);
 
   if (!isAuthenticated) {
     loginWithRedirect()
   }
 
   return (
-    <Box>
+    <Box data-testid="profile-1">
       <Typography
         variant="h1"
         fontWeight="500"
@@ -76,13 +75,13 @@ const Home = () => {
         </Box>
       </Grid>
 
-      <Box sx={{ marginBlock: "20px",  display:"flex", flexDirection:"column", alignContent:"center" }} >
-        <Button  onClick={() => getStats()}> Zobacz Statystyki </Button>
+      <Box sx={{ marginBlock: "20px", display: "flex", flexDirection: "column", alignContent: "center" }} >
+        <Button onClick={() => getStats()}> Zobacz Statystyki </Button>
         {seeStats && stats.map((el) => {
-          return (<Box sx={{margin: "10px"}}>{el.name}  {el.value} wydarzeniach</Box>)
+          return (<Box sx={{ margin: "10px" }}>{el.name}  {el.value} wydarzeniach</Box>)
         })}
-      <Button onClick={() =>navigate("/edit-profile") }> Edycja</Button>
-      <Button onClick={() => logout()}> LOGOUt</Button>
+        <Button onClick={() => navigate("/edit-profile")}> Edycja</Button>
+        <Button onClick={() => logout()}> LOGOUt</Button>
       </Box>
     </Box>
   );

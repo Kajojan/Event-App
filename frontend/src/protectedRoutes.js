@@ -6,7 +6,6 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 const ProtectedRoutes = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading, getAccessTokenSilently, loginWithRedirect } = useAuth0();
-  console.log(isAuthenticated);
   return isAuthenticated ? <Outlet /> : <a>Not Log in</a>;
 };
 

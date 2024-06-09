@@ -12,7 +12,7 @@ import SearchView from "./view/eventView/SearchView";
 import CurrentEventView from "./view/eventView/CurrentEventView";
 import LoadingView from "./view/LoadingView";
 import NotificationView from "./view/NotificationsView";
-import EditProfileView from "./view/user/EditProfileView"
+import EditProfileView from "./view/user/EditProfileView";
 import EditCurrentEventView from "./view/eventView/EditCurrentEventView";
 
 const AppRouter = createBrowserRouter([

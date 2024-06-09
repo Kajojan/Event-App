@@ -34,7 +34,7 @@ const EventMain = () => {
           <PopularIcon></PopularIcon>
         </Box>
         <Box onClick={() => navigate("/event/recomended")}>
-          <Link>rekomendowane</Link>
+          <Link>Rekomendowane</Link>
           <RecommendedIcon></RecommendedIcon>
         </Box>
         <Box onClick={() => navigate("/event/comming")}>

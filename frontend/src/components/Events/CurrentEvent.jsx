@@ -93,13 +93,13 @@ const CurrentEvent = () => {
 
     </Box>
     {
-      !takePart && hasSeat && owner.email !== user.email && 
+      !takePart && hasSeat && owner.email !== user.email &&
       <Button sx={{ marginBottom: "100px" }} onClick={() => { apiData.takePart({ email: user.email, id: id }).then((res) => { setTakePart(true) }) }}> Weż udział </Button>}
     {
-      takePart && item.seat != "" && owner.email !== user.email && 
+      takePart && item.seat != "" && owner.email !== user.email &&
       <Button sx={{ marginBottom: "100px" }} onClick={() => { downloadQRWithLogo() }}> Pobierz Bilet </Button>}
-      {owner.email === user.email && <Button sx={{ marginBottom: "100px" }} onClick={()=>navigate(`/event/${id}/edit`)} >Edytuj</Button> }
-      {owner.email === user.email && <Button sx={{ marginBottom: "100px" }} onClick={()=>apiData.deleteEvent(id).then((res)=>navigate('/'))} >Usuń</Button> }
+    {owner.email === user.email && <Button sx={{ marginBottom: "100px" }} onClick={() => navigate(`/event/${id}/edit`)} >Edytuj</Button>}
+    {owner.email === user.email && <Button sx={{ marginBottom: "100px" }} onClick={() => apiData.deleteEvent(id).then((res) => navigate('/'))} >Usuń</Button>}
 
   </Box>)
 }

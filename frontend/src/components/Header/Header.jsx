@@ -21,7 +21,6 @@ const Header = () => {
 
 
   useEffect(() => {
-    console.log(location, isAuthenticated, user, socket);
     if (isAuthenticated && (socket == null || !socket?.connected)) {
       dispatch(connect({ user }));
     }
@@ -47,6 +46,7 @@ const Header = () => {
       </Box>
       <Button
         id="fade-button"
+        data-testid="button-id"
         aria-controls={open ? "fade-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}

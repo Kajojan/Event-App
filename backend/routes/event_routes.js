@@ -9,16 +9,6 @@ const {
 } = require("../db/models/event");
 const relation = require("../db/models/relations");
 
-router.post("/edit_event", async (req, res) => {
-  const data = req.body;
-  try {
-    const event = await edit_event(data.id, data.content);
-    res.status(200).send(event);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
 router.get("/get_event/:id/:email", async (req, res) => {
   const eventId = req.params.id;
   const email = req.params.email;
@@ -30,7 +20,7 @@ router.get("/get_event/:id/:email", async (req, res) => {
   }
 });
 
-router.put("/edit/", async (req, res) => {
+router.put("/edit", async (req, res) => {
   const { id, data } = req.body;
   try {
     const event = await edit_event(id, data);

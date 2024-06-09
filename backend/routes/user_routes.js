@@ -17,9 +17,9 @@ router.put("/change", async (req, res) => {
   const { email, data } = req.body;
   try {
     const resoult = await edit_profile(email, data);
-    res.send(resoult);
+    res.status(200).send(resoult);
   } catch (error) {
-    console.log(error);
+    res.status(500).send(error.message);
   }
 });
 

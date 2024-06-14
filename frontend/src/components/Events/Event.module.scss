@@ -31,8 +31,17 @@
   margin: 60px auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
-  div {
+  
+  .box_container_row2{
+    grid-column: span 3;
+    display: flex;
+    justify-content: space-evenly;
+    margin-right: 30px;
+  }
+  .box {
+    &:last-child {
+      float: left;
+    }
     height: max-content;
     &:hover {
       transform: scale(1.01);

@@ -21,30 +21,33 @@ const EventMain = () => {
         Wydarzenia
       </Typography>
       <Box className={style.box_container}>
-        <Box onClick={() => navigate("/event/create")}>
+        <Box className={style.box} onClick={() => navigate("/event/create")}>
           <Link>Utwórz Nowe</Link>
           <CreateIcon></CreateIcon>
         </Box>
-        <Box onClick={() => navigate("/event/yourincomming")}>
+        <Box className={style.box} onClick={() => navigate("/event/yourincomming")}>
           <Link>Twoje Wydarzenia</Link>
           <TimeIcon></TimeIcon>
         </Box>
-        <Box onClick={() => navigate("/event/popular")}>
+        <Box className={style.box} onClick={() => navigate("/event/popular")}>
           <Link>Popularne</Link>
           <PopularIcon></PopularIcon>
         </Box>
-        <Box onClick={() => navigate("/event/recomended")}>
+        <Box className={style.box_container_row2}>
+
+        <Box className={style.box} onClick={() => navigate("/event/recomended")}>
           <Link>Rekomendowane</Link>
           <RecommendedIcon></RecommendedIcon>
         </Box>
-        <Box onClick={() => navigate("/event/comming")}>
+        <Box className={style.box} onClick={() => navigate("/event/comming")}>
           <Link>Nadchodzące</Link>
           <TimeIcon></TimeIcon>
         </Box>
-        <Box onClick={() => navigate("/event/map")}>
+        </Box>
+        {/* <Box onClick={() => navigate("/event/map")}>
           <Link>Map</Link>
           <MapIcon></MapIcon>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );

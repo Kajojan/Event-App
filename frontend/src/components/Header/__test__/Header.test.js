@@ -77,11 +77,9 @@ describe("Header component", () => {
       </Provider>
     );
 
-    // Sprawdzenie logo
     expect(screen.getByText("Event")).toBeInTheDocument();
     expect(screen.getByText("App")).toBeInTheDocument();
 
-    // Sprawdzenie przycisku menu
     expect(screen.getByTestId("button-id")).toBeInTheDocument();
 
     expect(screen.queryByText(/główna/i)).not.toBeInTheDocument();

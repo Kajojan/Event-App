@@ -74,13 +74,16 @@ describe("Profile component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("John Doe")).toBeInTheDocument();
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
       expect(screen.getByText("johnny")).toBeInTheDocument();
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
       expect(screen.getByText("john@example.com")).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByText("Zobacz Statystyki"));
     await waitFor(() => {
       expect(screen.getByText(/Wziałeś udział w 2 wydarzeniach/)).toBeInTheDocument();
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
       expect(screen.getByText(/Stworzyłeś 1 wydarzeniach/)).toBeInTheDocument();
     });
   });

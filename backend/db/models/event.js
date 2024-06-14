@@ -249,7 +249,6 @@ exports.delete_event = async function (id) {
   try {
     return await runQuery(query)
       .then((result) => {
-        console.log(result);
         return result.records;
       })
       .catch((error) => {

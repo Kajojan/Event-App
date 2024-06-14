@@ -15,6 +15,14 @@ const functions = {
       console.log(error);
     }
   },
+  find_all_follow: async function (username) {
+    try {
+      const res = await runQuery(`MATCH (n: user {email: '${username}' })- [r:PART] -> (m:event) RETURN m,r`);
+      return { isSuccessful: true, data: res.records };
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 module.exports = functions;

@@ -31,8 +31,7 @@ exports.create_user = async function (name, email, picture, nickname) {
 
 exports.get_user = async function (email) {
   try {
-    user = await runQuery(`MATCH (n:user WHERE n.email = '${email}' )
-                          RETURN n`)
+    user = await runQuery(`MATCH (n:user WHERE n.email = '${email}' ) RETURN n`)
       .then((result) => {
         if (result.records.length != 0) {
           return {

@@ -102,3 +102,5 @@ process.on("SIGINT", async () => {
     process.exit(0);
   });
 });
+
+module.exports = server;

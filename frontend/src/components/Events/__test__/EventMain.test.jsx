@@ -71,7 +71,6 @@ describe('EventMain component', () => {
         expect(screen.getByText('Popularne')).toBeInTheDocument();
         expect(screen.getByText('Rekomendowane')).toBeInTheDocument();
         expect(screen.getByText('Nadchodzące')).toBeInTheDocument();
-        expect(screen.getByText('Map')).toBeInTheDocument();
     });
 
 

@@ -14,15 +14,22 @@ const YourIncommingView = () => {
   const socket = useSelector((state) => state.socket.socket)
   const [skip, setSkip] = useState(0)
 
+  const connectAndCollect = (valueSkip) => {
+    socket.on("receive_new_event_yourComing", (data) => {
+      setEvents(prevEvents => [...prevEvents, ...data]);
+      socket.off("receive_new_event_yourComing")
+    });
+    dispatch(getEvents({ name: "yourincomming", skip: valueSkip, username: user.email }))
+
+  }
+
   useEffect(() => {
     if (socket) {
-      socket.once("receive_new_event_yourComing", (data) => {
-        setEvents([...events, ...data])
-        console.log([...events, ...data]);
-      });
-      dispatch(getEvents({ name: "yourincomming", skip, username: user.email }))
+      connectAndCollect(skip)
     }
   }, [socket])
+
+
   return (
     <div>
       <Header></Header>
@@ -30,8 +37,9 @@ const YourIncommingView = () => {
         events={events}
         name={"Twoje nadchodzące wydarzenia"}
       ></EventList>
-      <Button onClick={() => {
-        dispatch(getEvents({ name: "yourincomming", skip: 5, username: user.email }))
+      <Button onClick={async () => {
+        setSkip(prevSkip => prevSkip + 5);
+        connectAndCollect(skip + 5)
       }}>More</Button>
 
     </div>

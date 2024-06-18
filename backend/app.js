@@ -82,7 +82,7 @@ runQuery("RETURN 1")
     server.listen(apiPort, async () => {
       try {
         const result = await runQuery("SHOW CONSTRAINTS");
-        if (!result.records[0]._fields.includes("unique_user")) {
+        if (!result?.records[0]?._fields.includes("unique_user")) {
           await runQuery("CREATE CONSTRAINT unique_user FOR (user:user) REQUIRE user.email IS UNIQUE");
         }
         console.log(`API server available from: https://${apiHost}:${apiPort}`);

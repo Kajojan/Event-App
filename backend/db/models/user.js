@@ -21,7 +21,7 @@ exports.create_user = async function (name, email, picture, nickname) {
       })
       .catch((error) => {
         console.log(error);
-        return { message: "User exists", isSuccessful: false };
+        return { message: "User exists", isSuccessful: true };
       });
   } catch (err) {
     return { message: err, isSuccessful: false };

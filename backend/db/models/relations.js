@@ -1,6 +1,16 @@
 const { runQuery } = require("../db_connect");
 
 const functions = {
+  check_is_relation_event_user: async function (username, eventID, relation_name) {
+    try {
+      const res = await runQuery(
+        `MATCH (u1:user {email: '${username}'}) -[r:${relation_name}] -> (u2:event) WHERE id(u2)=${eventID} RETURN r `
+      );
+      return res.records.length == 0;
+    } catch (error) {
+      console.log(error);
+    }
+  },
   create_relation_event_user: async function (username, eventID, relation_name, data = "") {
     try {
       if (await this.check_is_relation_event_user(username, eventID, relation_name)) {

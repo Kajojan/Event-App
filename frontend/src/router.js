@@ -14,6 +14,7 @@ import LoadingView from "./view/LoadingView";
 import NotificationView from "./view/NotificationsView";
 import EditProfileView from "./view/user/EditProfileView";
 import EditCurrentEventView from "./view/eventView/EditCurrentEventView";
+import NotLoggedInView from "./view/NotLogin";
 
 const AppRouter = createBrowserRouter([
   {
@@ -60,7 +61,7 @@ const AppRouter = createBrowserRouter([
   },
   {
     path: "*",
-    element: <a>Not found</a>,
+    element:<NotLoggedInView></NotLoggedInView>
   },
 ]);
 

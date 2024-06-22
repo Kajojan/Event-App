@@ -58,7 +58,7 @@ router.post("/takePart", async (req, res) => {
         email,
         id,
         "PART",
-        istakpart?.event[0]?._fields[0]?.properties?.seat?.low + 1 || "wstęp wolny"
+        parseInt(istakpart?.event[0]?._fields[0]?.properties?.seat) + 1 || "wstęp wolny"
       );
 
       if (resoult.isSuccessful) {

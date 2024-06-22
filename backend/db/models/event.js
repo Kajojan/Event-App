@@ -71,7 +71,7 @@ exports.get_event = async function (id, email) {
 
 exports.TakePart_event_seat_counter = async function (id) {
   const query = `MATCH (n:event) WHERE id(n)=${id} and toInteger(n.seat) >0
-  SET n.seat = toInteger(n.seat) - 1 
+  SET n.seat = toString(toInteger(n.seat) - 1)
   RETURN n`;
   try {
     return await runQuery(query)

@@ -29,7 +29,7 @@ const CurrentEvent = () => {
   const hasSeat = item?.seat > 0 || item.seat == ""
 
   const downloadQRWithLogo = () => {
-    apiData.qrcode({ email: user.email, name: user.name, event: item.eventName, seat }).then((res) => {
+    apiData.qrcode({ email: user.email, name: user.name, event: item.eventName, seat: seat? seat : item.seat }).then((res) => {
       const link = document.createElement('a');
       link.href = res.data.qrCodeBase64;
       link.download = 'BiletQR.png';
@@ -90,7 +90,6 @@ const CurrentEvent = () => {
           </Grid>
         </Grid>
       </Box>
-
     </Box>
     {
       !takePart && hasSeat && owner.email !== user.email &&

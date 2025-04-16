@@ -13,7 +13,8 @@ jobs:
       ISSUER_BASE_URL: ${{ secrets.ISSUER_BASE_URL }}
       AUDIENCE: ${{ secrets.AUDIENCE }}
       SECRET: ${{ secrets.SECRET }}
-      TOKEN_SIGNING_ALG: RS256
+      TOKEN_SIGNING_ALG: 'RS256'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4

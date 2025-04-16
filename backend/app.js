@@ -18,7 +18,7 @@ app.use(require('cookie-parser')())
 const jwtCheck = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
-  tokenSigningAlg: process.env.TOKEN_SIGNING_ALG,
+  tokenSigningAlg: 'RS256',
   scope: 'openid profile email read:messages write:messages',
 })
 

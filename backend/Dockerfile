@@ -6,6 +6,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install 
 
+
 COPY . .
 
 ENV PORT=4000

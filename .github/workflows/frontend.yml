@@ -1,6 +1,9 @@
 name: ESLint & Tests - Frontend
+
 on:
   push:
+    branches:
+      - '*'
     paths:
       - './frontend/**'
 

@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: 'https://localhost:3000',
+    origin: ['https://localhost:3000', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['X-Requested-With', 'content-type', 'authorization', 'Access-Control-Allow-Origin'],
     credentials: true,
@@ -65,7 +65,7 @@ const { Server } = require('socket.io')
 const socketFunc = require('./socket/connect')
 const sio = new Server(server, {
   cors: {
-    origin: 'https://localhost:3000',
+    origin: ['https://localhost:3000', 'http://localhost:3000'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['X-Requested-With', 'content-type'],
     credentials: true,

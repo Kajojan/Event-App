@@ -1,106 +1,107 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
+require('dotenv').config()
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const bodyParser = require('body-parser')
 
-const auth_routes = require("./routes/auth_routes");
-const event_router = require("./routes/event_routes");
-const user_router = require("./routes/user_routes");
-const qrcode_router = require("./routes/qrcode_routes");
-const aws_router = require("./aws/aws_router");
-const no_auth_req = require("./routes/no_auth_req");
+const auth_routes = require('./routes/auth_routes')
+const event_router = require('./routes/event_routes')
+const user_router = require('./routes/user_routes')
+const qrcode_router = require('./routes/qrcode_routes')
+const aws_router = require('./aws/aws_router')
+const no_auth_req = require('./routes/no_auth_req')
 
-const { auth } = require("express-oauth2-jwt-bearer");
+const { auth } = require('express-oauth2-jwt-bearer')
 
-app.use(require("cookie-parser")());
+app.use(require('cookie-parser')())
 
 const jwtCheck = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
   tokenSigningAlg: process.env.TOKEN_SIGNING_ALG,
-  scope: "openid profile email read:messages write:messages",
-});
+  scope: 'openid profile email read:messages write:messages',
+})
 
 app.use((req, res, next) => {
-  console.log(`request: ${req.method} ${req.url}`);
-  next();
-});
+  console.log(`request: ${req.method} ${req.url}`)
+  next()
+})
 
 app.use(
   cors({
-    origin: "https://localhost:3000",
-    methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["X-Requested-With", "content-type", "authorization", "Access-Control-Allow-Origin"],
+    origin: 'https://localhost:3000',
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['X-Requested-With', 'content-type', 'authorization', 'Access-Control-Allow-Origin'],
     credentials: true,
   })
-);
+)
 
 app.use(bodyParser.json()).use(
   bodyParser.urlencoded({
     extended: true,
   })
-);
-app.use(express.json());
+)
+app.use(express.json())
 
-const { neo4j_session, driver, runQuery } = require("./db/db_connect");
+const { driver, runQuery } = require('./db/db_connect')
 
-app.use("/", auth_routes);
-app.use("/api/events", no_auth_req);
-app.use("/api/qr", jwtCheck, qrcode_router);
-app.use("/api/event", jwtCheck, event_router);
-app.use("/api/user", jwtCheck, user_router);
-app.use("/api/aws", jwtCheck, aws_router);
+app.use('/', auth_routes)
+app.use('/api/events', no_auth_req)
+app.use('/api/qr', jwtCheck, qrcode_router)
+app.use('/api/event', jwtCheck, event_router)
+app.use('/api/user', jwtCheck, user_router)
+app.use('/api/aws', jwtCheck, aws_router)
 
-const fs = require("fs");
-const https = require("https");
+const fs = require('fs')
+const https = require('https')
 const server = https.createServer(
   {
-    key: fs.readFileSync("./ssl/my.key", "utf8"),
-    cert: fs.readFileSync("./ssl/my.crt", "utf8"),
+    key: fs.readFileSync('./ssl/private.key', 'utf8'),
+    cert: fs.readFileSync('./ssl/certificate.crt', 'utf8'),
   },
   app
-);
-const { Server } = require("socket.io");
-const socketFunc = require("./socket/connect");
+)
+const { Server } = require('socket.io')
+const socketFunc = require('./socket/connect')
 const sio = new Server(server, {
   cors: {
-    origin: "https://localhost:3000",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["X-Requested-With", "content-type"],
+    origin: 'https://localhost:3000',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['X-Requested-With', 'content-type'],
     credentials: true,
   },
-});
+})
 
-socketFunc(sio);
+socketFunc(sio)
 
-const apiPort = process.env.PORT || 4000;
-const apiHost = process.env.API_HOST || "localhost";
+const apiPort = process.env.PORT || 4000
+const apiHost = process.env.API_HOST || 'localhost'
 
-runQuery("RETURN 1")
+runQuery('RETURN 1')
   .then(() => {
     server.listen(apiPort, async () => {
       try {
-        const result = await runQuery("SHOW CONSTRAINTS");
-        if (!result?.records[0]?._fields.includes("unique_user")) {
-          await runQuery("CREATE CONSTRAINT unique_user FOR (user:user) REQUIRE user.email IS UNIQUE");
+        const result = await runQuery('SHOW CONSTRAINTS')
+        if (!result?.records[0]?._fields.includes('unique_user')) {
+          await runQuery('CREATE CONSTRAINT unique_user FOR (user:user) REQUIRE user.email IS UNIQUE')
         }
-        console.log(`API server available from: https://${apiHost}:${apiPort}`);
+        console.log(`API server available from: https://${apiHost}:${apiPort}`)
       } catch {
-        console.error("Błąd podczas nawiązywania połączenia z bazą danych Neo4j");
+        console.error('Błąd podczas nawiązywania połączenia z bazą danych Neo4j')
       }
-    });
+    })
   })
   .catch((error) => {
-    console.error("Błąd podczas nawiązywania połączenia z bazą danych Neo4j:", error);
-  });
+    console.error('Błąd podczas nawiązywania połączenia z bazą danych Neo4j:', error)
+  })
 
-process.on("SIGINT", async () => {
-  await driver.close();
+process.on('SIGINT', async () => {
+  await driver.close()
   server.close(() => {
-    console.log("Serwer close.");
-    process.exit(0);
-  });
-});
+    console.log('Serwer close.')
+    // eslint-disable-next-line no-process-exit
+    process.exit(0)
+  })
+})
 
-module.exports = server;
+module.exports = server

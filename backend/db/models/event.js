@@ -1,6 +1,5 @@
-const { error } = require("neo4j-driver");
-const { runQuery } = require("../db_connect");
-const relation = require("./relations");
+const { runQuery } = require('../db_connect')
+const relation = require('./relations')
 
 exports.create_event = async function (
   eventName,
@@ -13,7 +12,7 @@ exports.create_event = async function (
   seat = 0
 ) {
   const query =
-    " CREATE (n:event {eventName: $eventName, eventDate: $eventDate, eventTime: $eventTime, eventImage: $eventImage,  eventDescription: $eventDescription, address: $address, seat: $seat}) RETURN n";
+    ' CREATE (n:event {eventName: $eventName, eventDate: $eventDate, eventTime: $eventTime, eventImage: $eventImage,  eventDescription: $eventDescription, address: $address, seat: $seat}) RETURN n'
 
   const parameters = {
     eventName: eventName,
@@ -23,26 +22,26 @@ exports.create_event = async function (
     eventDescription: eventDescription,
     address: address,
     seat: seat,
-  };
+  }
   try {
     return await runQuery(query, parameters)
       .then(async (result) => {
-        const id = result.records[0].get("n").identity.low;
-        await relation.create_relation_event_user(owner, id, "OWNER");
+        const id = result.records[0].get('n').identity.low
+        await relation.create_relation_event_user(owner, id, 'OWNER')
 
         return {
           isSuccessful: true,
           event: result.records,
-        };
+        }
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    return { isSuccessful: false };
+    return { isSuccessful: false }
   }
-};
+}
 
 exports.get_event = async function (id, email) {
   const query = `MATCH (m:event)- [:OWNER] - (n: user)  WHERE id(m)=${id} 
@@ -50,74 +49,74 @@ exports.get_event = async function (id, email) {
                   WITH m, n,COLLECT(l) AS PART
                   OPTIONAL MATCH (m)<-[r:PART]-(c: user {email: "${email}"}) 
                   with m,n,PART,c,r
-                  RETURN  m, n , PART,c,r `;
+                  RETURN  m, n , PART,c,r `
   try {
     return await runQuery(query)
       .then((result) => {
         return {
           isSuccessful: true,
           event: result.records,
-        };
+        }
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 
 exports.TakePart_event_seat_counter = async function (id) {
   const query = `MATCH (n:event) WHERE id(n)=${id} and toInteger(n.seat) >0
   SET n.seat = toString(toInteger(n.seat) - 1)
-  RETURN n`;
+  RETURN n`
   try {
     return await runQuery(query)
       .then((result) => {
         return {
           isSuccessful: true,
           event: result.records,
-        };
+        }
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    return { isSuccessful: false };
+    return { isSuccessful: false }
   }
-};
+}
 
 exports.edit_event = async function (id, data) {
   const setClause = Object.keys(data)
     .map((key) => `m.${key} = $${key}`)
-    .join(", ");
+    .join(', ')
 
-  const query = `MATCH (m:event) WHERE id(m)=${id} SET ${setClause}  RETURN m`;
+  const query = `MATCH (m:event) WHERE id(m)=${id} SET ${setClause}  RETURN m`
   try {
     return await runQuery(query, data)
       .then((result) => {
         return result.records.length == 0
           ? {
-              isSuccessful: false,
-              message: "event not found",
-            }
+            isSuccessful: false,
+            message: 'event not found',
+          }
           : {
-              isSuccessful: true,
-              event: result.records[0].get("m"),
-            };
+            isSuccessful: true,
+            event: result.records[0].get('m'),
+          }
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 
 exports.get_newEvents_yourComing = async function (user, skip) {
   const query = `MATCH (:user {email: "${user}"}) - [r:OWNER] -> (m:event)
@@ -128,21 +127,21 @@ exports.get_newEvents_yourComing = async function (user, skip) {
                   ORDER BY m.eventDate, m.eventTime
                   skip ${skip}
                   LIMIT 5
-                  RETURN m,n, PART`;
+                  RETURN m,n, PART`
   try {
     return await runQuery(query)
       .then((result) => {
-        return result.records;
+        return result.records
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 
 exports.get_newEvents_popular = async function (skip) {
   const query = `MATCH (n: event )  
@@ -153,21 +152,21 @@ exports.get_newEvents_popular = async function (skip) {
                   ORDER BY PART DESC
                   SKIP ${skip}
                   LIMIT 5
-                  RETURN n,m,PART`;
+                  RETURN n,m,PART`
   try {
     return await runQuery(query)
       .then((result) => {
-        return result.records;
+        return result.records
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 exports.get_newEvents_coming = async function (skip) {
   const query = `MATCH (n: event )
   WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
@@ -177,21 +176,21 @@ exports.get_newEvents_coming = async function (skip) {
                   ORDER BY n.eventDate, n.eventTime
                   SKIP ${skip}
                   LIMIT 5
-                  RETURN n,m,PART`;
+                  RETURN n,m,PART`
   try {
     return await runQuery(query)
       .then((result) => {
-        return result.records;
+        return result.records
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 
 // Rkomendacje n jeśli nie ma to wyświetlamy n2 jako " podobne "
 exports.get_newEvents_recommended = async function (user, skip) {
@@ -207,56 +206,56 @@ exports.get_newEvents_recommended = async function (user, skip) {
   WITH n,m,l,n2,PART,u
   SKIP ${skip}
   LIMIT 5 
-  RETURN  n,m,n2,l,PART,u `;
+  RETURN  n,m,n2,l,PART,u `
   try {
     return await runQuery(query)
       .then((result) => {
-        return result.records;
+        return result.records
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 exports.getEventByName = async function (name) {
   const query = `MATCH (e:event)
   WHERE toLower(e.eventName) CONTAINS toLower("${name}")
-  RETURN e`;
+  RETURN e`
   try {
     return await runQuery(query)
       .then((result) => {
-        console.log(result.records);
-        return result.records;
+        console.log(result.records)
+        return result.records
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}
 
 exports.delete_event = async function (id) {
   const query = `MATCH (n: event)-[r]-() 
   WHERE id(n) =  ${id}
-  DELETE r ,n`;
+  DELETE r ,n`
   try {
     return await runQuery(query)
       .then((result) => {
-        return result.records;
+        return result.records
       })
       .catch((error) => {
-        console.log(error);
-        return { isSuccessful: false };
-      });
+        console.log(error)
+        return { isSuccessful: false }
+      })
   } catch (err) {
-    console.log(err);
-    return { isSuccessful: false };
+    console.log(err)
+    return { isSuccessful: false }
   }
-};
+}

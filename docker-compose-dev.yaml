@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  database:
+    image: neo4j:latest
+    ports:
+      - "7687:7687"
+      - "7474:7474"
+    environment:
+      NEO4J_AUTH: none
+    volumes:
+      - ./data:/data
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: DockerFile-dev 
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules 
+    depends_on:
+      - database
+    networks:
+      - app-network
+    env_file:
+      - ./backend/.env
+    command: sh -c "sleep 30 && npm run dev"
+
+  frontend:
+    build:
+      context: ./frontend 
+      dockerfile: DockerFile-dev 
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules 
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    env_file:
+      - ./frontend/.env
+
+networks:
+  app-network:
+    driver: bridge

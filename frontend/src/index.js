@@ -12,6 +12,7 @@ const onRedirectCallback = (appState) => {
     {},
     document.title,
     appState && appState.returnTo ? appState.returnTo : window.location.pathname
+
   )
 }
 

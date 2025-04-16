@@ -1,15 +1,8 @@
-name: ESLint & Tests - branch
-
+name: ESLint & Tests - Frontend
 on:
   push:
-    branches:
-      - '**'
-  pull_request:
-    types:
-      - synchronize
-      - opened 
-      - reopened
-      - ready_for_review
+    paths:
+      - './frontend/**'
 
 jobs:
   eslint-and-tests:

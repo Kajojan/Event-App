@@ -65,6 +65,7 @@ const { Server } = require('socket.io')
 const socketFunc = require('./socket/connect')
 const sio = new Server(server, {
   cors: {
+
     origin: ['https://localhost:3000', 'http://localhost:3000'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['X-Requested-With', 'content-type'],

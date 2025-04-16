@@ -1,0 +1,27 @@
+name:  ESLint - branch
+on:
+  push:
+    branches:
+      - '**'
+jobs:
+  eslint-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: CI='' yarn build
+
+      - name: Run ESLint
+        run: yarn lint
+
+      - name: Run tests

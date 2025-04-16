@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, Divider } from "@mui/material";
-import Event from "../Events/Event";
-import style from "./Home.module.scss";
-import { Link, useNavigate } from "react-router-dom";
-import apiData from "../../services/apiData";
+import { useEffect, useState } from 'react'
+import { Box, Typography, Divider } from '@mui/material'
+import Event from '../Events/Event'
+import style from './Home.module.scss'
+import { Link, useNavigate } from 'react-router-dom'
+import apiData from '../../services/apiData'
 
 const Home = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [popularData, setPopularData] = useState([])
   const [incomingData, setIncomingData] = useState([])
 
 
   useEffect(() => {
-    apiData.getEvents("email", "popular").then((res) => {
+    apiData.getEvents('email', 'popular').then((res) => {
       setPopularData(res.data.slice(0, 4))
     })
-    apiData.getEvents("email", "incomming").then((res) => {
+    apiData.getEvents('email', 'incomming').then((res) => {
       setIncomingData(res.data.slice(0, 4))
     })
-  }, []);
+  }, [])
 
   const handleClickEvent = (id) => {
-    navigate(`event/${id}`);
-  };
+    navigate(`event/${id}`)
+  }
 
   return (
     <Box>
@@ -31,23 +31,23 @@ const Home = () => {
         fontWeight="500"
         className={style.Typography_home}
         sx={{
-          fontSize: ["xx-large", "xx-large", "xxx-large", "xxx-large"],
+          fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
         }}
       >
         EventApp
       </Typography>
-      <a > Aplikacja stworzona do znajdowaniu interesujących wydarzeń oraz brania w nich udziału </a>
+      <a > Aplikacja stworzona do znajdowaniu interesujących wydarzeń oraz brania w nich udziału.</a>
       <br></br>
-      <a>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi</a>
+      <a>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi.</a>
 
       <Divider
         sx={{
-          "&::before, &::after": {
-            borderColor: "#0000ff",
+          '&::before, &::after': {
+            borderColor: '#0000ff',
           },
         }}
-        style={{ width: "60%", marginTop: "50px", margin: "0 auto", fontSize: "20px" }}
+        style={{ width: '60%', marginTop: '50px', margin: '0 auto', fontSize: '20px' }}
         textAlign="left"
       >
         <Link className={style.home_link} to="/event/popular">
@@ -58,22 +58,23 @@ const Home = () => {
         {popularData.map((item, index) => {
           return (
             <Event
+              key={index}
               onClick={() => {
-                handleClickEvent(item._fields[0].identity.low);
+                handleClickEvent(item._fields[0].identity.low)
               }}
               item={item}
               className={style.event_home}
             ></Event>
-          );
+          )
         })}
       </Box>
       <Divider
         sx={{
-          "&::before, &::after": {
-            borderColor: "#0000ff",
+          '&::before, &::after': {
+            borderColor: '#0000ff',
           },
         }}
-        style={{ width: "60%", marginTop: "20px", margin: "0 auto", fontSize: "20px" }}
+        style={{ width: '60%', marginTop: '20px', margin: '0 auto', fontSize: '20px' }}
         textAlign="left"
       >
         <Link className={style.home_link} to="/event/comming">
@@ -84,18 +85,19 @@ const Home = () => {
         {incomingData.map((item, index) => {
           return (
             <Event
+              key={index}
               onClick={() => {
-                handleClickEvent(item._fields[0].identity.low);
+                handleClickEvent(item._fields[0].identity.low)
               }}
               item={item}
               className={style.event_home}
 
             ></Event>
-          );
+          )
         })}
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

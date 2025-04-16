@@ -1,9 +1,8 @@
-import React from 'react';
-import { useAuth0 } from "@auth0/auth0-react";
-import styles from "./NotLoginComponent.module.scss"
+import { useAuth0 } from '@auth0/auth0-react'
+import styles from './NotLoginComponent.module.scss'
 
 const NotLoggedInComponent = () => {
-    const {loginWithRedirect} = useAuth0()
+  const { loginWithRedirect } = useAuth0()
   return (
     <div className={styles.container}>
       <p className={styles.message}>Muszisz być zalogowany aby wejść na tą strone</p>
@@ -11,9 +10,9 @@ const NotLoggedInComponent = () => {
         Zaloguj
       </button>
     </div>
-  );
-};
+  )
+}
 
 
 
-export default NotLoggedInComponent;
+export default NotLoggedInComponent

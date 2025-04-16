@@ -1,5 +1,4 @@
-import React from "react";
-import { createSvgIcon } from "@mui/material/utils";
+import { createSvgIcon } from '@mui/material/utils'
 
 const EventIcon = createSvgIcon(
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" id="calendar">
@@ -10,5 +9,5 @@ const EventIcon = createSvgIcon(
     <path d="M88.615 91.997a.997.997 0 0 1-.708-.293l-7-7a1 1 0 1 1 1.415-1.414l7 7a1 1 0 0 1-.707 1.707z"></path>
     <path d="M81.615 91.997a1 1 0 0 1-.707-1.707l7-7a1 1 0 1 1 1.414 1.414l-7 7a.997.997 0 0 1-.707.293zM112.982 64.677a.997.997 0 0 1-.707-.292l-2.639-2.64a1 1 0 1 1 1.414-1.414l1.932 1.932 6.654-6.653a1 1 0 1 1 1.414 1.414l-7.36 7.36a.997.997 0 0 1-.708.293zM82.754 119.677a.997.997 0 0 1-.707-.292l-2.64-2.64a1 1 0 1 1 1.415-1.414l1.932 1.932 6.653-6.653a1 1 0 1 1 1.415 1.414l-7.361 7.36a.997.997 0 0 1-.707.293z"></path>
   </svg>
-);
-export default EventIcon;
+)
+export default EventIcon

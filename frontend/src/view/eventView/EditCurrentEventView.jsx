@@ -1,6 +1,5 @@
-import React from "react";
-import Header from "../../components/Header/Header";
-import EditCurrentEvent from "../../components/Events/EditCurrentEvent";
+import Header from '../../components/Header/Header'
+import EditCurrentEvent from '../../components/Events/EditCurrentEvent'
 
 const EditCurrentEventView = () => {
   return (
@@ -8,7 +7,7 @@ const EditCurrentEventView = () => {
       <Header></Header>
       <EditCurrentEvent/>
     </div>
-  );
-};
+  )
+}
 
-export default EditCurrentEventView;
+export default EditCurrentEventView

@@ -1,0 +1,89 @@
+# env:
+#   browser: true
+#   commonjs: true
+#   es6: true
+
+# extends:
+#   - eslint:recommended
+#   - plugin:react/recommended
+
+# settings:
+#   react:
+#     pragma: 'React'
+#     version: 'detect'
+
+# parser: '@babel/eslint-parser'
+# parserOptions:
+#   requireConfigFile: false
+#   ecmaVersion: 2020
+#   sourceType: module
+#   ecmaFeatures:
+#     jsx: true  # włącza obsługę JSX
+
+# plugins:
+#   - react
+
+# rules:
+#   max-len:
+#     - error
+#     - 150
+#     - 
+#       ignoreUrls: true
+#       ignoreStrings: true
+#       ignoreTemplateLiterals: true
+#       ignoreRegExpLiterals: true
+#       ignoreComments: true
+#       ignoreTrailingComments: true
+#       ignorePattern: '^import\\s.+\\sfrom\\s.+;$'
+#   indent:
+#     - error
+#     - 2
+#   linebreak-style:
+#     - error
+#     - unix
+#   quotes:
+#     - error
+#     - single
+#   semi:
+#     - error
+#     - never
+#   react/jsx-uses-react: off
+#   react/jsx-uses-vars: off
+#   react/react-in-jsx-scope: off
+#   no-multi-spaces: error
+#   no-trailing-spaces: error
+#   spaced-comment:
+#     - error
+#     - always
+#   space-in-parens:
+#     - error
+#     - never
+#   space-before-blocks:
+#     - error
+#     - always
+#   keyword-spacing:
+#     - error
+#     - before: true
+#       after: true
+#   space-infix-ops: error
+#   comma-spacing:
+#     - error
+#     - before: false
+#       after: true
+#   object-curly-spacing:
+#     - error
+#     - always
+#   array-bracket-spacing:
+#     - error
+#     - never
+
+# globals:
+#   process: true
+#   it: true
+#   expect: true
+#   describe: true
+
+
+
+# # // "start": "HTTPS=true SSL_CRT_FILE=./ssl/certificate.crt SSL_KEY_FILE=./ssl/private.key react-scripts start",
+#     # // "start-dev": "react-scripts start --no-cache",

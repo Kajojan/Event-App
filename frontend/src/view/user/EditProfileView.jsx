@@ -1,6 +1,5 @@
-import React from "react";
-import Header from "../../components/Header/Header";
-import EditProfile from "../../components/Profile/EditProfile";
+import Header from '../../components/Header/Header'
+import EditProfile from '../../components/Profile/EditProfile'
 
 const ProfileView = () => {
   return (
@@ -9,7 +8,7 @@ const ProfileView = () => {
       <EditProfile />
 
     </div>
-  );
-};
+  )
+}
 
-export default ProfileView;
+export default ProfileView

@@ -1,13 +1,12 @@
-import React from "react";
-import { createSvgIcon } from "@mui/material/utils";
+import { createSvgIcon } from '@mui/material/utils'
 
 const PopularIcon = createSvgIcon(
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    fill-rule="evenodd"
-    stroke-linejoin="round"
-    stroke-miterlimit="2"
-    clip-rule="evenodd"
+    fillRule="evenodd"
+    strokeLinejoin="round"
+    strokeMiterlimit="2"
+    clipRule="evenodd"
     viewBox="0 0 25 24"
     id="fire"
   >
@@ -20,5 +19,5 @@ const PopularIcon = createSvgIcon(
       ></path>
     </g>
   </svg>
-);
-export default PopularIcon;
+)
+export default PopularIcon

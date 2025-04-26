@@ -4,6 +4,7 @@ import Event from '../Events/Event'
 import style from './Home.module.scss'
 import { Link, useNavigate } from 'react-router-dom'
 import apiData from '../../services/apiData'
+import NoDataBox from '../helper/Error'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -30,6 +31,7 @@ const Home = () => {
         variant="h1"
         fontWeight="500"
         className={style.Typography_home}
+        style={{ marginTop:'30px' }}
         sx={{
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
@@ -39,7 +41,7 @@ const Home = () => {
       </Typography>
       <a > Aplikacja stworzona do znajdowaniu interesujących wydarzeń oraz brania w nich udziału.</a>
       <br></br>
-      <a>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi.</a>
+      <a style={{ marginBottom:'30px' }}>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi.</a>
 
       <Divider
         sx={{
@@ -55,7 +57,7 @@ const Home = () => {
         </Link>
       </Divider>
       <Box className={style.home_container}>
-        {popularData.map((item, index) => {
+        {Array.isArray(popularData) && popularData.length > 0 ? (popularData.map((item, index) => {
           return (
             <Event
               key={index}
@@ -66,7 +68,9 @@ const Home = () => {
               className={style.event_home}
             ></Event>
           )
-        })}
+        })) : (
+          <NoDataBox/>
+        )}
       </Box>
       <Divider
         sx={{
@@ -82,19 +86,22 @@ const Home = () => {
         </Link>
       </Divider>
       <Box className={style.home_container}>
-        {incomingData.map((item, index) => {
-          return (
-            <Event
-              key={index}
-              onClick={() => {
-                handleClickEvent(item._fields[0].identity.low)
-              }}
-              item={item}
-              className={style.event_home}
+        {Array.isArray(incomingData) && incomingData.length > 0 ?
+          (incomingData.map((item, index) => {
+            return (
+              <Event
+                key={index}
+                onClick={() => {
+                  handleClickEvent(item._fields[0].identity.low)
+                }}
+                item={item}
+                className={style.event_home}
 
-            ></Event>
-          )
-        })}
+              ></Event>
+            )
+          })) : (
+            <NoDataBox/>
+          )}
       </Box>
     </Box>
   )

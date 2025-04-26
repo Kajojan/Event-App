@@ -88,4 +88,13 @@ export default {
   changeAbout(username, about) {
     return apiClient.put('/api/user/changeabout', { username, about })
   },
+  filters() {
+    return apiClient.get('/api/events/filters')
+  },
+  filtersArg(body) {
+    return apiClient.post('/api/events/filters/arg', body)
+  },
+  filtersEvents(body) {
+    return apiClient.post('/api/events/filters/events', body)
+  }
 }

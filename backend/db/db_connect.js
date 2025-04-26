@@ -1,11 +1,10 @@
 const neo4j = require('neo4j-driver')
-require('dotenv').config()
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env'
+})
+console.log(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD))
 
-const driver = neo4j.driver(
-  `bolt://${process.env.PORT_DB}`,
-  // neo4j.auth.basic(process.env.USERNAME_DB, process.env.PASS_DB)
-  neo4j.auth.none()
-)
+const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD))
 async function runQuery(query, params = {}) {
   const session = driver.session()
   try {

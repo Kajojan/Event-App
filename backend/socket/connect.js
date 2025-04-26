@@ -10,6 +10,7 @@ const { expressjwt: jwt } = require('express-jwt')
 const jwksRsa = require('jwks-rsa')
 const cron = require('node-cron')
 
+
 const jwtCheck = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
@@ -21,6 +22,7 @@ const jwtCheck = jwt({
   issuer: `https://${process.env.Auth_DOMAIN}/`,
   algorithms: ['RS256'],
 })
+
 
 module.exports = (io) => {
   const connect = io.of('connect')
@@ -93,7 +95,7 @@ module.exports = (io) => {
       })
 
       socket.on('addEvent', async (data) => {
-        const { eventName, eventTime, eventDate, eventImage, eventDescription, address, seat } = data.content
+        const { eventName, eventTime, eventDate, eventImage, eventDescription, detailAddress, address, seat, arrayType } = data.content
         const res = await create_event(
           eventName,
           eventDate,
@@ -101,8 +103,10 @@ module.exports = (io) => {
           eventImage,
           eventDescription,
           address,
+          detailAddress,
           data.owner,
-          seat
+          seat,
+          arrayType
         )
         socket.emit('create_event', res)
       })

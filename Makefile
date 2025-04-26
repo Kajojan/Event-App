@@ -3,10 +3,10 @@ DOCKER_COMPOSE_FILE = docker-compose.yaml
 
 build:
 	@echo "Budowanie obrazów..."
-	    docker compose -f docker-compose.yaml build
+	    docker compose -f docker-compose.yaml build --no-cache
 
 build-dev: 
-	docker compose -f docker-compose-dev.yaml build
+	docker compose -f docker-compose-dev.yaml build --no-cache
 
 dev:
 	@echo "Uruchamianie kontenerów Developer..."

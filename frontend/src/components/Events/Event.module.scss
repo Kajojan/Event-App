@@ -1,8 +1,8 @@
 .event_container {
-  height: fit-content;
   border-radius: 8%;
   cursor: pointer;
   box-shadow: 0 5px 5px #d5def5;
+  padding-bottom: 10px;
 
   &:hover {
     box-shadow: 0 4px 10px #527cf2;
@@ -11,7 +11,10 @@
     img {
       border-radius: 8%;
       height: auto;
+      height: 200px;
       width: 100%;
+      object-fit: cover;
+      object-position: center;
     }
   }
   p {
@@ -20,9 +23,17 @@
   }
 
   .event_content {
-    padding-top: 5px;
+    padding: 5px 10px;
     display: flex;
     flex-direction: column;
+    text-align: start;
+    label{
+      font-weight: 900;
+    }
+    a{
+      font-weight: 400;
+      margin-left: 15px;
+    }
   }
 }
 .box_container {

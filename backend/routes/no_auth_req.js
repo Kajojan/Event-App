@@ -7,6 +7,7 @@ const {
   get_newEvents_recommended,
   get_newEvents_popular,
 } = require('../db/models/event')
+const { get_filters, get_filters_arg, get_filters_events } = require('../db/models/filters')
 
 router.get('/:name/get_event/:email', async (req, res) => {
   const name = req.params.name
@@ -42,6 +43,47 @@ router.get('/:name/get_event/:email', async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message)
   }
+})
+
+router.get('/filters', async (_req, res) => {
+  try {
+    const result = await get_filters()
+    res.status(200).send(result)
+  } catch (error) {
+    res.status(500).send(error.message)
+
+  }
+
+})
+
+router.post('/filters/arg', async (req, res) => {
+  try {
+    console.log('body', req.body)
+
+    const result = await get_filters_arg(req.body)
+    res.status(200).send(result)
+  } catch (error) {
+    console.log(error.message)
+
+    res.status(500).send(error.message)
+
+  }
+
+})
+
+router.post('/filters/events', async (req, res) => {
+  try {
+    console.log('body', req.body)
+
+    const result = await get_filters_events(req.body)
+    res.status(200).send(result.records)
+  } catch (error) {
+    console.log(error.message)
+
+    res.status(500).send(error.message)
+
+  }
+
 })
 
 module.exports = router

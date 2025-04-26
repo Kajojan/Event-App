@@ -25,7 +25,7 @@ const socketSlice = createSlice({
     connect(state, action) {
       console.log('connect: ')
       const { email, name, nickname } = action.payload.user
-      const socket = io('https://localhost:4000/connect', {
+      const socket = io(`${process.env.REACT_APP_API_URL}/connect`, {
         auth: { token: auth0Cache },
         query: { email, name, nickname },
       })

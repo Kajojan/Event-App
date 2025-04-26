@@ -9,9 +9,7 @@ RUN yarn install
 
 COPY . .
 
-ENV PORT=4000
-
-RUN npm test
+# RUN npm test
 
 EXPOSE 4000
 

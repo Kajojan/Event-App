@@ -8,11 +8,13 @@ exports.create_event = async function (
   eventImage,
   eventDescription,
   address,
+  detailAddress,
   owner,
-  seat = 0
+  seat = 0,
+  arrayType
 ) {
   const query =
-    ' CREATE (n:event {eventName: $eventName, eventDate: $eventDate, eventTime: $eventTime, eventImage: $eventImage,  eventDescription: $eventDescription, address: $address, seat: $seat}) RETURN n'
+    ' CREATE (n:event {eventName: $eventName, eventDate: $eventDate, eventTime: $eventTime, eventImage: $eventImage,  eventDescription: $eventDescription, detailAddress: $detailAddress, address: $address, seat: $seat, eventType: $arrayType}) RETURN n'
 
   const parameters = {
     eventName: eventName,
@@ -21,8 +23,12 @@ exports.create_event = async function (
     eventImage: eventImage,
     eventDescription: eventDescription,
     address: address,
+    detailAddress: detailAddress,
     seat: seat,
+    arrayType: arrayType
   }
+  console.log(query, parameters)
+
   try {
     return await runQuery(query, parameters)
       .then(async (result) => {

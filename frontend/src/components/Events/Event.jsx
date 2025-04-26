@@ -16,9 +16,12 @@ const Event = ({ item, onClick, className = '' }) => {
         </Box>
         <Typography>{eventName}</Typography>
         <Box className={style.event_content}>
-          Organizator: {item?._fields[1]?.properties?.nickname}
-          <a>Data i godzina: {eventDate}, {eventTime} </a>
-          <a>Miejsce: {address}</a>
+          <label> Organizator: </label>
+          <a>{item?._fields[1]?.properties?.nickname} </a>
+          <label>Data i godzina: </label>
+          <a> {eventDate}, {eventTime}  </a>
+          <label>Miejsce: </label>
+          <a>{address}</a>
         </Box>
       </Box>
     )
@@ -33,8 +36,14 @@ const Event = ({ item, onClick, className = '' }) => {
 
 }
 Event.propTypes = {
-  item: PropTypes.object.isRequired,
-  onClick: PropTypes.func.isRequired,
+  item: PropTypes.shape({
+    _fields: PropTypes.arrayOf(
+      PropTypes.shape({
+        properties: PropTypes.object
+      })
+    ).isRequired
+  }).isRequired,
+  onClick: PropTypes.func,
   className: PropTypes.string
 }
 export default Event

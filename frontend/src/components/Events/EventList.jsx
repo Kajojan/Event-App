@@ -29,7 +29,7 @@ const EventList = ({ events, name }) => {
   const [sortedEvents, setSortedEvents] = useState(duplicateNull(events))
   const [sortOrder, setSortOrder] = useState('asc')
   const [sortBy, setSortBy] = useState('name')
-  const [layout, setLayout] = useState('list')
+  const [layout, setLayout] = useState('2col')
   const navigate = useNavigate()
 
   const handleSort_Date = (property) => {
@@ -106,7 +106,7 @@ const EventList = ({ events, name }) => {
     setSortedEvents(duplicateNull(events))
   }, [events])
   return (
-    <Box>
+    <Box style={{ flex: '3' }}>
       <Typography
         variant="h1"
         fontWeight="500"
@@ -118,25 +118,29 @@ const EventList = ({ events, name }) => {
       >
         {name}
       </Typography>
-      <Box mb={2} mt={10}>
-        <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleSort_Name('eventName')}>
+      <Grid container spacing={2} gap={3} sx={{ width:'100%', justifyContent: 'space-between', marginTop: '35px', marginLeft: 0 }}>
+        <Box mb={2}>
+          <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleSort_Name('eventName')}>
           Sortuj po nazwie  ({sortOrder === 'asc' && sortBy === 'eventName' ? 'asc' : 'desc'})
-        </Button>
-        <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleSort_Date('eventDate')} style={{ marginLeft: 8 }}>
+          </Button>
+          <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleSort_Date('eventDate')} style={{ marginLeft: 8 }}>
           Sortuj po dacie ({sortOrder === 'asc' && sortBy === 'eventDate' ? 'asc' : 'desc'})
-        </Button>
-      </Box>
-      <Box mb={2}>
-        <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleLayoutChange('list')}>
+          </Button>
+        </Box>
+        <Box mb={2}>
+          <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleLayoutChange('list')}>
           List
-        </Button>
-        <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleLayoutChange('2col')} style={{ marginLeft: 8 }}>
+          </Button>
+          <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleLayoutChange('2col')} style={{ marginLeft: 8 }}>
           2 kolumny
-        </Button>
-        <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleLayoutChange('3col')} style={{ marginLeft: 8 }}>
+          </Button>
+          <Button variant="outlined" sx={{ borderColor: '#0000ff', color: 'black', fontWeight: 'normal' }} onClick={() => handleLayoutChange('3col')} style={{ marginLeft: 8 }}>
           3 kolumny
-        </Button>
-      </Box>
+          </Button>
+        </Box>
+      </Grid>
+
+
       <Grid container className={styles.eventList_container}>
         {sortedEvents.map((item, index) => (
           item._fields[0]?.identity?.low && <Grid

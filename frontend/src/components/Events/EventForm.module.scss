@@ -8,6 +8,18 @@
   align-items: center;
   background-color: #f5f5f5;
   width: 400px;
+  .typeContainer{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow-x: scroll;
+    height: 300px;
+    .Type_active{
+      background-color: #719ece;
+    }
+    .NotActive{
+      
+    }
+  }
   span {
     color: red;
   }

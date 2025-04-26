@@ -27,7 +27,7 @@ root.render(
       onRedirectCallback={onRedirectCallback}
       scope="openid profile email read:messages write:messages"
       authorizationParams={{
-        redirect_uri: 'https://localhost:3000/login',
+        redirect_uri: `${process.env.REACT_APP_URL}/login`,
         audience: process.env.REACT_APP_AUDIENCE,
       }}
     >

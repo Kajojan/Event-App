@@ -7,7 +7,7 @@ services:
       - "7687:7687"
       - "7474:7474"
     environment:
-      NEO4J_AUTH: none
+      NEO4J_AUTH: neo4j/test1234
     volumes:
       - ./data:/data
     networks:
@@ -27,7 +27,9 @@ services:
     networks:
       - app-network
     env_file:
-      - ./backend/.env
+      - ./backend/.env.development
+    environment:
+    - NODE_ENV=development
     command: sh -c "sleep 30 && npm run dev"
 
   frontend:
@@ -44,7 +46,7 @@ services:
     networks:
       - app-network
     env_file:
-      - ./frontend/.env
+      - ./frontend/.env.development
 
 networks:
   app-network:

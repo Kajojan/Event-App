@@ -1,7 +1,7 @@
 body {
   margin: 0;
   height: 100vh;
-  margin-inline: 300px;
+  margin-inline: 10vw;
   font-family: "Noto Sans", sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

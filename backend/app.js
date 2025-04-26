@@ -1,4 +1,6 @@
-require('dotenv').config()
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env'
+})
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -15,6 +17,7 @@ const { auth } = require('express-oauth2-jwt-bearer')
 
 app.use(require('cookie-parser')())
 
+
 const jwtCheck = auth({
   audience: process.env.AUDIENCE,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
@@ -29,7 +32,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ['https://localhost:3000', 'http://localhost:3000'],
+    origin: ['https://localhost:3000', 'http://localhost:3000', 'https://event-app-usy2.onrender.com'],
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['X-Requested-With', 'content-type', 'authorization', 'Access-Control-Allow-Origin'],
     credentials: true,
@@ -52,21 +55,23 @@ app.use('/api/event', jwtCheck, event_router)
 app.use('/api/user', jwtCheck, user_router)
 app.use('/api/aws', jwtCheck, aws_router)
 
-const fs = require('fs')
-const https = require('https')
-const server = https.createServer(
-  {
-    key: fs.readFileSync('./ssl/private.key', 'utf8'),
-    cert: fs.readFileSync('./ssl/certificate.crt', 'utf8'),
-  },
-  app
-)
+// const fs = require('fs')
+// const https = require('https')
+const http = require('http')
+// const server = https.createServer(
+//   {
+//     key: fs.readFileSync('./ssl/private.key', 'utf8'),
+//     cert: fs.readFileSync('./ssl/certificate.crt', 'utf8'),
+//   },
+//   app
+// )
+const httpServer = http.createServer(app)
+
 const { Server } = require('socket.io')
 const socketFunc = require('./socket/connect')
-const sio = new Server(server, {
+const sio = new Server(httpServer, {
   cors: {
-
-    origin: ['https://localhost:3000', 'http://localhost:3000'],
+    origin: ['https://localhost:3000', 'http://localhost:3000', 'https://event-app-usy2.onrender.com'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['X-Requested-With', 'content-type'],
     credentials: true,
@@ -76,17 +81,19 @@ const sio = new Server(server, {
 socketFunc(sio)
 
 const apiPort = process.env.PORT || 4000
+const apiPortHttp = process.env.PORT || 4000
+
 const apiHost = process.env.API_HOST || 'localhost'
 
 runQuery('RETURN 1')
   .then(() => {
-    server.listen(apiPort, async () => {
+    httpServer.listen(apiPortHttp, async () => {
       try {
         const result = await runQuery('SHOW CONSTRAINTS')
         if (!result?.records[0]?._fields.includes('unique_user')) {
           await runQuery('CREATE CONSTRAINT unique_user FOR (user:user) REQUIRE user.email IS UNIQUE')
         }
-        console.log(`API server available from: https://${apiHost}:${apiPort}`)
+        console.log(`API server available from: http://${apiHost}:${apiPort}`)
       } catch {
         console.error('Błąd podczas nawiązywania połączenia z bazą danych Neo4j')
       }
@@ -96,13 +103,14 @@ runQuery('RETURN 1')
     console.error('Błąd podczas nawiązywania połączenia z bazą danych Neo4j:', error)
   })
 
+
 process.on('SIGINT', async () => {
   await driver.close()
-  server.close(() => {
+  httpServer.close(() => {
     console.log('Serwer close.')
     // eslint-disable-next-line no-process-exit
     process.exit(0)
   })
 })
 
-module.exports = server
+module.exports = httpServer

@@ -1,0 +1,47 @@
+.filters_container{
+    text-align: start;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-shadow: none;
+    flex: 1;
+    h3, h2{
+        font-weight: 700;
+        text-transform: uppercase;
+        color: blue;
+    }
+    h3{
+        padding-left: 10px;
+        margin-bottom: 5px;
+    }
+    ul{
+        padding-left: 20px;
+        list-style-type: none;
+        margin-block: 5px;
+        li{
+            padding-block: 5px;
+            font-size: 15px;
+            label{
+                align-items: center;
+                display: flex;
+                flex-direction: row;
+                align-content: center;
+                input{
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20%;
+                }
+                p{
+                    font-size: 15px;
+                }
+                a{
+                    font-size: 12px;
+                    background-color: blue;
+                    color: white !important;
+                    padding: 5px 12px;
+                    border-radius: 10px;
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+}

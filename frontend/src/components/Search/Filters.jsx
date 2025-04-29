@@ -68,6 +68,7 @@ const Filters = ({ setEvent }) =>{
 
     setSelectedValues(updatedValues)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search])
 
   const handleClick = (key, value) => {

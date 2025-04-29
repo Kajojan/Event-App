@@ -25,8 +25,6 @@ const Filters = ({ setEvent }) =>{
 
   useEffect(()=>{
     apiData.filters().then((res)=>{
-      console.log(res.data.filters)
-
       setFilters(res.data.filters)
     })
   }, [])

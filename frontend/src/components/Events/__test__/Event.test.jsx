@@ -71,9 +71,12 @@ describe('CurrentEvent', () => {
     render(<Event item={item} />)
 
     expect(screen.getByText('Test Event')).toBeInTheDocument()
-    expect(screen.getByText('Organizator: Test Organizer')).toBeInTheDocument()
-    expect(screen.getByText('Data i godzina: 2024-06-01, 10:00')).toBeInTheDocument()
-    expect(screen.getByText('Miejsce: Test Address')).toBeInTheDocument()
+    expect(screen.getByText('Organizator:')).toBeInTheDocument()
+    expect(screen.getByText('Test Organizer')).toBeInTheDocument()
+    expect(screen.getByText('Miejsce:')).toBeInTheDocument()
+    expect(screen.getByText('Test Address')).toBeInTheDocument()
+
+
   })
 
   it('calls onClick handler when clicked', () => {

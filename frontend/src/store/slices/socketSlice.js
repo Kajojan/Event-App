@@ -7,6 +7,7 @@ const initialState = {
   socket: null,
   notification: [],
   isNotification: 0,
+  revie:[],
 }
 
 const socketSlice = createSlice({
@@ -20,7 +21,14 @@ const socketSlice = createSlice({
     Notification(state, action) {
       state.notification = [...state.notification, action.payload]
       state.isNotification = state.isNotification + 1
-      console.log(state.isNotification)
+    },
+    AddRevie(state, action) {
+      state.revie = [...state.revie, action.payload]
+      state.isNotification = state.isNotification + 1
+    },
+    DelRevie(state, action) {
+      state.revie = state.revie.filter(el=>el.identity.low != action.payload.identity.low)
+      state.isNotification = state.isNotification + 1
     },
     connect(state, action) {
       console.log('connect: ')
@@ -46,5 +54,5 @@ const socketSlice = createSlice({
   },
 })
 
-export const { connect, addEvent, getEvents, IntNotification, Notification } = socketSlice.actions
+export const { connect, addEvent, getEvents, IntNotification, Notification, AddRevie, DelRevie } = socketSlice.actions
 export default socketSlice.reducer

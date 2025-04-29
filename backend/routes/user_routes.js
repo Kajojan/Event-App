@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { get_user, edit_profile, get_relations_count } = require('../db/models/user')
+const { get_user, edit_profile, get_relations_count, get_starts } = require('../db/models/user')
 
 router.get('/:username', async (req, res) => {
   const username = req.params.username
@@ -26,7 +26,9 @@ router.get('/stats/:email', async (req, res) => {
   const { email } = req.params
   try {
     const resoutl = await get_relations_count(email)
-    res.status(200).send(resoutl)
+    const stars = await get_starts(email)
+    const CombineResult = { ...stars, ...resoutl }
+    res.status(200).send(CombineResult)
   } catch (error) {
     res.status(500).send(error.message)
   }

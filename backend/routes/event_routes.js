@@ -72,5 +72,26 @@ router.post('/takePart', async (req, res) => {
   }
 })
 
+router.get('/review/:id/:email', async(req, res)=>{
+  const email = req.params.email
+  const eventId = req.params.id
+  try {
+    const findEvents = await relation.find_revied(email, eventId)
+    res.status(200).send(findEvents)
+  } catch (error) {
+    res.send(500).send(error)
+  }
+})
+
+router.post('/review', async(req, res)=>{
+  const { email, eventId, star, content } = req.body
+  try {
+    const addRevie = await relation.add_revie(email, eventId, star, content)
+    res.status(200).send(addRevie)
+  } catch (error) {
+    res.send(500).send(error)
+  }
+})
+
 
 module.exports = router

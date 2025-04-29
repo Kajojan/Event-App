@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+
 const getAuthorizationHeader = () => {
   const auth0CacheKey = `@@auth0spajs@@::${process.env.REACT_APP_CLIENT_ID}::${process.env.REACT_APP_AUDIENCE}::openid profile email offline_access`
   const auth0Cache = JSON.parse(localStorage.getItem(auth0CacheKey)) || []
@@ -96,5 +97,8 @@ export default {
   },
   filtersEvents(body) {
     return apiClient.post('/api/events/filters/events', body)
+  },
+  addReview(body) {
+    return apiClient.post('/api/event/review', body)
   }
 }

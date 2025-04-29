@@ -3,7 +3,7 @@ import { RouterProvider } from 'react-router-dom'
 import AppRouter from './router.js'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Notification } from './store/slices/socketSlice.js'
+import { Notification, AddRevie } from './store/slices/socketSlice.js'
 import Footer from '../src/components/Footer/Footer'
 
 function App() {
@@ -12,8 +12,12 @@ function App() {
   useEffect(() => {
     if (socket || socket?.connected) {
       socket.on('Powiadomienie', (data) => {
-        console.log(data)
         dispatch(Notification(data))
+      })
+      socket.on('addRevie', (data) => {
+        console.log('revie', data)
+
+        dispatch(AddRevie(data))
       })
     }
   }, [socket, dispatch])

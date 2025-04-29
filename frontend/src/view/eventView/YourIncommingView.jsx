@@ -18,7 +18,10 @@ const YourIncommingView = () => {
     socket.on('receive_new_event_yourComing', (data) => {
       setEvents(prevEvents => [...prevEvents, ...data])
       socket.off('receive_new_event_yourComing')
+      console.log(data)
+
     })
+
     dispatch(getEvents({ name: 'yourincomming', skip: valueSkip, username: user.email }))
 
   }

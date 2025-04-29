@@ -11,7 +11,7 @@ const Search = () => {
     if (event.target.value != '')
       apiData.getEventByName(event.target.value).then((res) => {
         setEvent(res.data)
-        console.log(res.data)
+        console.log('ddataSearch:', res.data)
       })
   }
 
@@ -25,6 +25,7 @@ const Search = () => {
         sx={{
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
+          marginTop:'40px'
         }}
       >
         Wyszukaj

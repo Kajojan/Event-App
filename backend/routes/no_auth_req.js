@@ -58,8 +58,6 @@ router.get('/filters', async (_req, res) => {
 
 router.post('/filters/arg', async (req, res) => {
   try {
-    console.log('body', req.body)
-
     const result = await get_filters_arg(req.body)
     res.status(200).send(result)
   } catch (error) {
@@ -73,8 +71,6 @@ router.post('/filters/arg', async (req, res) => {
 
 router.post('/filters/events', async (req, res) => {
   try {
-    console.log('body', req.body)
-
     const result = await get_filters_events(req.body)
     res.status(200).send(result.records)
   } catch (error) {

@@ -1,6 +1,7 @@
-import { Box, Typography } from '@mui/material'
+/* eslint-disable react/prop-types */
+import { Box, Rating, Typography } from '@mui/material'
 import style from './Event.module.scss'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 
 const Event = ({ item, onClick, className = '' }) => {
   const source = item._fields[0] === null ? item._fields[2] : item._fields[0]
@@ -13,13 +14,23 @@ const Event = ({ item, onClick, className = '' }) => {
             src={eventImage}
             alt="EventImage"
           />
+          <a className={style.EventDate}> {eventDate} {eventTime}  </a>
         </Box>
         <Typography>{eventName}</Typography>
         <Box className={style.event_content}>
           <label> Organizator: </label>
           <a>{item?._fields[1]?.properties?.nickname} </a>
-          <label>Data i godzina: </label>
-          <a> {eventDate}, {eventTime}  </a>
+          <Box sx={{ marginLeft: '25px', marginBottom:'10px', display:'flex', justifyContent:'start', alignContent:'center' }}>
+            <Rating
+              sx={{
+                fontSize: '18px'
+              }}
+              name="read-only-rating"
+              value={item?._fields[3]}
+              readOnly
+            />
+            <span style={{ margin:0, fontSize: '16px', color: '#c0c0c0' }}>/ {item?._fields[4]?.low}</span>
+          </Box>
           <label>Miejsce: </label>
           <a>{address}</a>
         </Box>
@@ -35,15 +46,5 @@ const Event = ({ item, onClick, className = '' }) => {
   }
 
 }
-Event.propTypes = {
-  item: PropTypes.shape({
-    _fields: PropTypes.arrayOf(
-      PropTypes.shape({
-        properties: PropTypes.object
-      })
-    ).isRequired
-  }).isRequired,
-  onClick: PropTypes.func,
-  className: PropTypes.string
-}
+
 export default Event

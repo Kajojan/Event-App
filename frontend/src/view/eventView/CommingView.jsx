@@ -35,7 +35,6 @@ const CommingView = () => {
       <Header></Header>
       <EventList
         events={events}
-
         name={'Nadchodzące wydarzenia'}
       ></EventList>
       <Button onClick={async () => {

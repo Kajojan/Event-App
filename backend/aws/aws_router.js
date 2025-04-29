@@ -61,9 +61,11 @@ const images = [
   'https://serwis-y.s3.eu-north-1.amazonaws.com/uploads/example5.jpg',
   'https://serwis-y.s3.eu-north-1.amazonaws.com/uploads/example6.jpeg',
 ]
+let currentImg = 0
 router.get('/image', async (req, res) => {
   try {
-    const image = images[Math.floor(Math.random() * 6)]
+    const image = images[currentImg]
+    currentImg = (currentImg + 1) % images.length
     res.send(image)
   } catch (error) {
     console.log(error)

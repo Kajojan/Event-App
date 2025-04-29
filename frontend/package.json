@@ -14,7 +14,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/react": "18",
-    "axios": "^1.6.8",
+    "axios": "1.5.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.1.0",
@@ -39,16 +39,31 @@
     "start": "HTTPS=true SSL_CRT_FILE=./ssl/certificate.crt SSL_KEY_FILE=./ssl/private.key react-scripts start",
     "start-dev": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --watchAll=false",
+    "test": "react-scripts test  --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
   },
   "babel": {
     "presets": [
       "@babel/preset-env",
-      "@babel/preset-react"
+      "@babel/preset-react",
+      "@babel/preset-typescript"
+    ],
+    "plugins": [
+      "@babel/plugin-transform-runtime"
     ]
   },
+  "jest": {
+  "transformIgnorePatterns": [
+    "/node_modules/(?!axios)/"
+  ],
+  "moduleNameMapper": {
+    "\\.(scss|sass|css)$": "identity-obj-proxy"
+  },
+  "transform": {
+    "^.+\\.[jt]sx?$": "babel-jest"
+  }
+},
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -77,6 +92,7 @@
     "babel-jest": "^29.7.0",
     "babel-loader": "^10.0.0",
     "eslint-plugin-react": "^7.37.5",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
     "prettier": "^3.2.5",
     "react-scripts": "^5.0.1",

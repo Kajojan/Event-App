@@ -114,6 +114,7 @@ const EventList = ({ events, name }) => {
         sx={{
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
+          marginTop:'40px'
         }}
       >
         {name}
@@ -149,10 +150,9 @@ const EventList = ({ events, name }) => {
             container
             {...getGridItemProps()}
             justifyContent={'center'}
-            gap={'50px'}
-            style={{ height: layout === 'list' ? '500px' : '' }}
+            style={{ height: layout === 'list' ? '500px' : '', paddingBottom: '30px' }}
           >
-            <div style={{ height: 'fit-content', margin: '50px' }}>
+            <div style={{ height: 'fit-content', }}>
               <Event
                 onClick={() => {
                   handleClickEvent(item._fields[0].identity.low)

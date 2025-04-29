@@ -44,8 +44,7 @@ module.exports = (io) => {
       const { email } = socket.handshake.query
       console.log('# Socket.io: połączono: ', email)
 
-      const follow_arr = await relations.find_all_follow(email)
-
+      const [follow_arr, NotReviedEvents] = await Promise.all([relations.find_all_follow(email), relations.find_all_revied(email)])
       follow_arr.data.map(async (element) => {
         const eventDateTime = new Date(
           `${element._fields[0].properties.eventDate}T${element._fields[0].properties.eventTime}`
@@ -56,9 +55,14 @@ module.exports = (io) => {
         const hour = eventDateTimeMinus12Hours.getHours()
         const minute = eventDateTimeMinus12Hours.getMinutes()
         const cronExpression = `${minute} ${hour} ${day} ${month} *`
+
         cron.schedule(cronExpression, () => {
           socket.emit('Powiadomienie', element._fields[0])
         })
+      })
+
+      NotReviedEvents.data.map(async (element)=>{
+        socket.emit('addRevie', element._fields[0])
       })
 
       socket.on('get_new_event', async (data) => {
@@ -110,7 +114,6 @@ module.exports = (io) => {
         )
         socket.emit('create_event', res)
       })
-
       socket.on('disconnect', () => {
         console.log('# Socket.io: rozłączono')
       })
@@ -118,6 +121,7 @@ module.exports = (io) => {
       socket.on('error', (err) => {
         console.dir(err.message)
       })
+
     } catch (error) {
       console.error('Błąd podczas obsługi połączenia Socket.IO:', error)
     }

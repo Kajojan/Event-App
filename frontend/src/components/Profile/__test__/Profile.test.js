@@ -19,27 +19,17 @@ jest.mock('react-router-dom', () => ({
 }))
 
 jest.mock('../../../services/apiData', () => ({
-  getOnlyPersonData: (_id, _user) => {
+  getOnlyPersonData: () => {
     return Promise.resolve({
       data: {
-        user: [
-          {
-            _fields: [
-              {
-                properties: {
-                  name: 'John Doe',
-                  nickname: 'johnny',
-                  email: 'john@example.com',
-                  picture: 'https://example.com/profile.jpg',
-                },
-              },
-              { properties: { nickname: 'Test Organizer', email: 'organizer@example.com' } },
-              null,
-              true,
-              { properties: { seat: 1 } },
-            ],
+        user: {
+          properties: {
+            name: 'John Doe',
+            nickname: 'johnny',
+            email: 'john@example.com',
+            picture: 'https://example.com/profile.jpg',
           },
-        ],
+        },
       },
     })
   },
@@ -47,7 +37,9 @@ jest.mock('../../../services/apiData', () => ({
     return Promise.resolve({
       data: {
         values: [{ low: 1 }, { low: 2 }],
-      },
+        avg: 4.5,
+        number: 10,
+      }
     })
   },
 }))
@@ -75,9 +67,14 @@ describe('Profile component', () => {
     })
 
     fireEvent.click(screen.getByText('Zobacz Statystyki'))
+
     await waitFor(() => {
-      expect(screen.getByText(/Wziałeś udział w 2 wydarzeniach/)).toBeInTheDocument()
-      expect(screen.getByText(/Stworzyłeś 1 wydarzeniach/)).toBeInTheDocument()
+      expect(screen.getByText('Wziałeś udział w wydarzeniach')).toBeInTheDocument()
+      expect(screen.getByText('2')).toBeInTheDocument()
+      expect(screen.getByText('Stworzyłeś wydarzeń')).toBeInTheDocument()
+      expect(screen.getByText('1')).toBeInTheDocument()
+      expect(screen.getByText('Ilość osób oceniających')).toBeInTheDocument()
+      expect(screen.getByText('10')).toBeInTheDocument()
     })
   })
 })

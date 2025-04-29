@@ -124,16 +124,21 @@ exports.edit_event = async function (id, data) {
   }
 }
 
+
+
+
+
 exports.get_newEvents_yourComing = async function (user, skip) {
   const query = `MATCH (:user {email: "${user}"}) - [r:OWNER] -> (m:event)
   WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
-                  OPTIONAL MATCH (m) <- [:OWNER] - (n:user) 
-                  WITH m,n ,COLLECT(l) AS PART
+                  OPTIONAL MATCH (m) <- [:OWNER] - (n:user)
+                  OPTIONAL MATCH (n)-[:OWNER]->(:event)<-[r2:REVIE]-()
+                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount    
                   ORDER BY m.eventDate, m.eventTime
                   skip ${skip}
                   LIMIT 5
-                  RETURN m,n, PART`
+                  RETURN m,n, PART, averageRating, reviewCount`
   try {
     return await runQuery(query)
       .then((result) => {
@@ -148,17 +153,21 @@ exports.get_newEvents_yourComing = async function (user, skip) {
     return { isSuccessful: false }
   }
 }
+// MATCH (owner:user {email: "${email}"})-[:OWNER]->(e:event)<-[r:REVIE]-()
+// RETURN   avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount`
+
 
 exports.get_newEvents_popular = async function (skip) {
   const query = `MATCH (n: event )  
                 WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
-                  WITH n,m ,COLLECT(l) AS PART
+                  OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
+                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount
                   ORDER BY PART DESC
                   SKIP ${skip}
                   LIMIT 5
-                  RETURN n,m,PART`
+                  RETURN n,m,PART,averageRating,reviewCount`
   try {
     return await runQuery(query)
       .then((result) => {
@@ -178,11 +187,12 @@ exports.get_newEvents_coming = async function (skip) {
   WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
-                  WITH n,m ,COLLECT(l) AS PART
+                  OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
+                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount
                   ORDER BY n.eventDate, n.eventTime
                   SKIP ${skip}
                   LIMIT 5
-                  RETURN n,m,PART`
+                  RETURN n,m,PART, averageRating, reviewCount`
   try {
     return await runQuery(query)
       .then((result) => {
@@ -208,11 +218,13 @@ exports.get_newEvents_recommended = async function (user, skip) {
   WITH n,m,COLLECT(l) AS PART,l,u
   ORDER BY n.eventDate, n.eventTime
   OPTIONAL MATCH (n2: event) 
-  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2) AND datetime(n2.eventDate + 'T' + n2.eventTime) > datetime()
-  WITH n,m,l,n2,PART,u
+  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2) AND datetime(n2.eventDate + 'T' + n2.eventTime) > datetime() 
+  OPTIONAL MATCH (n) <-[:OWNER]- (owner:user)
+  OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()
+  WITH n,m,l,n2,PART,u,owner,avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount
   SKIP ${skip}
   LIMIT 5 
-  RETURN  n,m,n2,l,PART,u `
+  RETURN  n,owner,n2,averageRating, reviewCount,l,PART`
   try {
     return await runQuery(query)
       .then((result) => {

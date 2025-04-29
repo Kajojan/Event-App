@@ -152,6 +152,7 @@ function EventForm() {
         sx={{
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
+          marginTop:'40px'
         }}
       >
         Utwórz nowe Wydarzenie

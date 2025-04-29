@@ -131,9 +131,9 @@ function EventForm() {
           dispatch(addEvent({ event: { content: { ...data, address, detailAddress, eventImage: res.data.result, arrayType }, owner: user.email } }))
         })
       } else {
-        console.log({ event: { content: { ...data, address, detailAddress, eventImage: image }, owner: user.email } })
         dispatch(addEvent({ event: { content: { ...data, address, detailAddress, eventImage: image, arrayType }, owner: user.email } }))
       }
+      window.location.href = '/'
     } else {
       setError(true)
     }
@@ -161,6 +161,7 @@ function EventForm() {
         sx={{
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
+          marginTop:'40px'
         }}
       >
         Utwórz nowe Wydarzenie
@@ -172,7 +173,6 @@ function EventForm() {
           backgroundColor: '#f5f5f5',
           borderRadius: '20px',
           margin: '20px',
-
           justifyContent: 'space-around',
         }}
       >

@@ -58,6 +58,23 @@ exports.get_user = async function (email) {
   }
 }
 
+exports.get_starts = async function (email) {
+  const query = `MATCH (owner:user {email: "${email}"})-[:OWNER]->(e:event)<-[r:REVIE]-()
+RETURN   avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount`
+  const parameters = { email }
+  try {
+    const result = await runQuery(query, parameters)
+    return {
+      avg: result.records[0].get('averageRating'),
+      number: result.records[0].get('reviewCount').low,
+      isSuccessful: true,
+    }
+  } catch (error) {
+    console.log(error)
+    return { message: 'Error fetching user', isSuccessful: false }
+  }
+}
+
 exports.edit_profile = async function (email, data) {
   const setClause = Object.keys(data)
     .map((key) => `n.${key} = $${key}`)

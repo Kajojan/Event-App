@@ -8,13 +8,22 @@
     box-shadow: 0 4px 10px #527cf2;
   }
   .event_image {
+    position: relative;
     img {
       border-radius: 8%;
-      height: auto;
       height: 200px;
-      width: 100%;
+      width: 300px;
       object-fit: cover;
       object-position: center;
+    }
+    .EventDate{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1;
+      background-color: white;
+      padding: 2px 5px ;
+      border-radius: 20px;
     }
   }
   p {
@@ -27,6 +36,7 @@
     display: flex;
     flex-direction: column;
     text-align: start;
+    width: 280px;
     label{
       font-weight: 900;
     }
@@ -50,6 +60,7 @@
     margin-right: 30px;
   }
   .box {
+    padding: 5px;
     &:last-child {
       float: left;
     }

@@ -175,7 +175,6 @@ RETURN types, countries, cities, seats
           countries: record.get('countries'),
           cities: record.get('cities')
         }
-        console.log('res', filters, 'params', params)
         return {
           isSuccessful: true,
           filters: filters,
@@ -203,7 +202,7 @@ exports.get_filters_events = async function ({
 
   let query = `
     MATCH (e:event)
-    WHERE datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) > datetime()`
+    WHERE datetime({date: date(coalesce(e.eventDate, '1970-01-01')), time: time(coalesce(e.eventTime, '00:00') + ':00')}) > datetime()`
 
   if (types && types.length > 0) {
     query += ' AND ANY(t IN e.eventType WHERE t IN $types)'
@@ -226,8 +225,13 @@ exports.get_filters_events = async function ({
     query += ' AND datetime({date: date(e.eventDate), time: time(e.eventTime + \':00\')}) <= datetime($endDate)'
   }
 
-  query += ' RETURN e'
+  query += `
+  WITH e
+  MATCH (e)-[:OWNER]-(owner:user)
+  OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()
 
+  RETURN e, owner, r2,avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount
+  `
 
 
   const params = {
@@ -242,7 +246,6 @@ exports.get_filters_events = async function ({
   try {
     return await runQuery(query, params)
       .then((result) => {
-        console.log('res', result, 'params', params)
         return result
       })
       .catch((error) => {

@@ -24,6 +24,13 @@ p {
   p {
     margin: 10px;
   }
+  .rating_box{
+    margin-left: 25px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
   .peopleContainer {
     display: flex;
     justify-content: flex-end;

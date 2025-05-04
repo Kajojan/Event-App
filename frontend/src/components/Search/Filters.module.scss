@@ -4,6 +4,21 @@
     padding: 20px;
     box-shadow: none;
     flex: 1;
+    .filter_header_container{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        svg{
+            cursor: pointer;
+            padding-right: 30px;
+            padding-left: 10px;
+        }
+    }
+    .datePicker{
+        padding: 10px;
+        border-radius: 10px;
+        margin: 10px 0 10px 20px;
+    }
     h3, h2{
         font-weight: 700;
         text-transform: uppercase;

@@ -19,9 +19,29 @@ export const useParsedFilters = () => {
   }
 
   return {
-    selectedDateRanges: parseDateRanges(), // => array of [Date, Date]
+    selectedDateRanges: parseDateRanges(),
     selectedTypes: getArrayParam('types'),
     selectedCountries: getArrayParam('countries'),
     selectedCities: getArrayParam('cities'),
+    selectedStar: getArrayParam('star')
   }
+}
+
+
+export const getFilterName = (key)=>{
+  switch (key) {
+  case 'cities':
+    return 'Miasta'
+  case 'countries':
+    return 'Kraje'
+  case 'seats':
+    return 'Liczba miejsc'
+  case 'star':
+    return 'średnie oceny organizatora'
+  case 'types':
+    return 'Typy wydarzeń'
+  default:
+    return key
+  }
+
 }

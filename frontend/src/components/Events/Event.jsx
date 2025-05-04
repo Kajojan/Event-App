@@ -20,7 +20,7 @@ const Event = ({ item, onClick, className = '' }) => {
         <Box className={style.event_content}>
           <label> Organizator: </label>
           <a>{item?._fields[1]?.properties?.nickname} </a>
-          <Box sx={{ marginLeft: '25px', marginBottom:'10px', display:'flex', justifyContent:'start', alignContent:'center' }}>
+          <Box className={style.rating_box}>
             <Rating
               sx={{
                 fontSize: '18px'

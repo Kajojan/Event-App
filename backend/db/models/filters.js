@@ -41,9 +41,17 @@ CALL {
   RETURN collect({ value: seat, count: count }) AS seats
 }
 
-RETURN types, countries, cities, seats
+CALL {
+  MATCH (e:event)
+  OPTIONAL MATCH (n:user)-[:OWNER]->(:event)<-[r2:REVIE]-()
+  WHERE datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) < datetime()
+  WITH n, avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount,  count(*) AS count
+  WHERE  averageRating > 0
+  RETURN collect({ value: averageRating, count: count}) AS eventRatings  
+}
 
-    `
+RETURN types, countries, cities, seats, eventRatings`
+
   try {
     return await runQuery(query)
       .then((result) => {
@@ -52,7 +60,8 @@ RETURN types, countries, cities, seats
           types: record.get('types'),
           seats: record.get('seats'),
           countries: record.get('countries'),
-          cities: record.get('cities')
+          cities: record.get('cities'),
+          stars: record.get('eventRatings')
         }
         return {
           isSuccessful: true,
@@ -70,23 +79,31 @@ RETURN types, countries, cities, seats
 }
 
 
-exports.get_filters_arg = async function ({ types = [], countries: country = [], cities: city = [], startDate = null, endDate = null, seats = [] }) {
-
-  const query3 = `
-// Typy wydarzeń
+exports.get_filters_arg = async function ({
+  types = [],
+  countries: country = [],
+  cities: city = [],
+  startDate = null,
+  endDate = null,
+  seats = [],
+  star = [0] }) {
+  const query = `
+// Typy
 CALL {
-  MATCH (e:event)
-  WHERE (
-      ($startDate IS NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) > datetime()) OR
-      ($startDate IS NOT NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate))
-    )
-    AND ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate))
-    AND (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types))
-    AND (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country))
-    AND (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city))
-    AND (size($seats) = 0 OR e.seat IN $seats)
+  MATCH (e:event)<-[:OWNER]-(n:user)
+  WHERE 
+    ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate)) AND
+    ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate)) AND
+    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
+    (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
+    (size($seats) = 0 OR e.seat IN $seats)
+  OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
+  WHERE datetime({date: date(e2.eventDate), time: time(e2.eventTime + ':00')}) < datetime()
+  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   UNWIND e.eventType AS type
   WITH type, count(DISTINCT e) AS eventCount
   RETURN collect({ value: type, count: eventCount }) AS types
@@ -94,18 +111,20 @@ CALL {
 
 // Kraje
 CALL {
-  MATCH (e:event)
-  WHERE (
-      ($startDate IS NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) > datetime()) OR
-      ($startDate IS NOT NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate))
-    )
-    AND ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate))
-    AND (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types))
-    AND (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country))
-    AND (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city))
-    AND (size($seats) = 0 OR e.seat IN $seats)
+  MATCH (e:event)<-[:OWNER]-(n:user)
+  WHERE 
+    ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate)) AND
+    ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate)) AND
+    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
+    (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
+    (size($seats) = 0 OR e.seat IN $seats)
+  OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
+  WHERE datetime({date: date(e2.eventDate), time: time(e2.eventTime + ':00')}) < datetime()
+  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH [pair IN split(e.detailAddress, "; ") WHERE trim(split(pair, ":")[0]) = 'country' | trim(split(pair, ":")[1])] AS countries, e
   UNWIND countries AS country
   WITH country, count(DISTINCT e) AS eventCount
@@ -114,46 +133,71 @@ CALL {
 
 // Miasta
 CALL {
-  MATCH (e:event)
-  WHERE (
-      ($startDate IS NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) > datetime()) OR
-      ($startDate IS NOT NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate))
-    )
-    AND ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate))
-    AND (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types))
-    AND (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country))
-    AND (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city))
-    AND (size($seats) = 0 OR e.seat IN $seats)
+  MATCH (e:event)<-[:OWNER]-(n:user)
+  WHERE 
+    ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate)) AND
+    ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate)) AND
+    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
+    (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
+    (size($seats) = 0 OR e.seat IN $seats)
+  OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
+  WHERE datetime({date: date(e2.eventDate), time: time(e2.eventTime + ':00')}) < datetime()
+  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH [pair IN split(e.detailAddress, "; ") WHERE trim(split(pair, ":")[0]) = 'locality' | trim(split(pair, ":")[1])] AS cities, e
   UNWIND cities AS city
   WITH city, count(DISTINCT e) AS eventCount
   RETURN collect({ value: city, count: eventCount }) AS cities
 }
 
-// Miejsca (seats)
+// Miejsca
 CALL {
-  MATCH (e:event)
-  WHERE (
-      ($startDate IS NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) > datetime()) OR
-      ($startDate IS NOT NULL AND datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate))
-    )
-    AND ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate))
-    AND (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types))
-    AND (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country))
-    AND (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
-         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city))
-    AND (size($seats) = 0 OR e.seat IN $seats)
-  WITH e.seat AS seat, e
-  WITH seat, count(DISTINCT e) AS eventCount
+  MATCH (e:event)<-[:OWNER]-(n:user)
+  WHERE 
+    ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate)) AND
+    ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate)) AND
+    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
+    (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
+    (size($seats) = 0 OR e.seat IN $seats)
+  OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
+  WHERE datetime({date: date(e2.eventDate), time: time(e2.eventTime + ':00')}) < datetime()
+  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
+  WITH e.seat AS seat, count(DISTINCT e) AS eventCount
   RETURN collect({ value: seat, count: eventCount }) AS seats
 }
 
-RETURN types, countries, cities, seats
+// Oceny
+CALL {
+  MATCH (e:event)<-[:OWNER]-(n:user)
+  WHERE 
+    ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) >= datetime($startDate)) AND
+    ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00')}) <= datetime($endDate)) AND
+    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
+    (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
+        WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
+    (size($seats) = 0 OR e.seat IN $seats)
+  WITH DISTINCT n,e
+
+  OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
+  WHERE datetime({date: date(e2.eventDate), time: time(e2.eventTime + ':00')}) < datetime()
+  WITH n, avg(toFloat(r2.star)) AS averageRating, count(DISTINCT e) AS eventCount
+  WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
+  RETURN collect({ value: averageRating, count: eventCount }) AS averageRatings
+}
+
+RETURN types, countries, cities, seats, averageRatings
 
 `
+
 
   const params = {
     types,
@@ -161,11 +205,13 @@ RETURN types, countries, cities, seats
     city,
     startDate,
     endDate,
-    seats
+    seats,
+    star
   }
+  console.log(params)
 
   try {
-    return await runQuery(query3, params)
+    return await runQuery(query, params)
       .then((result) => {
 
         const record = result.records[0]
@@ -173,7 +219,8 @@ RETURN types, countries, cities, seats
           types: record.get('types'),
           seats: record.get('seats'),
           countries: record.get('countries'),
-          cities: record.get('cities')
+          cities: record.get('cities'),
+          star: record.get('averageRatings')
         }
         return {
           isSuccessful: true,
@@ -197,7 +244,8 @@ exports.get_filters_events = async function ({
   cities: city = [],
   startDate = null,
   endDate = null,
-  seats = [] })
+  seats = [],
+  star = [] })
 {
 
   let query = `
@@ -228,10 +276,17 @@ exports.get_filters_events = async function ({
   query += `
   WITH e
   MATCH (e)-[:OWNER]-(owner:user)
-  OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()
-
-  RETURN e, owner, r2,avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount
+  OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()  
+  WITH e, owner, r2, avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount
   `
+
+  if (star && Array.isArray(star) && star.length === 2) {
+
+    query += ' WHERE averageRating >= $minStar AND averageRating <= $maxStar'
+  }
+
+  query += `
+  RETURN e, owner, r2, averageRating, reviewCount`
 
 
   const params = {
@@ -240,7 +295,9 @@ exports.get_filters_events = async function ({
     city,
     startDate,
     endDate,
-    seats
+    seats,
+    minStar: star ? star[0] : null,
+    maxStar: star ? star[1] : null
   }
 
   try {

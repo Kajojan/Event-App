@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
-import { Box } from '@mui/material'
+import { Box, Button, Rating } from '@mui/material'
 import { useEffect, useState } from 'react'
 import apiData from '../../services/apiData'
 import { useNavigate } from 'react-router-dom'
 import DatePicker from 'react-datepicker'
 import { pl } from 'date-fns/locale/pl'
 import 'react-datepicker/dist/react-datepicker.css'
-import { useParsedFilters } from '../helper/FiltersUrl'
+import { getFilterName, useParsedFilters } from '../helper/FiltersUrl'
 import style from './Filters.module.scss'
-import PropTypes from 'prop-types'
+import PropTypes, { object } from 'prop-types'
 
 
 
@@ -18,16 +18,17 @@ const Filters = ({ setEvent }) =>{
   } = useParsedFilters()
 
   const navigate = useNavigate()
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useState(
+    { types: [],
+      countries: [],
+      cities: [],
+      startDate: null,
+      endDate: null,
+      seats: [],
+      star: [] })
   const searchParams = new URLSearchParams(window.location.search)
   const [selectedDate, setSelectedDate] = useState(selectedDateRanges[0] || [null, null])
   const [selectedValues, setSelectedValues] = useState({})
-
-  useEffect(()=>{
-    apiData.filters().then((res)=>{
-      setFilters(res.data.filters)
-    })
-  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -35,6 +36,8 @@ const Filters = ({ setEvent }) =>{
 
     Object.keys(filters).forEach((key) => {
       const paramValue = params.get(key)
+      console.log('params', key, paramValue)
+
       if (paramValue) {
         updatedValues[key] = paramValue.split(',')
       } else {
@@ -48,23 +51,23 @@ const Filters = ({ setEvent }) =>{
       updatedValues.startDate = start || null
       updatedValues.endDate = end || null
     } else {
-      updatedValues.startDate = null
+      updatedValues.startDate = new Date()
       updatedValues.endDate = null
     }
 
-
     apiData.filtersArg({ ...updatedValues }).then((res)=>{
       setFilters(res.data.filters)
+      console.log('filteraArg', res.data.filters)
+
     })
     apiData.filtersEvents({ ...updatedValues }).then((res)=>{
       console.log('data', res.data)
       if (res.data) {
         setEvent(res.data)
       }
-
     })
 
-    console.log(updatedValues)
+    console.log('updated', updatedValues)
 
     setSelectedValues(updatedValues)
 
@@ -89,11 +92,6 @@ const Filters = ({ setEvent }) =>{
     } else {
       searchParams.delete(key)
     }
-
-
-    // apiData.filtersArg({})
-    console.log(searchParams.toString())
-
     navigate(`?${searchParams.toString()}`)
   }
 
@@ -118,37 +116,70 @@ const Filters = ({ setEvent }) =>{
 
   return (
     <Box className={style.filters_container}>
-      <h2>Filtrowanie</h2>
+      <Box className={style.filter_header_container}>
+        <h2>Filtrowanie</h2>
+        <Button onClick={()=>{navigate(''), setSelectedDate([null, null]) }}>
+          wyszyść
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.146 2.146a.5.5 0 011 0L8 6.293l4.854-4.147a.5.5 0 01.707.707L8.707 7l4.854 4.854a.5.5 0 01-.707.707L8 7.707l-4.854 4.854a.5.5 0 01-.707-.707L7.293 7 2.146 2.854a.5.5 0 010-.707z"/>
+          </svg>
+        </Button>
+
+      </Box>
+      <Box>
+        <h3>Data</h3>
+        <DatePicker
+          className={style.datePicker}
+          locale={pl}
+          onChange={(date) => {handleDateChange(date)}}
+          placeholderText="Wybierz datę"
+          dateFormat="yyyy-MM-dd"
+          calendarStartDay={1}
+          selectsRange={true}
+          startDate={selectedDate?.[0]}
+          endDate={selectedDate?.[1]}
+          minDate={new Date()}
+        />
+      </Box>
       {filters && Object.entries(filters).map(([key, values]) => (
         <div key={key}>
-          <h3>{key}</h3>
+          <h3>{getFilterName(key)}</h3>
           <ul>
-            {values.map(({ count, value }, i) => (
-              <li key={i}>
-                <label key={i}>
-                  <input
-                    type="checkbox"
-                    checked={selectedValues[key] && selectedValues[key].includes(`${value}`)}
-                    onChange={() => handleClick(key, `${value}`)}
-                  />
-                  <p> { !value.low ? value : value.low} </p>
-                  <a>{count.low}</a>
-                </label>
-              </li>
-            ))}
+            {values?.length > 0 && values.map(({ count, value }, i) => {
+              if (key == 'star') {
+                return (
+                  <li key={i}>
+                    <label key={i}>
+                      <input
+                        type="checkbox"
+                        checked={selectedValues[key] && selectedValues[key].includes(`${value}`)}
+                        onChange={() => handleClick(key, `${value}`)}
+                      />
+                      <Rating
+                        name="read-only-rating"
+                        value={value}/>
+                      <a>{count.low}</a>
+                    </label>
+                  </li>
+                )
+              }
+              return (
+                <li key={i}>
+                  <label key={i}>
+                    <input
+                      type="checkbox"
+                      checked={selectedValues[key] && selectedValues[key].includes(`${value}`)}
+                      onChange={() => handleClick(key, `${value}`)}
+                    />
+                    <p> {value} </p>
+                    <a>{count.low}</a>
+                  </label>
+                </li>
+              )}
+            )}
           </ul>
         </div>
       ))}
-      <DatePicker
-        locale={pl}
-        onChange={(date) => {handleDateChange(date)}}
-        placeholderText="Wybierz datę"
-        dateFormat="yyyy-MM-dd"
-        calendarStartDay={1}
-        selectsRange={true}
-        startDate={selectedDate?.[0]}
-        endDate={selectedDate?.[1]}
-      />
     </Box>
   )
 

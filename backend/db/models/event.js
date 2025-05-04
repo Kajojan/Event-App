@@ -128,8 +128,8 @@ exports.edit_event = async function (id, data) {
 
 
 
-exports.get_newEvents_yourComing = async function (user, skip) {
-  const query = `MATCH (:user {email: "${user}"}) - [r:OWNER] -> (m:event)
+exports.get_newEvents_yourComing = async function (user, skip, type) {
+  const query = `MATCH (:user {email: "${user}"}) - [r:${type}] -> (m:event)
   WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m) <- [:OWNER] - (n:user)
@@ -142,6 +142,8 @@ exports.get_newEvents_yourComing = async function (user, skip) {
   try {
     return await runQuery(query)
       .then((result) => {
+        console.log(result)
+
         return result.records
       })
       .catch((error) => {

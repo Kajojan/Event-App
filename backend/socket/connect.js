@@ -66,7 +66,7 @@ module.exports = (io) => {
       })
 
       socket.on('get_new_event', async (data) => {
-        const { name, skip, username } = data
+        const { name, skip, username, type } = data
         switch (name) {
         case 'popular': {
           const newEventPopular = await get_newEvents_popular(skip)
@@ -75,7 +75,7 @@ module.exports = (io) => {
         }
 
         case 'yourincomming': {
-          const newEvent_yourCOming = await get_newEvents_yourComing(username, skip)
+          const newEvent_yourCOming = await get_newEvents_yourComing(username, skip, type)
           socket.emit('receive_new_event_yourComing', newEvent_yourCOming)
           break
         }

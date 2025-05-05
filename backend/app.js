@@ -12,6 +12,7 @@ const user_router = require('./routes/user_routes')
 const qrcode_router = require('./routes/qrcode_routes')
 const aws_router = require('./aws/aws_router')
 const no_auth_req = require('./routes/no_auth_req')
+const email_router = require('./routes/email_routes')
 
 const { auth } = require('express-oauth2-jwt-bearer')
 
@@ -54,6 +55,8 @@ app.use('/api/qr', jwtCheck, qrcode_router)
 app.use('/api/event', jwtCheck, event_router)
 app.use('/api/user', jwtCheck, user_router)
 app.use('/api/aws', jwtCheck, aws_router)
+app.use('/api/send-email', email_router)
+
 
 // const fs = require('fs')
 // const https = require('https')

@@ -1,7 +1,4 @@
-const { param } = require('../../routes/no_auth_req')
 const { runQuery } = require('../db_connect')
-
-
 
 exports.get_filters = async function () {
   const query = `

@@ -41,7 +41,7 @@ const Filters = ({ setEvent }) =>{
       if (paramValue) {
         updatedValues[key] = paramValue.split(',')
       } else {
-        updatedValues[key] = []
+        key == 'star' ? updatedValues[key] = [0] : updatedValues[key] = []
       }
     })
     const dateRanges = params.get('date')
@@ -51,7 +51,9 @@ const Filters = ({ setEvent }) =>{
       updatedValues.startDate = start || null
       updatedValues.endDate = end || null
     } else {
-      updatedValues.startDate = new Date()
+      const date = new Date()
+      date.setHours(date.getHours() + 2)
+      updatedValues.startDate = date
       updatedValues.endDate = null
     }
 

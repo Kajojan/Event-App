@@ -17,7 +17,7 @@ const RecomendedView = () => {
   const connectAndCollect = (valueSkip) => {
     socket.on('receive_new_event_reco', (data) => {
       setEvents(prevEvents => [...prevEvents, ...data])
-      console.log(data)
+      console.log('receive_new_event_reco', data)
 
       socket.off('receive_new_event_reco')
     })

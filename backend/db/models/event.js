@@ -130,7 +130,7 @@ exports.edit_event = async function (id, data) {
 
 exports.get_newEvents_yourComing = async function (user, skip, type) {
   const query = `MATCH (:user {email: "${user}"}) - [r:${type}] -> (m:event)
-  WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
+  WHERE datetime(m.eventDate + 'T' + m.eventTime + '+02:00') > datetime({timezone: 'Europe/Warsaw'})
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m) <- [:OWNER] - (n:user)
                   OPTIONAL MATCH (n)-[:OWNER]->(:event)<-[r2:REVIE]-()
@@ -161,7 +161,7 @@ exports.get_newEvents_yourComing = async function (user, skip, type) {
 
 exports.get_newEvents_popular = async function (skip) {
   const query = `MATCH (n: event )  
-                WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
+                WHERE datetime(n.eventDate + 'T' + n.eventTime + '+02:00') > datetime({timezone: 'Europe/Warsaw'})
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
@@ -186,7 +186,7 @@ exports.get_newEvents_popular = async function (skip) {
 }
 exports.get_newEvents_coming = async function (skip) {
   const query = `MATCH (n: event )
-  WHERE datetime(n.eventDate + 'T' + n.eventTime) > datetime()
+  WHERE datetime(n.eventDate + 'T' +  n.eventTime + '+02:00') > datetime({timezone: 'Europe/Warsaw'})
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
@@ -213,14 +213,14 @@ exports.get_newEvents_coming = async function (skip) {
 // Rkomendacje n jeśli nie ma to wyświetlamy n2 jako " podobne "
 exports.get_newEvents_recommended = async function (user, skip) {
   const query = `MATCH (u:user {email: "${user}"}) - [r:PART|OWNER] -> (m:event)
-   WHERE datetime(m.eventDate + 'T' + m.eventTime) > datetime()
+   WHERE datetime(m.eventDate + 'T' + m.eventTime + '+02:00' ) > datetime({timezone: 'Europe/Warsaw'})
   OPTIONAL MATCH (m) <- [:OWNER|PART] - (l:user)
   OPTIONAL MATCH (n: event) <- [:OWNER|PART] - (l) 
   WHERE NOT (u)-[:OWNER|PART]-(n)
   WITH n,m,COLLECT(l) AS PART,l,u
   ORDER BY n.eventDate, n.eventTime
   OPTIONAL MATCH (n2: event) 
-  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2) AND datetime(n2.eventDate + 'T' + n2.eventTime) > datetime() 
+  WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2) AND datetime(n2.eventDate + 'T' + n2.eventTime + '+02:00') > datetime({timezone: 'Europe/Warsaw'}) 
   OPTIONAL MATCH (n) <-[:OWNER]- (owner:user)
   OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()
   WITH n,m,l,n2,PART,u,owner,avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount

@@ -57,7 +57,18 @@ const functions = {
   },
   find_all_revied: async function (email) {
     try {
-      const res = await runQuery(`MATCH (n: user {email: '${email}' })- [r:PART] -> (m:event)  WHERE NOT (n)-[:REVIE]->(m) AND datetime({date: date(coalesce(m.eventDate, '1970-01-01')), time: time(coalesce(m.eventTime, '00:00') + ':00')}) < datetime() RETURN m`)
+      const res = await runQuery(`
+        MATCH (n: user {email: '${email}' })- [r:PART] -> (m:event)  
+        WHERE NOT (n)-[:REVIE]->(m) 
+        AND datetime({
+          date: date(coalesce(m.eventDate, '1970-01-01')),
+          time: time({
+            hour: toInteger(split(coalesce(m.eventTime, '00:00'), ':')[0]),
+            minute: toInteger(split(coalesce(m.eventTime, '00:00'), ':')[1])
+          }),
+          timezone: 'Europe/Warsaw'
+        }) < datetime({timezone: 'Europe/Warsaw'})
+        RETURN m`)
       return { isSuccessful: true, data: res.records }
     } catch (error) {
       console.log(error)

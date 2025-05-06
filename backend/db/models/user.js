@@ -103,9 +103,9 @@ exports.edit_profile = async function (email, data) {
 }
 
 exports.get_relations_count = async function (email) {
-  console.log(email)
   const query = `MATCH (n:event)<-[:PART]-(l:user)
-  WHERE l.email = '${email}' AND  date(n.eventDate) < date(datetime())
+  WHERE l.email = '${email}' AND  
+    date(datetime({date: date(n.eventDate), timezone: 'Europe/Warsaw'})) < date(datetime({timezone: 'Europe/Warsaw'}))
     WITH n, COUNT (n) AS partCount,l
     OPTIONAL MATCH (n2:event)<-[:OWNER]-(l)
     RETURN COUNT(DISTINCT 1) AS ownerCount, SUM(partCount) AS partCount`

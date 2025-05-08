@@ -29,12 +29,13 @@ const Home = () => {
     <Box>
       <Typography
         variant="h1"
-        fontWeight="500"
+        fontWeight="600"
         className={style.Typography_home}
-        style={{ marginTop:'30px' }}
         sx={{
+          fontFamily: '"Noto Sans", sans-serif',
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
+          marginTop:'30px'
         }}
       >
         EventApp

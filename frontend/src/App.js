@@ -15,8 +15,6 @@ function App() {
         dispatch(Notification(data))
       })
       socket.on('addRevie', (data) => {
-        console.log('revie', data)
-
         dispatch(AddRevie(data))
       })
     }

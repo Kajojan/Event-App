@@ -47,6 +47,7 @@ const Notifications = () => {
       fontWeight="500"
       className={styles.Typography_home}
       sx={{
+        fontFamily: 'Montserrat, sans-serif',
         fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
         paddingLeft: [0, 0, 3, 0],
         marginTop: '40px'
@@ -54,7 +55,7 @@ const Notifications = () => {
     >
             Powiadomienia
     </Typography>
-    <Grid container direction='row' justifyContent="space-between" >
+    <Grid container direction='row' justifyContent="space-between" alignContent='center' >
       <Box className={styles.notificationContainer}>
         { notifications && notifications?.length == 0 &&
                 <a style={{ width: 'fit-content', padding: '15px', marginTop: '20px' }}>{'Tu będą powiadomienia o nadchodzących wydarzeniach'}</a>
@@ -75,8 +76,6 @@ const Notifications = () => {
                 <a style={{ width: 'fit-content', padding: '15px', marginTop: '20px' }}>{'Tu będą powiadomienia o ocenie poprzednich wydarzeniach'}</a>
         }
         {revies && revies?.length > 0 && revies.map((el, index) => {
-          console.log(revies)
-
           return (
             <Box
               key={index}

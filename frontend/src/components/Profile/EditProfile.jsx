@@ -20,14 +20,12 @@ const EditProfile = () => {
   useEffect(() => {
     apiData.getOnlyPersonData(user.email).then((res)=>{
       setData(res.data.user[0]._fields[0].properties)
-      console.log(res.data.user[0]._fields[0].properties)
     }).catch((err)=>{
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log(isAuthenticated)
 
   if (!isAuthenticated) {
     loginWithRedirect()
@@ -43,9 +41,10 @@ const EditProfile = () => {
     <Box>
       <Typography
         variant="h1"
-        fontWeight="500"
+        fontWeight="600"
         className={styles.Typography_home}
         sx={{
+          fontFamily: '"Noto Sans", sans-serif',
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
         }}

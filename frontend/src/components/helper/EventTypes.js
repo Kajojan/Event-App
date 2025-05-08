@@ -1,6 +1,6 @@
 export const eventTypes = [
   // Wydarzenia kulturalne
-  'Konscert',
+  'Koncert',
   'Teatr',
   'Wystawa',
   'Festiwal',

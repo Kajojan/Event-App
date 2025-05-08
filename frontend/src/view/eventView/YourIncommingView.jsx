@@ -33,8 +33,6 @@ const YourIncommingView = () => {
         })
         return uniqueEvents
       })
-      console.log(data)
-
       socket.off('receive_new_event_yourComing')
 
     })
@@ -56,8 +54,9 @@ const YourIncommingView = () => {
       <Header></Header>
       <Typography
         variant="h1"
-        fontWeight="500"
+        fontWeight="600"
         sx={{
+          fontFamily: '"Noto Sans", sans-serif',
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
           marginTop:'40px',
@@ -87,9 +86,6 @@ const YourIncommingView = () => {
       </>
       }
       {open && <YourIncomingCalendar events={events}/>}
-
-
-
     </div>
   )
 }

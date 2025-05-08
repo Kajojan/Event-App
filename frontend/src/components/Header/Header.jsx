@@ -22,7 +22,6 @@ const Header = () => {
 
   useEffect(() => {
     if (isAuthenticated && (socket == null || !socket?.connected)) {
-      console.log(user)
       dispatch(connect({ user }))
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

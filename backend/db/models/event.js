@@ -213,10 +213,9 @@ exports.get_newEvents_coming = async function (skip) {
 // Rkomendacje n jeśli nie ma to wyświetlamy n2 jako " podobne "
 exports.get_newEvents_recommended = async function (user, skip) {
   const query = `MATCH (u:user {email: "${user}"}) - [r:PART|OWNER] -> (m:event)
-   WHERE datetime(m.eventDate + 'T' + m.eventTime + '+02:00' ) > datetime({timezone: 'Europe/Warsaw'})
   OPTIONAL MATCH (m) <- [:OWNER|PART] - (l:user)
   OPTIONAL MATCH (n: event) <- [:OWNER|PART] - (l) 
-  WHERE NOT (u)-[:OWNER|PART]-(n)
+  WHERE NOT (u)-[:OWNER|PART]-(n) AND datetime(n.eventDate + 'T' + n.eventTime + '+02:00' ) > datetime({timezone: 'Europe/Warsaw'})
   WITH n,m,COLLECT(l) AS PART,l,u
   ORDER BY n.eventDate, n.eventTime
   OPTIONAL MATCH (n2: event) 

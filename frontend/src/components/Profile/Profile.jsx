@@ -16,7 +16,6 @@ const Home = () => {
 
   const getStats = () => {
     apiData.getStatsUser(user.email).then((res) => {
-      console.log(res.data)
       setStats([{ name: 'Wziałeś udział w wydarzeniach', value: res.data.values[1].low }, { name: 'Stworzyłeś wydarzeń', value: res.data.values[0].low }])
       setSeeStats(!seeStats)
       setStars({ avg: res.data.avg, number: res.data.number })
@@ -26,6 +25,7 @@ const Home = () => {
     apiData.getOnlyPersonData(user.email).then((res) => {
       setUserData(res.data.user.properties)
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,9 +65,10 @@ const Home = () => {
     <Box data-testid="profile-1">
       <Typography
         variant="h1"
-        fontWeight="500"
+        fontWeight="600"
         className={styles.Typography_home}
         sx={{
+          fontFamily: '"Noto Sans", sans-serif',
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
           marginTop:'40px'

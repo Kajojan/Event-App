@@ -29,7 +29,7 @@ const EventList = ({ events, name }) => {
   const [sortedEvents, setSortedEvents] = useState(duplicateNull(events))
   const [sortOrder, setSortOrder] = useState('asc')
   const [sortBy, setSortBy] = useState('name')
-  const [layout, setLayout] = useState('2col')
+  const [layout, setLayout] = useState(window.innerWidth > 1300 ? '2col' : '')
   const navigate = useNavigate()
 
   const handleSort_Date = (property) => {
@@ -97,10 +97,15 @@ const EventList = ({ events, name }) => {
     case '2col':
       return { xs: 12, sm: 6 }
     case '3col':
-      return { xs: 12, sm: 4 }
+      if (window.innerWidth > 1300) {
+        return { xs: 12, sm: 4 }
+      } else {
+        return { xs: 12, sm: 6 }
+      }
     default:
       return { xs: 12, sm: 7 }
     }
+
   }
   useEffect(() => {
     setSortedEvents(duplicateNull(events))
@@ -109,9 +114,10 @@ const EventList = ({ events, name }) => {
     <Box style={{ flex: '3' }}>
       <Typography
         variant="h1"
-        fontWeight="500"
+        fontWeight="600"
         className={styles.Typography_home}
         sx={{
+          fontFamily: '"Noto Sans", sans-serif',
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
           marginTop:'40px'

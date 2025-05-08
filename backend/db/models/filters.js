@@ -130,7 +130,7 @@ WHERE datetime({
   }),
   timezone: 'Europe/Warsaw'
 }) < datetime({timezone: 'Europe/Warsaw'})
-  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   UNWIND e.eventType AS type
   WITH type, count(DISTINCT e) AS eventCount
@@ -158,7 +158,7 @@ WHERE datetime({
   }),
   timezone: 'Europe/Warsaw'
 }) < datetime({timezone: 'Europe/Warsaw'})
-  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH [pair IN split(e.detailAddress, "; ") WHERE trim(split(pair, ":")[0]) = 'country' | trim(split(pair, ":")[1])] AS countries, e
   UNWIND countries AS country
@@ -187,7 +187,7 @@ WHERE datetime({
   }),
   timezone: 'Europe/Warsaw'
 }) < datetime({timezone: 'Europe/Warsaw'})
-  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH [pair IN split(e.detailAddress, "; ") WHERE trim(split(pair, ":")[0]) = 'locality' | trim(split(pair, ":")[1])] AS cities, e
   UNWIND cities AS city
@@ -216,7 +216,7 @@ WHERE datetime({
   }),
   timezone: 'Europe/Warsaw'
 }) < datetime({timezone: 'Europe/Warsaw'})
-  WITH e, avg(toFloat(r2.star)) AS averageRating
+  WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH e.seat AS seat, count(DISTINCT e) AS eventCount
   RETURN collect({ value: seat, count: eventCount }) AS seats
@@ -245,15 +245,16 @@ WHERE datetime({
   }),
   timezone: 'Europe/Warsaw'
 }) < datetime({timezone: 'Europe/Warsaw'})
-  WITH n, avg(toFloat(r2.star)) AS averageRating, count(DISTINCT e) AS eventCount
+  WITH n,e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
-  RETURN collect({ value: averageRating, count: eventCount }) AS averageRatings
+  WITH averageRating, count(DISTINCT e) AS eventCount
+
+  RETURN collect(DISTINCT { value: averageRating, count: eventCount }) AS averageRatings
 }
 
 RETURN types, countries, cities, seats, averageRatings
 
 `
-
 
   const params = {
     types,
@@ -300,7 +301,9 @@ exports.get_filters_events = async function ({
   startDate = null,
   endDate = null,
   seats = [],
-  star = [0] })
+  star = [0],
+  skip = 0,
+  limit = 5 })
 {
 
   let query = `
@@ -345,7 +348,7 @@ exports.get_filters_events = async function ({
   WITH e
   MATCH (e)-[:OWNER]-(owner:user)
   OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()  
-  WITH e, owner, r2, avg(toFloat(r2.star)) AS averageRating, COUNT(r2) AS reviewCount
+  WITH e, owner, r2, coalesce(avg(toFloat(r2.star)), 0) AS averageRating, COUNT(r2) AS reviewCount
 `
 
   if (star && Array.isArray(star)) {
@@ -353,6 +356,8 @@ exports.get_filters_events = async function ({
   }
 
   query += `
+  SKIP toInteger($skip)
+  LIMIT toInteger($limit)
   RETURN e, owner, r2, averageRating, reviewCount
 `
 
@@ -365,6 +370,8 @@ exports.get_filters_events = async function ({
     seats,
     star,
     minStar: star ? star[0] : null,
+    skip,
+    limit
   }
 
   console.log(query, params)

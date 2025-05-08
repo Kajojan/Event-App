@@ -21,6 +21,18 @@ const apiClient = axios.create({
   },
 })
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.href = '/event'
+    }
+    return Promise.reject(error)
+  }
+)
+
 export default {
   login(user) {
     return apiClient.post('/login', user)

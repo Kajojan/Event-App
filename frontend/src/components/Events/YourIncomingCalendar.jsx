@@ -48,8 +48,6 @@ export default function YourIncomingCalendar({ events }) {
   const tileContent = ({ date, view }) => {
     const key = formatDateKey(date)
     if (view === 'month' && eventsData[key] && Array.isArray(eventsData[key])) {
-      console.log(key)
-
       return (
         <div className="event-dot" style={{ width:'100%' }}>
           <ul style={{ listStyle:'none', padding: 0 }}>

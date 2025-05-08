@@ -89,7 +89,6 @@ function EventForm() {
   const see = (data) => {
     const { eventImage, ...dataWithoutImage } = data
     const Eventdata = image ? { ...data, eventImage: image } : dataWithoutImage
-    console.log(image, eventImage, Eventdata)
     if (address != '') {
       setFormData({
         '_fields': [
@@ -107,7 +106,6 @@ function EventForm() {
           }
         ]
       })
-      console.log(formData, data)
     }
   }
   const onSubmit = (data) => {
@@ -121,7 +119,6 @@ function EventForm() {
           apiData.editEvent(id, { ...data, address, eventImage: res.data.result })
         })
       } else {
-        console.log({ event: { content: { ...data, address, eventImage: image }, owner: user.email } })
         apiData.editEvent(id, { ...data, address, eventImage: image }).then((_res)=>{
           navigate(`/event/${id}`)
         })
@@ -147,9 +144,10 @@ function EventForm() {
     <Box>
       <Typography
         variant="h1"
-        fontWeight="500"
+        fontWeight="600"
         className={style.Typography_home}
         sx={{
+          fontFamily: '"Noto Sans", sans-serif',
           fontSize: ['xx-large', 'xx-large', 'xxx-large', 'xxx-large'],
           paddingLeft: [0, 0, 3, 0],
           marginTop:'40px'

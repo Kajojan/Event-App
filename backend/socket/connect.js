@@ -111,6 +111,8 @@ module.exports = (io) => {
 
       socket.on('get_new_event', async (data) => {
         const { name, skip, username, type } = data
+        console.log(name)
+
         switch (name) {
         case 'popular': {
           const newEventPopular = await get_newEvents_popular(skip)

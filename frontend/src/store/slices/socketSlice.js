@@ -16,7 +16,6 @@ const socketSlice = createSlice({
   reducers: {
     IntNotification(state, action) {
       state.isNotification = action.payload
-      console.log(state.isNotification)
     },
     Notification(state, action) {
       state.notification = [...state.notification, action.payload]
@@ -31,7 +30,6 @@ const socketSlice = createSlice({
       state.isNotification = state.isNotification + 1
     },
     connect(state, action) {
-      console.log('connect: ')
       const { email, name, nickname } = action.payload.user
       const socket = io(`${process.env.REACT_APP_API_URL}/connect`, {
         auth: { token: auth0Cache },

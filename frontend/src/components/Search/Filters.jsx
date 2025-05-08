@@ -12,7 +12,7 @@ import PropTypes, { object } from 'prop-types'
 
 
 
-const Filters = ({ setEvent }) =>{
+const Filters = ({ skip, setEvent, event }) =>{
   const {
     selectedDateRanges,
   } = useParsedFilters()
@@ -29,14 +29,13 @@ const Filters = ({ setEvent }) =>{
   const searchParams = new URLSearchParams(window.location.search)
   const [selectedDate, setSelectedDate] = useState(selectedDateRanges[0] || [null, null])
   const [selectedValues, setSelectedValues] = useState({})
-
+  const [open, setOpen] = useState(true)
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     let updatedValues = {}
 
     Object.keys(filters).forEach((key) => {
       const paramValue = params.get(key)
-      console.log('params', key, paramValue)
 
       if (paramValue) {
         updatedValues[key] = paramValue.split(',')
@@ -59,22 +58,17 @@ const Filters = ({ setEvent }) =>{
 
     apiData.filtersArg({ ...updatedValues }).then((res)=>{
       setFilters(res.data.filters)
-      console.log('filteraArg', res.data.filters)
-
     })
-    apiData.filtersEvents({ ...updatedValues }).then((res)=>{
-      console.log('data', res.data)
+    apiData.filtersEvents({ ...updatedValues, skip }).then((res)=>{
       if (res.data) {
-        setEvent(res.data)
+        setEvent([...event, ...res.data])
       }
     })
-
-    console.log('updated', updatedValues)
 
     setSelectedValues(updatedValues)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search])
+  }, [location.search, skip])
 
   const handleClick = (key, value) => {
     const current = (searchParams.get(key) || '').split(',').filter(Boolean)
@@ -84,8 +78,6 @@ const Filters = ({ setEvent }) =>{
     if (current.includes(value)) {
       updated = current.filter(item => item !== value)
     } else {
-      console.log(key, value)
-
       key == 'date' ? updated = [value] : updated = [...current, value]
     }
 
@@ -102,7 +94,6 @@ const Filters = ({ setEvent }) =>{
     setSelectedDate(dates)
 
     const [start, end] = dates
-    console.log(dates)
 
     if (start && end) {
       const startDate = new Date(start)
@@ -119,15 +110,19 @@ const Filters = ({ setEvent }) =>{
   return (
     <Box className={style.filters_container}>
       <Box className={style.filter_header_container}>
-        <h2>Filtrowanie</h2>
-        <Button onClick={()=>{navigate(''), setSelectedDate([null, null]) }}>
+        <h2 onClick={window.innerWidth < 1300 ? ()=>setOpen(!open) : null}>Filtrowanie
+          {window.innerWidth < 1300 && !open ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 55" width="25" height="25">
+            <path d="M50 10 L50 70 M50 70 L30 50 M50 70 L70 50" stroke="blue" strokeWidth="5" fill="none"/>
+          </svg>
+            : null}</h2>
+        { open && <Button onClick={()=>{navigate(''), setSelectedDate([null, null]) }}>
           wyszyść
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M2.146 2.146a.5.5 0 011 0L8 6.293l4.854-4.147a.5.5 0 01.707.707L8.707 7l4.854 4.854a.5.5 0 01-.707.707L8 7.707l-4.854 4.854a.5.5 0 01-.707-.707L7.293 7 2.146 2.854a.5.5 0 010-.707z"/>
           </svg>
-        </Button>
+        </Button>}
       </Box>
-      <Box>
+      {open && <> <Box>
         <h3>Data</h3>
         <DatePicker
           className={style.datePicker}
@@ -153,12 +148,29 @@ const Filters = ({ setEvent }) =>{
                     <label key={i}>
                       <input
                         type="checkbox"
-                        checked={selectedValues[key] && selectedValues[key].includes(`${value}`)}
-                        onChange={() => handleClick(key, `${value}`)}
+                        checked={selectedValues[key] && selectedValues[key].includes(`${value.low}`)}
+                        onChange={() => handleClick(key, `${value.low}`)}
                       />
                       <Rating
                         name="read-only-rating"
-                        value={value}/>
+                        value={value.low}
+                        readOnly
+                      />
+                      <a>{count.low}</a>
+                    </label>
+                  </li>
+                )
+              }
+              if (key == 'seats') {
+                return (
+                  <li key={i}>
+                    <label key={i}>
+                      <input
+                        type="checkbox"
+                        checked={selectedValues[key] && selectedValues[key].includes(`${value}`)}
+                        onChange={() => handleClick(key, `${value}`)}
+                      />
+                      <p> {value.low} </p>
                       <a>{count.low}</a>
                     </label>
                   </li>
@@ -180,13 +192,14 @@ const Filters = ({ setEvent }) =>{
             )}
           </ul>
         </div>
-      ))}
+      ))} </> }
     </Box>
   )
-
 }
 
 Filters.propTypes = {
-  setEvent: PropTypes.func
+  setEvent: PropTypes.func,
+  skip: PropTypes.number,
+  event: PropTypes.array
 }
 export default Filters

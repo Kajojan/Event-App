@@ -25,6 +25,7 @@ module.exports = {
   ],
   plugins: ['react', 'react-hooks'],
   rules: {
+    'no-console': ['error', { allow: ['error'] }],
     'no-unused-vars': [
       'error',
       {

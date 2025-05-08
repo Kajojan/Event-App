@@ -15,6 +15,7 @@ import NotificationView from './view/NotificationsView'
 import EditProfileView from './view/user/EditProfileView'
 import EditCurrentEventView from './view/eventView/EditCurrentEventView'
 import NotLoggedInView from './view/NotLogin'
+import MapView from './view/eventView/MapView'
 
 const AppRouter = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const AppRouter = createBrowserRouter([
       { path: 'popular', element: <PopularView /> },
       { path: 'recomended', element: <RecomendedView /> },
       { path: 'comming', element: <CommingView /> },
+      { path: 'map', element: <MapView/> }
     ],
   },
   {

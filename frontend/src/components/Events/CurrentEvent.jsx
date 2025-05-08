@@ -23,6 +23,7 @@ const CurrentEvent = () => {
       setTakePart(res.data.event[0]._fields[3] != null)
       setSeat(res.data.event[0]._fields[4]?.properties?.seat || null)
     }).catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err)
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps

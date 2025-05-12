@@ -43,7 +43,7 @@ module.exports = (io) => {
     jwtCheck({ headers: { authorization: `Bearer ${token}` } }, {}, (err) => {
       if (err) {
         console.log(err)
-        return socket.disconnect(true)
+        socket.emit('auth_error', { message: 'Token missing' })
       }
       next()
     })
@@ -106,7 +106,7 @@ module.exports = (io) => {
       })
 
       NotReviedEvents.data.map(async (element)=>{
-        socket.emit('addRevie', element._fields[0])
+        socket.emit('addRevie', element._fields)
       })
 
       socket.on('get_new_event', async (data) => {

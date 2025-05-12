@@ -26,6 +26,7 @@ const Event = ({ item, onClick, className = '' }) => {
                 fontSize: '18px'
               }}
               name="read-only-rating"
+              precision={0.01}
               value={item?._fields[3]}
               readOnly
             />

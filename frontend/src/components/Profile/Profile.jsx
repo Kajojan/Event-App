@@ -44,12 +44,15 @@ const Home = () => {
       ? [
         {
           label: 'Średnia Ocena Twoich Wydarzeń',
-          value: (
+          value: (<div style={{ display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:'10px' }}>
+            <a>{star.avg} </a>
             <Rating
               name="read-only-rating"
               value={star.avg}
+              precision={0.01}
               readOnly
             />
+          </div>
           ),
         },
         {

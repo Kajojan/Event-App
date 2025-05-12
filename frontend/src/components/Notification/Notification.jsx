@@ -15,16 +15,15 @@ const Notifications = () => {
   const [open, setOpen] = useState(false)
   const [element, setElement] = useState({})
   const { user } = useAuth0()
-
   const onSubmit = (review)=>{
     apiData.addReview(
       { 'email':user.email,
-        'eventId':element.identity.low,
+        'eventId':element[0].identity.low,
         'star': review.stars,
         'content': review.content })
       .then((res)=>{
         if (res.data.isSuccessful) {
-          dispatch(DelRevie(element))
+          dispatch(DelRevie(element[0]))
         }
       })
 
@@ -40,6 +39,7 @@ const Notifications = () => {
   useEffect(() => {
     dispatch(IntNotification(0))
   })
+
 
   return <Box >
     <Typography
@@ -84,12 +84,12 @@ const Notifications = () => {
               onClick={(()=>{isOpen(el)})}
             >
               Oceń Wydarzenie
-              <a style={{ fontWeight:'bold' }}> {el.properties.eventName}</a>, w którym brałeś udział
+              <a style={{ fontWeight:'bold' }}> {el[0].properties.eventName}</a>, w którym brałeś udział
             </Box>)
         })}
       </Box>
     </Grid>
-    <RatingPopup open={open} handleClose={close} onSubmit={onSubmit} element={{ _fields:[element] }}/>
+    <RatingPopup open={open} handleClose={close} onSubmit={onSubmit} element={{ _fields:element }}/>
   </Box>
 }
 

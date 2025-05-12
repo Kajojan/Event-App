@@ -245,7 +245,7 @@ WHERE datetime({
   }),
   timezone: 'Europe/Warsaw'
 }) < datetime({timezone: 'Europe/Warsaw'})
-  WITH n,e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
+  WITH n,e, coalesce(avg(toInteger(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH averageRating, count(DISTINCT e) AS eventCount
 
@@ -347,18 +347,18 @@ exports.get_filters_events = async function ({
   query += `
   WITH e
   MATCH (e)-[:OWNER]-(owner:user)
-  OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()  
-  WITH e, owner, r2, coalesce(avg(toFloat(r2.star)), 0) AS averageRating, COUNT(r2) AS reviewCount
+  OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-() 
+  WITH e, owner, coalesce(avg(toFloat(r2.star)), 0) AS averageRating, COUNT(DISTINCT r2) AS reviewCount
 `
 
   if (star && Array.isArray(star)) {
-    query += ' WHERE averageRating >= toInteger($minStar)'
+    query += ' WHERE averageRating >= toFloat($minStar)'
   }
 
   query += `
   SKIP toInteger($skip)
   LIMIT toInteger($limit)
-  RETURN e, owner, r2, averageRating, reviewCount
+  RETURN e, owner, toFloat($minStar) ,averageRating, reviewCount
 `
 
   const params = {
@@ -373,8 +373,6 @@ exports.get_filters_events = async function ({
     skip,
     limit
   }
-
-  console.log(query, params)
 
   try {
     return await runQuery(query, params)

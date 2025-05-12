@@ -1,8 +1,9 @@
 const { runQuery } = require('../db_connect')
 
 exports.create_user = async function (name, email, picture, nickname) {
-  const query = `Merge (n:user {name: $name,  picture: $picture, nickname: $nickname, email: $email})
-  RETURN n`
+  const query = `MERGE (n:user {email: $email})
+SET n.name = $name, n.picture = $picture, n.nickname = $nickname
+RETURN n`
 
   const parameters = {
     name: name,
@@ -60,7 +61,7 @@ exports.get_user = async function (email) {
 
 exports.get_starts = async function (email) {
   const query = `MATCH (owner:user {email: "${email}"})-[:OWNER]->(e:event)<-[r:REVIE]-()
-RETURN   avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount`
+RETURN   avg(toFloat(r.star)) AS averageRating, COUNT(r) AS reviewCount`
   const parameters = { email }
   try {
     const result = await runQuery(query, parameters)
@@ -107,8 +108,9 @@ exports.get_relations_count = async function (email) {
   WHERE l.email = '${email}' AND  
     date(datetime({date: date(n.eventDate), timezone: 'Europe/Warsaw'})) < date(datetime({timezone: 'Europe/Warsaw'}))
     WITH n, COUNT (n) AS partCount,l
+    WITH sum(partCount) as sumPartCount, l
     OPTIONAL MATCH (n2:event)<-[:OWNER]-(l)
-    RETURN COUNT(DISTINCT 1) AS ownerCount, SUM(partCount) AS partCount`
+    RETURN COUNT(DISTINCT n2) AS ownerCount, sumPartCount`
 
   try {
     return await runQuery(query).then((result) => {

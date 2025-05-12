@@ -42,15 +42,14 @@ const Home = () => {
       </Typography>
       <a > Aplikacja stworzona do znajdowaniu interesujących wydarzeń oraz brania w nich udziału.</a>
       <br></br>
-      <a style={{ marginBottom:'30px' }}>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi.</a>
-
+      <a style={{ marginBottom:'50px' }}>Także zapraszam do tworzenia własnych wydarzeń i zapraszaniu ludzi.</a>
       <Divider
         sx={{
           '&::before, &::after': {
             borderColor: '#0000ff',
           },
         }}
-        style={{ width: '60%', marginTop: '50px', margin: '0 auto', fontSize: '20px' }}
+        style={{ width: '60%', marginTop: '50px', marginInline: 'auto', fontSize: '20px' }}
         textAlign="left"
       >
         <Link className={style.home_link} to="/event/popular">
@@ -79,7 +78,7 @@ const Home = () => {
             borderColor: '#0000ff',
           },
         }}
-        style={{ width: '60%', marginTop: '20px', margin: '0 auto', fontSize: '20px' }}
+        style={{ width: '60%', marginTop: '50px', marginInline: 'auto', fontSize: '20px' }}
         textAlign="left"
       >
         <Link className={style.home_link} to="/event/comming">

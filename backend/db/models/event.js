@@ -27,8 +27,6 @@ exports.create_event = async function (
     seat: seat,
     arrayType: arrayType
   }
-  console.log(query, parameters)
-
   try {
     return await runQuery(query, parameters)
       .then(async (result) => {
@@ -134,7 +132,7 @@ exports.get_newEvents_yourComing = async function (user, skip, type) {
                   OPTIONAL MATCH (m) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m) <- [:OWNER] - (n:user)
                   OPTIONAL MATCH (n)-[:OWNER]->(:event)<-[r2:REVIE]-()
-                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount    
+                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r2.star)) AS averageRating, COUNT( DISTINCT r2) AS reviewCount    
                   ORDER BY m.eventDate, m.eventTime
                   skip ${skip}
                   LIMIT 5
@@ -142,8 +140,6 @@ exports.get_newEvents_yourComing = async function (user, skip, type) {
   try {
     return await runQuery(query)
       .then((result) => {
-        console.log(result)
-
         return result.records
       })
       .catch((error) => {
@@ -165,7 +161,7 @@ exports.get_newEvents_popular = async function (skip) {
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
-                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount
+                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT(DISTINCT r) AS reviewCount
                   ORDER BY PART DESC
                   SKIP ${skip}
                   LIMIT 5
@@ -190,7 +186,7 @@ exports.get_newEvents_coming = async function (skip) {
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
-                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT(r) AS reviewCount
+                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT( DISTINCT r) AS reviewCount
                   ORDER BY n.eventDate, n.eventTime
                   SKIP ${skip}
                   LIMIT 5
@@ -222,7 +218,7 @@ exports.get_newEvents_recommended = async function (user, skip) {
   WHERE NOT (u)-[:OWNER|PART]-(n2) AND NOT (l)-[:OWNER|PART]-(n2) AND datetime(n2.eventDate + 'T' + n2.eventTime + '+02:00') > datetime({timezone: 'Europe/Warsaw'}) 
   OPTIONAL MATCH (n) <-[:OWNER]- (owner:user)
   OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()
-  WITH n,m,l,n2,PART,u,owner,avg(toInteger(r2.star)) AS averageRating, COUNT(r2) AS reviewCount
+  WITH n,m,l,n2,PART,u,owner,avg(toInteger(r2.star)) AS averageRating, COUNT(DISTINCT r2) AS reviewCount
   SKIP ${skip}
   LIMIT 5 
   RETURN  n,owner,n2,averageRating, reviewCount,l,PART`
@@ -247,7 +243,6 @@ exports.getEventByName = async function (name) {
   try {
     return await runQuery(query)
       .then((result) => {
-        console.log(result.records)
         return result.records
       })
       .catch((error) => {

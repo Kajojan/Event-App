@@ -8,6 +8,7 @@ export default function RatingPopup({ open, handleClose, onSubmit, element }) {
   const [stars, setStars] = useState(0)
   const [text, setText] = useState('')
 
+
   const handleTextChange = (e) => {
     const words = e.target.value.split(/\s+/)
     if (words.length <= 50) {
@@ -49,6 +50,7 @@ export default function RatingPopup({ open, handleClose, onSubmit, element }) {
         <Rating
           name="simple-controlled"
           value={stars}
+          precision={0.01}
           onChange={(event, newValue) => {
             setStars(newValue)
           }}

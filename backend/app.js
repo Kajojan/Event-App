@@ -31,6 +31,16 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    console.log('UnauthorizedError')
+
+    return res.status(401).json({ message: 'Token expired or invalid' })
+  }
+  next(err)
+})
+
+
 app.use(
   cors({
     origin: ['https://localhost:3000', 'http://localhost:3000', 'https://event-app-usy2.onrender.com'],
@@ -57,6 +67,14 @@ app.use('/api/user', jwtCheck, user_router)
 app.use('/api/aws', jwtCheck, aws_router)
 app.use('/api/send-email', email_router)
 
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({ error: 'Token expired or invalid' })
+  }
+
+  // Możesz też dodać inne przypadki:
+  return res.status(500).json({ error: 'Internal server error' })
+})
 
 // const fs = require('fs')
 // const https = require('https')

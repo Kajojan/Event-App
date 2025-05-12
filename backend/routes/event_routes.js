@@ -53,6 +53,7 @@ router.post('/takePart', async (req, res) => {
   const { email, id } = req.body
   try {
     const istakpart = await TakePart_event_seat_counter(id)
+    console.log(istakpart?.event[0]?._fields[0]?.properties?.seat)
     if (istakpart.isSuccessful) {
       const resoult = await relation.create_relation_event_user(
         email,

@@ -68,7 +68,12 @@ const functions = {
           }),
           timezone: 'Europe/Warsaw'
         }) < datetime({timezone: 'Europe/Warsaw'})
-        RETURN m`)
+      WITH m
+      OPTIONAL MATCH (m) <-[:OWNER]- (owner:user)
+      OPTIONAL MATCH (owner)-[:OWNER]->(:event)<-[r2:REVIE]-()
+      WITH m,owner,avg(toInteger(r2.star)) AS averageRating, COUNT(DISTINCT r2) AS reviewCount
+      RETURN m, owner, null, averageRating, reviewCount
+        `)
       return { isSuccessful: true, data: res.records }
     } catch (error) {
       console.log(error)

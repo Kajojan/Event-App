@@ -64,26 +64,39 @@ const Header = () => {
         open={open}
         onClose={handleClose}
         TransitionComponent={Fade}
+        className={styles.menu_container_header}
       >
-        <MenuItem onClick={handleClose}>
-          <Link to="/">Głowna</Link>
+        <MenuItem component={Link} to="/" onClick={handleClose}>
+          Główna
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Link to="/event">Wydarzenia</Link>
+
+        <MenuItem component={Link} to="/event" onClick={handleClose}>
+         Wydarzenia
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Link to="/search">Wyszukaj</Link>
+
+        <MenuItem component={Link} to="/search" onClick={handleClose}>
+          Wyszukaj
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Link to="/notifications">Powiadomienia</Link>{notifications != 0 && <span style={{ marginBottom: '20px', marginLeft: '-6px', color: 'red', fontWeight: 'bolder' }}><DotIcon></DotIcon></span>}
+
+        <MenuItem component={Link} to="/notifications" onClick={handleClose}>
+          Powiadomienia
+          {notifications !== 0 && (
+            <span style={{ marginLeft: 6, color: 'red', fontWeight: 'bolder' }}>
+              <DotIcon fontSize="small" />
+            </span>
+          )}
         </MenuItem>
-        <hr></hr>
+
+        <hr />
+
         {isAuthenticated ? (
-          <MenuItem onClick={handleClose}>
-            <Link to="/profile">{user.email} </Link>
+          <MenuItem component={Link} to="/profile" onClick={handleClose}>
+            {user.email}
           </MenuItem>
         ) : (
-          <MenuItem onClick={loginWithRedirect}>Zaloguj się</MenuItem>
+          <MenuItem onClick={loginWithRedirect}>
+            Zaloguj się
+          </MenuItem>
         )}
       </Menu>
     </Box>

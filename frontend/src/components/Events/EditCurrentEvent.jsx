@@ -7,12 +7,15 @@ import PlacesAutocomplete from 'react-places-autocomplete'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import apiData from '../../services/apiData'
+import ImageSelector from './EventFormPopUp'
 
 function EventForm() {
   const [image, setImage] = useState('')
   const { user } = useAuth0()
   const { id } = useParams()
   const navigate = useNavigate()
+  const [change, setChange] = useState(false)
+  const [arrImages, setArrImages] = useState([])
 
   const [formData, setFormData] = useState({
     '_fields': [
@@ -26,25 +29,51 @@ function EventForm() {
       }
     ]
   })
-  const changeImage = () => {
-    apiData.getImage().then((res) => {
-      setImage(res.data)
-      setFormData({
-        '_fields': [
-          {
-            properties: {
-              ...formData._fields[0].properties,
-              eventImage: res.data
-            }
-          },
-          {
-            properties: {
-              ...formData._fields[1].properties
-            }
-          }]
-      })
+
+  const setImageData = (img)=>{
+    setImage(img)
+    setFormData({
+      '_fields': [
+        {
+          properties: {
+            ...formData._fields[0].properties,
+            eventImage: img
+          }
+        },
+        {
+          properties: {
+            ...formData._fields[1].properties
+          }
+        }]
     })
+
   }
+  useEffect(() => {
+    apiData.getImage().then((res) => {
+      setArrImages(res.data)
+      setImageData(res.data[1])
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  // const changeImage = () => {
+  //   apiData.getImage().then((res) => {
+  //     setImage(res.data)
+  //     setFormData({
+  //       '_fields': [
+  //         {
+  //           properties: {
+  //             ...formData._fields[0].properties,
+  //             eventImage: res.data
+  //           }
+  //         },
+  //         {
+  //           properties: {
+  //             ...formData._fields[1].properties
+  //           }
+  //         }]
+  //     })
+  //   })
+  // }
 
   useEffect(() => {
     apiData.getEvent(id, user.email).then((res) => {
@@ -112,11 +141,13 @@ function EventForm() {
     if (address != '') {
       see(data)
       setError(false)
-      if (data.eventImage != image && image != formData._fields[0].properties.eventImage) {
+      // eslint-disable-next-line no-console
+      if (data.eventImage != image && data.eventImage != formData._fields[0].properties.eventImage && !arrImages.includes(image)) {
         const formData = new FormData()
         formData.append('file', data.eventImage[0])
         apiData.sendFile(formData).then((res) => {
           apiData.editEvent(id, { ...data, address, eventImage: res.data.result })
+          navigate(`/event/${id}`)
         })
       } else {
         apiData.editEvent(id, { ...data, address, eventImage: image }).then((_res)=>{
@@ -169,10 +200,12 @@ function EventForm() {
         <Box sx={{ marginBottom: '20px', marginLeft: '30px', width: '300px', alignSelf: 'center', display: 'flex', flexDirection: 'column' }}>
           <Event item={formData}></Event>
 
-          <Button onClick={() => { changeImage() }}> Zmień obrazek</Button>
+          <Button onClick={() => { setChange(!change) }}> Zmień obrazek</Button>
 
           <Button onClick={handleSubmit(see)}> Podgląd</Button>
         </Box>
+        <ImageSelector setImage={setImageData} setChange={setChange} change={change} images={arrImages}/>
+
         <form onSubmit={handleSubmit(onSubmit)} className={style.container}>
           <div className={style.name}>
             <label htmlFor="eventName" >Nazwa Wydarzenia</label>

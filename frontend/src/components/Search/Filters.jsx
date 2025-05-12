@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Box, Button, Rating } from '@mui/material'
 import { useEffect, useState } from 'react'
 import apiData from '../../services/apiData'
@@ -8,7 +7,7 @@ import { pl } from 'date-fns/locale/pl'
 import 'react-datepicker/dist/react-datepicker.css'
 import { getFilterName, useParsedFilters } from '../helper/FiltersUrl'
 import style from './Filters.module.scss'
-import PropTypes, { object } from 'prop-types'
+import PropTypes from 'prop-types'
 
 
 
@@ -29,7 +28,7 @@ const Filters = ({ skip, setEvent, event }) =>{
   const searchParams = new URLSearchParams(window.location.search)
   const [selectedDate, setSelectedDate] = useState(selectedDateRanges[0] || [null, null])
   const [selectedValues, setSelectedValues] = useState({})
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(window.innerWidth >= 1300)
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     let updatedValues = {}
@@ -38,7 +37,7 @@ const Filters = ({ skip, setEvent, event }) =>{
       const paramValue = params.get(key)
 
       if (paramValue) {
-        updatedValues[key] = paramValue.split(',')
+        updatedValues[key] = key == 'seats' ? paramValue.split(',').map((el)=>parseInt(el)) : paramValue.split(',')
       } else {
         key == 'star' ? updatedValues[key] = [0] : updatedValues[key] = []
       }
@@ -59,22 +58,31 @@ const Filters = ({ skip, setEvent, event }) =>{
     apiData.filtersArg({ ...updatedValues }).then((res)=>{
       setFilters(res.data.filters)
     })
-    apiData.filtersEvents({ ...updatedValues, skip }).then((res)=>{
+    apiData.filtersEvents({ ...updatedValues }).then((res)=>{
       if (res.data) {
-        setEvent([...event, ...res.data])
+        setEvent(res.data)
       }
     })
 
     setSelectedValues(updatedValues)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search, skip])
+  }, [location.search])
+
+  useEffect(() => {
+    if (!selectedValues) return
+    apiData.filtersEvents({ ...selectedValues, skip }).then((res) => {
+      if (res.data) {
+        setEvent([...event, ...res.data])
+      }
+    })
+
+  }, [skip])
 
   const handleClick = (key, value) => {
     const current = (searchParams.get(key) || '').split(',').filter(Boolean)
 
     let updated
-
     if (current.includes(value)) {
       updated = current.filter(item => item !== value)
     } else {
@@ -148,13 +156,14 @@ const Filters = ({ skip, setEvent, event }) =>{
                     <label key={i}>
                       <input
                         type="checkbox"
-                        checked={selectedValues[key] && selectedValues[key].includes(`${value.low}`)}
-                        onChange={() => handleClick(key, `${value.low}`)}
+                        checked={selectedValues[key] && selectedValues[key].includes(`${value.low ? value.low : value}`)}
+                        onChange={() => handleClick(key, `${value.low ? value.low : value}`)}
                       />
                       <Rating
                         name="read-only-rating"
-                        value={value.low}
+                        value={value.low ? value.low : value}
                         readOnly
+                        precision={0.01}
                       />
                       <a>{count.low}</a>
                     </label>
@@ -167,10 +176,10 @@ const Filters = ({ skip, setEvent, event }) =>{
                     <label key={i}>
                       <input
                         type="checkbox"
-                        checked={selectedValues[key] && selectedValues[key].includes(`${value}`)}
-                        onChange={() => handleClick(key, `${value}`)}
+                        checked={selectedValues[key] && selectedValues[key].includes(value.low ? value.low : value)}
+                        onChange={() => handleClick(key, `${value.low ? value.low : value}`)}
                       />
-                      <p> {value.low} </p>
+                      <p> {value.low ? value.low : value} </p>
                       <a>{count.low}</a>
                     </label>
                   </li>

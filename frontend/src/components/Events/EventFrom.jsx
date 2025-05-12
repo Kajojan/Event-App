@@ -10,9 +10,11 @@ import { addEvent } from '../../store/slices/socketSlice'
 import apiData from '../../services/apiData'
 import { eventTypes } from '../helper/EventTypes'
 import ImageSelector from './EventFormPopUp'
+import { useNavigate } from 'react-router-dom'
 
 
 function EventForm() {
+  const navigate = useNavigate()
   const [arrImages, setArrImages] = useState([])
   const [value, setValue] = useState('')
   const [tagsArr, setTagsArray] = useState(eventTypes)
@@ -61,11 +63,11 @@ function EventForm() {
 
   const [check, setCheck] = useState(false)
   const [error, setError] = useState(false)
+  const [typeError, setTypeError] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm()
 
   const [address, setAddress] = useState('')
@@ -101,7 +103,6 @@ function EventForm() {
     }
   }
   const see = (data) => {
-
     const { eventImage, ...dataWithoutImage } = data
     const Eventdata = data?.eventImage && data.eventImage.length > 0 ? data : dataWithoutImage
 
@@ -126,22 +127,26 @@ function EventForm() {
     }
   }
   const onSubmit = (data) => {
-    if (address != '' && detailAddress != '') {
+    if (arrayType.length != 3) {
+      setTypeError(true)
+    }
+    else if (address != '' && detailAddress != '') {
       see(data)
       setError(false)
-      setAddress('')
-      reset()
 
       if (data?.eventImage && data.eventImage.length > 0 && data.eventImage[0] != null) {
         const formData = new FormData()
         formData.append('file', data.eventImage[0])
         apiData.sendFile(formData).then((res) => {
           dispatch(addEvent({ event: { content: { ...data, address, detailAddress, eventImage: res.data.result, arrayType }, owner: user.email } }))
+          navigate('/')
         })
+
       } else {
         dispatch(addEvent({ event: { content: { ...data, address, detailAddress, eventImage: image, arrayType }, owner: user.email } }))
+        navigate('/')
       }
-      window.location.href = '/'
+
     } else {
       setError(true)
     }
@@ -254,7 +259,7 @@ function EventForm() {
 
           <div className={style.desc}>
             <label htmlFor="eventDescription">Opis wydarzenia</label>
-            <textarea id="eventDescription" {...register('eventDescription', { required: true })} />
+            <textarea id="eventDescription" {...register('eventDescription')} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <label style={{ alignContent: 'center' }}>Ograniczona Ilość miejsc:</label>
@@ -265,7 +270,8 @@ function EventForm() {
             <input id="seat" type="number" min="1" {...register('seat')} />
           </div>}
           <label style={{ marginBottom: '10px' }}>Wybierz 3 typy wydarzenia</label>
-          <input onChange={searchTags} value={value} type="text" placeholder='Wyszukaj'></input>
+          {typeError && <span style={{ marginBottom:'10px' }}>Musisz wybrać 3 typy</span>}
+          <input onChange={searchTags} value={value} type="text" placeholder='Wyszukaj typ'></input>
           <div className={style.typeContainer}>
             {tagsArr.map((el, index)=>(
               <p key={index} onClick={()=>{addType(el)}} className={arrayType.includes(el) ? style.Type_active : style.NotActive} >{el}</p>

@@ -24,10 +24,11 @@ const socketSlice = createSlice({
     AddRevie(state, action) {
       state.revie = [...state.revie, action.payload]
       state.isNotification = state.isNotification + 1
+
     },
     DelRevie(state, action) {
-      state.revie = state.revie.filter(el=>el.identity.low != action.payload.identity.low)
-      state.isNotification = state.isNotification + 1
+      state.revie = state.revie.filter(el=>el[0].identity.low != action.payload.identity.low)
+      state.isNotification = state.isNotification - 1
     },
     connect(state, action) {
       const { email, name, nickname } = action.payload.user

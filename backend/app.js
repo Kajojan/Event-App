@@ -67,7 +67,7 @@ app.use('/api/user', jwtCheck, user_router)
 app.use('/api/aws', jwtCheck, aws_router)
 app.use('/api/send-email', email_router)
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   if (err.name === 'UnauthorizedError') {
     return res.status(401).json({ error: 'Token expired or invalid' })
   }

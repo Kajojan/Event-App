@@ -161,7 +161,7 @@ exports.get_newEvents_popular = async function (skip) {
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
-                  WITH n,m ,COLLECT(l) AS PART, avg(toInteger(r.star)) AS averageRating, COUNT(DISTINCT r) AS reviewCount
+                  WITH n,m ,COLLECT(l) AS PART, avg(toFloat(r.star)) AS averageRating, COUNT(DISTINCT r) AS reviewCount
                   ORDER BY PART DESC
                   SKIP ${skip}
                   LIMIT 5

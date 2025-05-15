@@ -50,7 +50,7 @@ export default function RatingPopup({ open, handleClose, onSubmit, element }) {
         <Rating
           name="simple-controlled"
           value={stars}
-          precision={0.01}
+          precision={0.5}
           onChange={(event, newValue) => {
             setStars(newValue)
           }}

@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import Header from '../Header'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
+import { waitFor } from '@testing-library/react'
+
 
 jest.mock('@auth0/auth0-react', () => ({
   useAuth0: () => ({
@@ -66,7 +68,7 @@ const store = createStore(reducer, {
 })
 
 describe('Header component', () => {
-  it('renders all elements correctly', () => {
+  it('renders all elements correctly', async () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
@@ -84,16 +86,17 @@ describe('Header component', () => {
     expect(screen.queryByText(/wydarzenia/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/wyszukaj/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/powiadomienia/i)).not.toBeInTheDocument()
-
     expect(screen.queryByText(/zaloguj się/i)).not.toBeInTheDocument()
 
     expect(screen.queryByTestId('dot-icon')).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByTestId('button-id'))
-    expect(screen.getByText('Głowna')).toBeInTheDocument()
-    expect(screen.getByText(/wydarzenia/i)).toBeInTheDocument()
-    expect(screen.getByText(/wyszukaj/i)).toBeInTheDocument()
-    expect(screen.getByText(/powiadomienia/i)).toBeInTheDocument()
-    expect(screen.getByText(/zaloguj się/i)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText(/główna/i)).toBeInTheDocument()
+      expect(screen.getByText(/wydarzenia/i)).toBeInTheDocument()
+      expect(screen.getByText(/wyszukaj/i)).toBeInTheDocument()
+      expect(screen.getByText(/powiadomienia/i)).toBeInTheDocument()
+      expect(screen.getByText(/zaloguj się/i)).toBeInTheDocument()
+    })
   })
 })

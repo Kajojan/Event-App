@@ -5,6 +5,7 @@ import Notification from '../Notification'
 import { useDispatch, useSelector } from 'react-redux'
 import { IntNotification } from '../../../store/slices/socketSlice'
 
+
 jest.mock('react-redux')
 jest.mock('@auth0/auth0-react', () => ({
   useAuth0: () => ({
@@ -72,12 +73,13 @@ describe('Notification component', () => {
 
   it('opens the rating popup when a review is clicked', async () => {
     const reviesMock = [
-      { identity: { low: 1 }, properties: { eventName: 'Test Event' } },
+      [{ identity: { low: 1 }, properties: { eventName: 'Test Event' } }],
     ]
 
     useSelector.mockImplementation((selectorFn) =>
       selectorFn({
         socket: {
+          notification: [],
           revie: reviesMock,
         },
       })

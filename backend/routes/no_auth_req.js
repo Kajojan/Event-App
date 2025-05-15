@@ -19,7 +19,6 @@ router.get('/:name/get_event/:email', async (req, res) => {
       const newEventPopular = await get_newEvents_popular(skip)
       res.status(200).send(newEventPopular)
     }
-
       break
     case 'yourincomming': {
       const newEvent_yourCOming = await get_newEvents_yourComing(email, skip)

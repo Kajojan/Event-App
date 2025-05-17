@@ -1,0 +1,77 @@
+name: Build and Push Frontend & Backend Docker Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-frontend:
+    name: Build & Push Frontend Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get short Git SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/event-app-frontend:${{ steps.vars.outputs.sha_short }}
+            ${{ secrets.DOCKER_USERNAME }}/event-app-frontend:latest
+          build-args: |
+            REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
+            REACT_APP_URL=${{ secrets.REACT_APP_URL }}
+            REACT_APP_DOMAIN=${{ secrets.REACT_APP_DOMAIN }}
+            REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
+            REACT_APP_SECRET=${{ secrets.REACT_APP_SECRET }}
+            REACT_APP_AUDIENCE=${{ secrets.REACT_APP_AUDIENCE }}
+            REACT_APP_AUTH_URL=${{ secrets.REACT_APP_AUTH_URL }}
+            REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+
+  build-backend:
+    name: Build & Push Backend Image
+    runs-on: ubuntu-latest
+    needs: build-frontend
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get short Git SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/event-app-backend:${{ steps.vars.outputs.sha_short }}
+            ${{ secrets.DOCKER_USERNAME }}/event-app-backend:latest

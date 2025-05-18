@@ -1,11 +1,17 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env'
-})
+const envFile =
+  process.env.NODE_ENV === 'development'
+    ? '.env.development'
+    : process.env.NODE_ENV === 'test'
+      ? '.env.test'
+      : '.env'
+
+require('dotenv').config({ path: envFile })
+
+require('./worker')
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
-
 const auth_routes = require('./routes/auth_routes')
 const event_router = require('./routes/event_routes')
 const user_router = require('./routes/user_routes')
@@ -105,6 +111,7 @@ const apiPort = process.env.PORT || 4000
 const apiPortHttp = process.env.PORT || 4000
 
 const apiHost = process.env.API_HOST || 'localhost'
+
 
 runQuery('RETURN 1')
   .then(() => {

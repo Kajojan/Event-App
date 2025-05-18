@@ -1,6 +1,12 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env'
-})
+const envFile =
+  process.env.NODE_ENV === 'development'
+    ? '.env.development'
+    : process.env.NODE_ENV === 'test'
+      ? '.env.test'
+      : '.env'
+
+require('dotenv').config({ path: envFile })
+
 const express = require('express')
 const multer = require('multer')
 

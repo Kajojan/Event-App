@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=development jest --runInBand  ",
+    "test": "cross-env NODE_ENV=test jest --runInBand  ",
     "dev": "nodemon app.js",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },

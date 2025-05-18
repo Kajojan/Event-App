@@ -148,7 +148,7 @@ const Filters = ({ skip, setEvent, event }) =>{
       {filters && Object.entries(filters).map(([key, values]) => (
         <div key={key}>
           <h3>{getFilterName(key)}</h3>
-          <ul>
+          <ul style={{ maxHeight: '250px', overflow:'auto' }}>
             {values?.length > 0 && values.map(({ count, value }, i) => {
               if (key == 'star') {
                 return (

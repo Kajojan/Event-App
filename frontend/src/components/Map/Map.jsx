@@ -9,7 +9,7 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import apiData from '../../services/apiData'
-import { Box, Typography } from '@mui/material'
+import { Box, CircularProgress, Typography } from '@mui/material'
 
 delete L.Icon.Default.prototype._getIconUrl
 
@@ -91,7 +91,7 @@ const AddressMap = () => {
       >
         Mapa
       </Typography>
-      <MapContainer center={[52.237, 21.017]} zoom={6} style={{ height: '500px', width: '100%', marginBlock:'50px', borderRadius:'20px' }}>
+      {locations.length > 0 ? (<MapContainer center={[52.237, 21.017]} zoom={6} style={{ height: '500px', width: '100%', marginBlock:'50px', borderRadius:'20px' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {locations.map((loc) => (
           loc.coordinates ? (
@@ -100,7 +100,16 @@ const AddressMap = () => {
             </Marker>
           ) : null
         ))}
-      </MapContainer>
+      </MapContainer>) : <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '150px',
+        }}
+      >
+        <CircularProgress />
+      </Box>}
     </Box>
   )
 }

@@ -161,11 +161,13 @@ exports.get_newEvents_popular = async function (skip) {
                   OPTIONAL MATCH (n) <- [:OWNER] - (m:user) 
                   OPTIONAL MATCH (n) <- [:PART] - (l:user) 
                   OPTIONAL MATCH (m)-[:OWNER]->(e:event)<-[r:REVIE]-()
-                  WITH n,m ,COLLECT(l) AS PART, avg(toFloat(r.star)) AS averageRating, COUNT(DISTINCT r) AS reviewCount
-                  ORDER BY PART DESC
-                  SKIP ${skip}
-                  LIMIT 5
-                  RETURN n,m,PART,averageRating,reviewCount`
+                WITH n, m, COLLECT(DISTINCT l) AS PART,
+                    SIZE(COLLECT(DISTINCT l)) AS participantCount,
+                    avg(toFloat(r.star)) AS averageRating, COUNT(DISTINCT r) AS reviewCount
+                ORDER BY participantCount DESC
+                SKIP ${skip}
+                LIMIT 5
+                RETURN n, m, PART, averageRating, reviewCount, participantCount`
   try {
     return await runQuery(query)
       .then((result) => {

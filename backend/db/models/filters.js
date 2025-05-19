@@ -115,21 +115,13 @@ CALL {
     timezone: 'Europe/Warsaw'
     }) >= datetime($startDate)) AND
     ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) <= datetime($endDate) ) AND
-    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($types) = 0 OR ALL(t IN $types WHERE t IN e.eventType)) AND
     (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
     (size($seats) = 0 OR e.seat IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
-WHERE datetime({
-  date: date(e2.eventDate),
-  time: time({
-    hour: toInteger(split(e2.eventTime, ':')[0]),
-    minute: toInteger(split(e2.eventTime, ':')[1])
-  }),
-  timezone: 'Europe/Warsaw'
-}) < datetime({timezone: 'Europe/Warsaw'})
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   UNWIND e.eventType AS type
@@ -143,21 +135,13 @@ CALL {
   WHERE 
     ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw' }) >= datetime($startDate)) AND
     ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) <= datetime($endDate)) AND
-    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($types) = 0 OR ALL(t IN $types WHERE t IN e.eventType)) AND
     (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
     (size($seats) = 0 OR e.seat IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
-WHERE datetime({
-  date: date(e2.eventDate),
-  time: time({
-    hour: toInteger(split(e2.eventTime, ':')[0]),
-    minute: toInteger(split(e2.eventTime, ':')[1])
-  }),
-  timezone: 'Europe/Warsaw'
-}) < datetime({timezone: 'Europe/Warsaw'})
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH [pair IN split(e.detailAddress, "; ") WHERE trim(split(pair, ":")[0]) = 'country' | trim(split(pair, ":")[1])] AS countries, e
@@ -172,21 +156,13 @@ CALL {
   WHERE 
     ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) >= datetime($startDate)) AND
     ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) <= datetime($endDate)) AND
-    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($types) = 0 OR ALL(t IN $types WHERE t IN e.eventType)) AND
     (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
     (size($seats) = 0 OR e.seat IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
-WHERE datetime({
-  date: date(e2.eventDate),
-  time: time({
-    hour: toInteger(split(e2.eventTime, ':')[0]),
-    minute: toInteger(split(e2.eventTime, ':')[1])
-  }),
-  timezone: 'Europe/Warsaw'
-}) < datetime({timezone: 'Europe/Warsaw'})
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH [pair IN split(e.detailAddress, "; ") WHERE trim(split(pair, ":")[0]) = 'locality' | trim(split(pair, ":")[1])] AS cities, e
@@ -201,21 +177,13 @@ CALL {
   WHERE 
     ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) >= datetime($startDate)) AND
     ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) <= datetime($endDate)) AND
-    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($types) = 0 OR ALL(t IN $types WHERE t IN e.eventType)) AND
     (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
     (size($seats) = 0 OR e.seat IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
-WHERE datetime({
-  date: date(e2.eventDate),
-  time: time({
-    hour: toInteger(split(e2.eventTime, ':')[0]),
-    minute: toInteger(split(e2.eventTime, ':')[1])
-  }),
-  timezone: 'Europe/Warsaw'
-}) < datetime({timezone: 'Europe/Warsaw'})
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH e.seat AS seat, count(DISTINCT e) AS eventCount
@@ -228,7 +196,7 @@ CALL {
   WHERE 
     ($startDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) >= datetime($startDate)) AND
     ($endDate IS NULL OR datetime({date: date(e.eventDate), time: time(e.eventTime + ':00'), timezone: 'Europe/Warsaw'}) <= datetime($endDate)) AND
-    (size($types) = 0 OR ANY(t IN e.eventType WHERE t IN $types)) AND
+    (size($types) = 0 OR ALL(t IN $types WHERE t IN e.eventType)) AND
     (size($country) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
@@ -237,14 +205,6 @@ CALL {
   WITH DISTINCT n,e
 
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
-WHERE datetime({
-  date: date(e2.eventDate),
-  time: time({
-    hour: toInteger(split(e2.eventTime, ':')[0]),
-    minute: toInteger(split(e2.eventTime, ':')[1])
-  }),
-  timezone: 'Europe/Warsaw'
-}) < datetime({timezone: 'Europe/Warsaw'})
   WITH n,e, coalesce(avg(toInteger(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
   WITH averageRating, count(DISTINCT e) AS eventCount
@@ -319,7 +279,7 @@ exports.get_filters_events = async function ({
 `
 
   if (types && types.length > 0) {
-    query += ' AND ANY(t IN e.eventType WHERE t IN $types)'
+    query += ' AND ALL(t IN $types WHERE t IN e.eventType)'
   }
 
   if (country && country.length > 0) {

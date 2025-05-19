@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import { Box, Button, Rating } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import apiData from '../../services/apiData'
 import { useNavigate } from 'react-router-dom'
 import DatePicker from 'react-datepicker'
@@ -12,6 +13,8 @@ import PropTypes from 'prop-types'
 
 
 const Filters = ({ skip, setEvent, event }) =>{
+  const skipRef = useRef(skip)
+
   const {
     selectedDateRanges,
   } = useParsedFilters()
@@ -55,6 +58,8 @@ const Filters = ({ skip, setEvent, event }) =>{
       updatedValues.endDate = null
     }
 
+    // eslint-disable-next-line no-console
+
     apiData.filtersArg({ ...updatedValues }).then((res)=>{
       setFilters(res.data.filters)
     })
@@ -63,14 +68,18 @@ const Filters = ({ skip, setEvent, event }) =>{
         setEvent(res.data)
       }
     })
-
+    // eslint-disable-next-line no-console
     setSelectedValues(updatedValues)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search])
 
   useEffect(() => {
-    if (!selectedValues) return
+    if (skipRef.current === skip) {
+      return
+    }
+    console.log(skip, selectedValues)
+    skipRef.current = skip
     apiData.filtersEvents({ ...selectedValues, skip }).then((res) => {
       if (res.data) {
         setEvent([...event, ...res.data])

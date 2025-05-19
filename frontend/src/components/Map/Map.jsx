@@ -19,6 +19,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 })
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
 
 const AddressMap = () => {
   const [locations, setLocations] = useState([])
@@ -30,42 +32,66 @@ const AddressMap = () => {
     const obj = Object.fromEntries(parts)
     return `${obj.route || ''} ${obj.street_number || ''}, ${obj.locality || ''}, ${obj.country || ''}`
   }
-
   const geocodeAddress = async (address) => {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
-    )
-    const data = await res.json()
-    if (data.length === 0) return null
-    return {
-      lat: parseFloat(data[0].lat),
-      lng: parseFloat(data[0].lon),
-      label: address
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`,
+        {
+          headers: {
+            'User-Agent': 'YourAppName/1.0 (kajetan.kajo.jankowski@gmail.com)',
+          },
+        }
+
+      )
+
+      if (!res.ok) {
+        console.error(`Błąd żądania: ${res.status} ${res.statusText}`)
+        return null
+      }
+
+      const data = await res.json()
+      if (!Array.isArray(data) || data.length === 0) {
+        return null
+      }
+
+      return {
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon),
+        label: address
+      }
+
+    } catch (err) {
+      console.error('Błąd podczas geokodowania adresu:', err)
+      return null
     }
   }
 
+
   const loadLocations = async (data) => {
-    const results = await Promise.all(
-      Object.entries(data).map(async ([id, [detailAddress, eventName]]) => {
-        const formatted = parseAddress(detailAddress)
-        const loc = await geocodeAddress(formatted)
-        if (loc) {
-          return {
-            id,
-            name: eventName,
-            coordinates: loc,
-          }
-        }
-        return null
-      })
-    )
-    setLocations(results.filter(Boolean))
+    const results = []
+
+    for (const [id, [detailAddress, eventName]] of Object.entries(data)) {
+      const formatted = parseAddress(detailAddress)
+      await delay(1000)
+      const loc = await geocodeAddress(formatted)
+
+      if (loc) {
+        results.push({
+          id,
+          name: eventName,
+          coordinates: loc,
+        })
+      }
+    }
+
+    setLocations(results)
   }
+
 
   useEffect(() => {
     const date = new Date()
     date.setHours(date.getHours() + 2)
-    apiData.filtersEvents({ 'startDate': date, 'limit': 100 }).then((res)=>{
+    apiData.filtersEvents({ 'startDate': date, 'limit': 10 }).then((res)=>{
       const data = res.data.reduce((acc, el)=>{
         acc[el._fields[0].identity.low] = [el._fields[0].properties.detailAddress, el._fields[0].properties.eventName]
         return acc

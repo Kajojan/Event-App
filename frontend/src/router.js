@@ -53,8 +53,7 @@ const AppRouter = createBrowserRouter([
   },
   {
     path: '/search',
-    element: <ProtectedRoutes />,
-    children: [{ path: '', element: <SearchView /> }],
+    element: <SearchView />
   },
   {
     path: '/notifications',

@@ -43,7 +43,7 @@ const EventMain = () => {
           <TimeIcon></TimeIcon>
         </Box>
         <Box className={style.box} onClick={() => navigate('/event/map')}>
-          <Link>Map</Link>
+          <Link>Mapa</Link>
           <MapIcon></MapIcon>
         </Box>
       </Box>

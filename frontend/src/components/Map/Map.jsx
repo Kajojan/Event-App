@@ -35,13 +35,7 @@ const AddressMap = () => {
   const geocodeAddress = async (address) => {
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`,
-        {
-          headers: {
-            'User-Agent': 'YourAppName/1.0 (kajetan.kajo.jankowski@gmail.com)',
-          },
-        }
-
+        `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCIQ_API_KEY}&q=${encodeURIComponent(address)}&format=json`
       )
 
       if (!res.ok) {

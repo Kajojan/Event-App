@@ -127,6 +127,7 @@ function EventForm() {
     }
   }
   const onSubmit = (data) => {
+
     if (arrayType.length != 3) {
       setTypeError(true)
     }
@@ -139,11 +140,19 @@ function EventForm() {
         formData.append('file', data.eventImage[0])
         apiData.sendFile(formData).then((res) => {
           dispatch(addEvent({ event: { content: { ...data, address, detailAddress, eventImage: res.data.result, arrayType }, owner: user.email } }))
+          window.gtag('event', 'Create_Event', {
+            event_owner: user.email,
+            event_title: data.eventName
+          })
           navigate('/')
         })
 
       } else {
         dispatch(addEvent({ event: { content: { ...data, address, detailAddress, eventImage: image, arrayType }, owner: user.email } }))
+        window.gtag('event', 'Create_Event', {
+          event_owner: user.email,
+          event_title: data.eventName
+        })
         navigate('/')
       }
 
@@ -277,7 +286,7 @@ function EventForm() {
               <p key={index} onClick={()=>{addType(el)}} className={arrayType.includes(el) ? style.Type_active : style.NotActive} >{el}</p>
             ))}
           </div>
-          <Button type="submit">Dodaj</Button>
+          <Button type="submit" >Dodaj</Button>
 
         </form>
       </Box>

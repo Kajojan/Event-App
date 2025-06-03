@@ -180,12 +180,14 @@ const Filters = ({ skip, setEvent, event }) =>{
                 )
               }
               if (key == 'seats') {
+                console.log(selectedValues[key], value, key)
+
                 return (
                   <li key={i}>
                     <label key={i}>
                       <input
                         type="checkbox"
-                        checked={selectedValues[key] && selectedValues[key].includes(value.low ? value.low : value)}
+                        checked={selectedValues[key] && selectedValues[key].includes(value.low ? value.low : parseInt(value))}
                         onChange={() => handleClick(key, `${value.low ? value.low : value}`)}
                       />
                       <p> {value.low ? value.low : value} </p>

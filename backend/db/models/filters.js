@@ -120,7 +120,7 @@ CALL {
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
-    (size($seats) = 0 OR e.seat IN $seats)
+    (size($seats) = 0 OR toInteger(e.seat) IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
@@ -140,7 +140,7 @@ CALL {
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
-    (size($seats) = 0 OR e.seat IN $seats)
+    (size($seats) = 0 OR toInteger(e.seat) IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
@@ -161,7 +161,7 @@ CALL {
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
-    (size($seats) = 0 OR e.seat IN $seats)
+    (size($seats) = 0 OR toInteger(e.seat) IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
@@ -182,7 +182,7 @@ CALL {
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
-    (size($seats) = 0 OR e.seat IN $seats)
+    (size($seats) = 0 OR toInteger(e.seat) IN $seats)
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
   WITH e, coalesce(avg(toFloat(r2.star)), 0) AS averageRating
   WHERE (size($star) = 0 OR averageRating >= toFloat($star[0]))
@@ -201,7 +201,7 @@ CALL {
         WHERE trim(split(pair, ":")[0]) = 'country' AND trim(split(pair, ":")[1]) IN $country)) AND
     (size($city) = 0 OR ANY(pair IN split(e.detailAddress, "; ") 
         WHERE trim(split(pair, ":")[0]) = 'locality' AND trim(split(pair, ":")[1]) IN $city)) AND
-    (size($seats) = 0 OR e.seat IN $seats)
+    (size($seats) = 0 OR toInteger(e.seat) IN $seats)
   WITH DISTINCT n,e
 
   OPTIONAL MATCH (n)-[:OWNER]->(e2)<-[r2:REVIE]-()
@@ -225,6 +225,7 @@ RETURN types, countries, cities, seats, averageRatings
     seats,
     star
   }
+
 
   try {
     return await runQuery(query, params)
@@ -293,7 +294,9 @@ exports.get_filters_events = async function ({
   }
 
   if (seats && seats.length > 0) {
-    query += ' AND e.seat IN $seats'
+    console.log(seats)
+
+    query += ' AND toInteger(e.seat) IN $seats'
   }
 
   if (startDate) {

@@ -65,7 +65,7 @@ const functions = {
           time: time({
             hour: toInteger(split(coalesce(m.eventTime, '00:00'), ':')[0]),
             minute: toInteger(split(coalesce(m.eventTime, '00:00'), ':')[1])
-          }),
+          })
         }) < datetime({timezone: 'Europe/Warsaw'})
       WITH m
       OPTIONAL MATCH (m) <-[:OWNER]- (owner:user)

@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import CurrentEvent from '../CurrentEvent'
 import '@testing-library/jest-dom/extend-expect'
+beforeAll(() => {
+  window.gtag = jest.fn()
+})
+
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

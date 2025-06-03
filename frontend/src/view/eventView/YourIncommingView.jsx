@@ -37,7 +37,7 @@ const YourIncommingView = () => {
 
     })
 
-    dispatch(getEvents({ name: 'yourincomming', skip: valueSkip, username: user.email, type:'PART' }))
+    dispatch(getEvents({ name: 'yourincomming', skip: valueSkip, username: user.email, type:'PART | OWNER' }))
 
   }
 

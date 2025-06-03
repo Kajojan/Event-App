@@ -43,3 +43,4 @@ jobs:
             REACT_APP_AUDIENCE=${{ secrets.REACT_APP_AUDIENCE }}
             REACT_APP_AUTH_URL=${{ secrets.REACT_APP_AUTH_URL }}
             REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+            REACT_APP_LOCIQ_API_KEY=${{secrets.REACT_APP_LOCIQ_API_KEY }}
